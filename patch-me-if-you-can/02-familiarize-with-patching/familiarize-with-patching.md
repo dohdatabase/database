@@ -339,9 +339,9 @@ You can use the *queryable inventory* inside the database to get information fro
 
 ## Task 3: Use Datapatch
 
-Datapatch applies or roll back SQL changes to the database. 
+Datapatch applies or rolls back SQL changes to the database. 
 
-1. Remain in the *yellow* terminal 🟨. You find Datapatch in the *OPatch* directory. Check the version of OPatch.
+1. Remain in the *yellow* terminal 🟨. You find Datapatch in the *OPatch* directory. 
     
     ```
     <copy>
@@ -566,7 +566,7 @@ Datapatch applies or roll back SQL changes to the database.
     ```
     </details>       
 
-# Task 4: Useful queries
+## Task 4: Useful queries
 
 Here are a few useful queries that informs about the database.
 
@@ -581,7 +581,7 @@ Here are a few useful queries that informs about the database.
     -- Be sure to hit RETURN
     ```
 
-        <details>
+    <details>
     <summary>*click to see the output*</summary>
     ``` text
     SQL> col oracle_home format a60
