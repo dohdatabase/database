@@ -14,28 +14,33 @@
       "filename": "https://oracle-livelabs.github.io/common/labs/cloud-login/cloud-login-livelabs-novnc.md"
     },
     {
-      "title": "Lab 1: Installation and Patching",
+      "title": "Lab 1: Initialize environment",
+      "description": "Initialize Environment",
+      "filename": "../../01-initialize-environment/initialize-environment.md"
+    },
+    {
+      "title": "Lab 1001: Installation and Patching",
       "description": "Install Oracle database into a separate OH and patch it unattended.",
-      "filename": "../../01-installation-patching/01-installation-and-patching.md"
+      "filename": "../../zzz-01-installation-patching/01-installation-and-patching.md"
     },
     {
-      "title": "Lab 2: Checks in the 19.18 Environment",
+      "title": "Lab 1002: Checks in the 19.18 Environment",
       "description": "Common checks when patching",
-      "filename": "../../02-db-19-18-checks/02-db-19-18-checks.md"
+      "filename": "../../zzz-02-db-19-18-checks/02-db-19-18-checks.md"
     },
     {
-      "title": "Lab 3: AutoUpgrade for patching",
+      "title": "Lab 1003: AutoUpgrade for patching",
       "description": "Use AutoUpgrade for patching",
-      "filename": "../../03-autoupgrade-4-patching/03-autoupgrade-4-patching.md"
+      "filename": "../../zzz-03-autoupgrade-4-patching/03-autoupgrade-4-patching.md"
     },
     {
-      "title": "Lab 4: In-Place Patching",
+      "title": "Lab 1004: In-Place Patching",
       "description": "Patching an existing OH",
-      "filename": "../../04-in-place-patching/04-in-place-patching.md"
+      "filename": "../../zzz-04-in-place-patching/04-in-place-patching.md"
     },
     {
       "title": "Lab 5: Inventory Cleanup and Final Checks",
-      "filename": "../../05-final-checks/05-final-checks.md"
+      "filename": "../../zzz-05-final-checks/05-final-checks.md"
     },
     {
       "title": "Need Help?",
