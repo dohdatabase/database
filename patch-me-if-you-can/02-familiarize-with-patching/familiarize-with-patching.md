@@ -236,6 +236,9 @@ You use *OPatch* to perform the first part of patching an Oracle Database; patch
     ```
     </details>      
 
+## Task 2: Use OPatch inside the database
+
+
 You may now *proceed to the next lab*.
 
 ## Acknowledgements
