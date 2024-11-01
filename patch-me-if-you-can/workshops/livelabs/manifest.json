@@ -15,13 +15,18 @@
     },
     {
       "title": "Lab 1: Initialize environment",
-      "description": "Initialize Environment",
+      "description": "Initialize environment",
       "filename": "../../01-initialize-environment/initialize-environment.md"
     },
     {
       "title": "Lab 2: Familiarize with patching",
-      "description": "Initialize Environment",
+      "description": "Familiarize with patching",
       "filename": "../../02-familiarize-with-patching/familiarize-with-patching.md"
+    },
+    {
+      "title": "Lab 3: Simple patching",
+      "description": "Simple patching",
+      "filename": "../../03-simple-patching/simple-patching.md"
     },
     {
       "title": "Lab 1001: Installation and Patching",

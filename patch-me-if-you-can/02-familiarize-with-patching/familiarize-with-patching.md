@@ -4,15 +4,14 @@
 
 In this lab, you will familiarize with some of the tools used to patch Oracle Database. 
 
-Estimated Time: 5 Minutes
+Estimated Time: 10 Minutes
 
 
 ### Objectives
 
 In this lab, you will:
 
-* Use OPatch
-* Use Datapatch
+* Check the tools needed for patching
 * Check an Oracle Database
 
 ### Prerequisites
@@ -650,6 +649,49 @@ Here are a few useful queries that informs about the database.
     XDB        19.21.0.0.0     VALID
     ```
     </details>    
+
+4. Exit SQL*Plus.
+
+    ```
+    <copy>
+    exit
+    </copy>
+    ```    
+
+## Task 5: Check AutoUpgrade
+
+Oracle recommends that you always use the latest version of AutoUpgrade.
+
+1. Check the version of AutoUpgrade.
+
+    ```
+    <copy>
+    cd
+    java -jar autoupgrade.jar -version
+    </copy>
+
+    -- Be sure to hit RETURN
+    ```
+
+    * *MOS_LINK* contains the URL to the My Oracle Support document where you can download the latest version of AutoUpgrade.
+    * In this lab, you will use the existing version.
+
+    <details>
+    <summary>*click to see the output*</summary>
+    ``` text
+    $ cd
+    $ java -jar autoupgrade.jar -version
+    build.version 24.7.241021
+    build.date 2024/10/21 11:16:20 -0400
+    build.hash babf5a631
+    build.hash_date 2024/10/18 18:36:27 -0400
+    build.supported_target_versions 12.2,18,19,21,23
+    build.type production
+    build.label (HEAD, tag: v24.7, origin/stable_devel, stable_devel)
+    build.MOS_NOTE 2485457.1
+    build.MOS_LINK https://support.oracle.com/epmos/faces/DocumentDisplay?id=2485457.1
+    ```
+    </details>   
 
 You may now *proceed to the next lab*.
 
