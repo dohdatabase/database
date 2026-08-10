@@ -76,5 +76,6 @@ badge: images/upgrade-badge.png
 
 ## Acknowledgements
 
-* **Author** - Alex Zaballa, Linda Foinding
-* **Last Updated By/Date** - Linda Foinding, March 2026
+* **Author** - Daniel Overby Hansen
+* **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
+* **Last Updated By/Date** - Daniel Overby Hansen, August 2026

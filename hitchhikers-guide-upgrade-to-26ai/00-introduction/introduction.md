@@ -2,7 +2,7 @@
 
 ## About this Workshop
 
-Oracle AI Database 26ai is a *Long Term Support Release*. This lab combines several upgrade and migration methods, and equips you with performance features and tools to ensure stability when you move to any new Oracle AI Database release. By upgrading to Oracle AI Database 26ai, you will have Premier Support until the end of 2031 and Extended Support for a period thereafter. There is a direct upgrade path to Oracle AI Database 26ai from Oracle Database 19c and 21c, regardless of the Release Update applied. From Oracle Database 23ai, you simply patch your database to update to Oracle AI Database 26ai.
+Oracle AI Database 26ai is a *Long Term Support Release* with Premier Support until the end of 2031 and Extended Support for a period thereafter. In this lab, you'll learn how to upgrade your databases using different techniques. You'll gain an understanding of the pros and cons of each method enabling you to make the best decisions in your daily work. Besides upgrading and converting databases, this lab covers common upgrade-related tasks like installing a new Oracle home and diagnosing upgrade issues.
 
 Estimated Workshop Time: 120 minutes
 
@@ -11,9 +11,9 @@ Estimated Workshop Time: 120 minutes
 In this workshop, you will:
 
 * Upgrade databases
-* Use Performance Stability Prescription to ensure performance stability
-* Convert to multitenant architecture
-* Migrate databases using Data Pump and transportable tablespaces
+* Convert from non-CDB architecture
+* Install Oracle home
+* Diagnose and troubleshoot
 
 ## About the workshop contents
 
@@ -53,5 +53,5 @@ You may now [*proceed to the next lab*](#next).
 ## Acknowledgements
 
 * **Author** - Daniel Overby Hansen
-* **Contributors** - Klaus Gronau, Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Rodrigo Jorge, January 2026
+* **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
+* **Last Updated By/Date** - Daniel Overby Hansen, August 2026

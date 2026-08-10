@@ -1,5 +1,5 @@
 {
-  "workshoptitle": "Hitchhiker's Guide for Upgrading to Oracle AI Database",
+  "workshoptitle": "Hitchhiker's Guide for Upgrading to Oracle AI Database 26ai",
   "support": "https://community.oracle.com/tech/developers/categories/database-26ai",
   "help": "livelabs-help-db_us@oracle.com",
   "tutorials": [
@@ -19,8 +19,8 @@
       "filename": "../../01-initialize-environment/initialize-environment.md"
     },
     {
-      "title": "Lab 2: Explore Multitenant Architecture",
-      "filename": "../../02-explore-multitenant/explore-multitenant.md"
+      "title": "Lab 2: Upgrade Non-CDB Using Refreshable Clone PDB",
+      "filename": "../../02-upg-refresh-clone/upg-refresh-clone.md"
     },
     {
       "title": "Lab 3: Generate AWR Snapshot",
