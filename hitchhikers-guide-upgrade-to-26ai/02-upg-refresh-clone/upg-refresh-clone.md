@@ -300,6 +300,8 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     </copy>
     ```
 
+    * Later, we use the test data to ensure that no data is lost.
+
     <details>
     <summary>*click to see the output*</summary>
 
