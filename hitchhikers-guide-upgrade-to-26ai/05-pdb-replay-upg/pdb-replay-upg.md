@@ -172,12 +172,13 @@ Inside your maintenance window, you perform the upgrade.
 
     ``` bash
     <copy>
-    create pluggable database terracotta using '/home/oracle/scripts/terracotta.xml';
+    create pluggable database terracotta using '/home/oracle/scripts/terracotta.xml' NOCOPY;
     </copy>
     ```
 
     * The target CDB now reads the manifest file and plugs in the *TERRACOTTA* PDB.
-    * It reuses the data files in their current location. You can copy or move the data files by modifying the `CREATE PLUGGABLE DATABASE` statement.
+    * It reuses the data files in their current location because of the `NOCOPY` clause. 
+    * You can copy or move the data files by modifying the `CREATE PLUGGABLE DATABASE` statement.
     
     <details>
     <summary>*click to see the output*</summary>

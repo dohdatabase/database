@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will upgrade a single PDB using *replay upgrade*. You unplug the PDB from the 19c CDB and plug into a 26ai CDB. When you open the PDB, the database automatically upgrades itself. This is a method originally developed for Oracle Autonomous AI Database and is now available in Oracle AI Database.
+Some times you find a glitch in our code or a a bug. In this lab, you learn a few troubleshooting techniques.
 
 Estimated Time: 10 minutes
 
@@ -10,19 +10,24 @@ Estimated Time: 10 minutes
 
 In this lab, you will:
 
-* Upgrade a PDB
-* Plug in to an existing 26ai CDB
-* Upgrade using replay upgrade
+* Create an AutoUpgrade zip file
+* Check logs and views 
+* Disable replay upgrade
 
 ### Prerequisites
 
 None.
 
-## Task 1: Prepare for upgrade
+## Task 1: AutoUpgrade zip file
 
 You may now [*proceed to the next lab*](#next).
 
-**Congratulations!* You've completed the lab. Feel free to proceed with the optional labs. You can complete them in any order.
+
+ALTER DATABASE UPGRADE SYNC OFF
+upg1.replay=yes
+
+
+You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 

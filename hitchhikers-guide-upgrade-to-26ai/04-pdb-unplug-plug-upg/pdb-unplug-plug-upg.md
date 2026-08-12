@@ -37,6 +37,31 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     # Be sure to hit RETURN
     ```
 
+2. Switch to the *ORANGE* PDB and check the `COMPATIBLE` parameter.
+
+    ``` sql
+    <copy>
+    alter session set container=ORANGE;
+    select value from v$parameter where name='compatible';
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    * The `COMPATIBLE` parameter is set to `19.0.0`. 
+    * We'll discuss the parameter in a later lab.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+        VALUE
+    _________
+    19.0.0
+    ```
+
+    </details>
+
 2. For this lab, you use a pre-created config file. Examine the pre-created config file.
 
     ``` bash

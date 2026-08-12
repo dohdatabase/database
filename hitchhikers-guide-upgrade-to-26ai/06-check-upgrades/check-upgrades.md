@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will upgrade a single PDB using *replay upgrade*. You unplug the PDB from the 19c CDB and plug into a 26ai CDB. When you open the PDB, the database automatically upgrades itself. This is a method originally developed for Oracle Autonomous AI Database and is now available in Oracle AI Database.
+In previous labs, you started two PDB upgrades. One unplug-plug upgrade using AutoUpgrade and another using replay upgrade. In this lab, you check the outcome of the upgrades.
 
 
 Estimated Time: 10 minutes
@@ -11,127 +11,247 @@ Estimated Time: 10 minutes
 
 In this lab, you will:
 
-* Upgrade a PDB
-* Plug in to an existing 26ai CDB
-* Upgrade using replay upgrade
+* Check on the PDB upgrades
 
 ### Prerequisites
 
-None.
+You have completed:
+* Lab 4: Upgrade PDB Using Unplug-Plug
+* Lab 5: Upgrade PDB Using Replay Upgrade
 
-## Task 1: Prepare for upgrade
+## Task 1: Check AutoUpgrade
 
-1. Use the *blue* 🟦 terminal. You start by assesing the upgrade readiness of the *TERRACOTTA* PDB. Examine the pre-created config file.
-
-    ``` bash
-    <copy>
-    cat /home/oracle/scripts/pdb-replay-upg-terracotta.cfg
-    </copy>
-    ```
-
-    * You only use AutoUpgrade for the pre-upgrade analysis and fixups. 
-    * `sid` and `target_cdb` specify the SID of the source and target CDB.
-    * `pdbs` is a comma-separated list of PDBs to upgrade.
-    
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    global.global_log_dir=/home/oracle/logs/pdb-replay-upg-terracotta
-    global.global_log_dir=/home/oracle/logs/pdb-replay-upg-terracotta
-    upg1.source_home=/u01/app/oracle/product/19
-    upg1.target_home=/u01/app/oracle/product/26
-    upg1.sid=CDB19
-    upg1.pdbs=TERRACOTTA
-    upg1.target_cdb=CDB26
-    ```
-
-    </details>
-
-2. Start AutoUpgrade in *analyze* mode. The check usually completes very fast. Wait for it to complete.
-
-    ``` bash
-    <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-replay-upg-terracotta.cfg -mode analyze
-    </copy>
-    ```
-
-    * You can use the `lsj` command to get details.
-
-3. When AutoUpgrade completes, it prints the path to the summary report. Check the summary report.
-
-    ``` bash
-    <copy>
-    cat /home/oracle/logs/pdb-replay-upg-terracotta/cfgtoollogs/upgrade/auto/status/status.log
-    </copy>
-    ```
-
-    * The report states *Check passed and no manual intervention needed*.
+1. Use the *yellow* 🟨 terminal. AutoUpgrade should be done by now. Otherwise, wait for it complete.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    ==========================================
-              Autoupgrade Summary Report
-    ==========================================
-    [Date]           Wed Aug 12 05:06:33 GMT 2026
-    [Number of Jobs] 1
-    ==========================================
-    [Job ID] 100
-    ==========================================
-    [DB Name]                cdb19
-    [Version Before Upgrade] 19.31.0.0.0
-    [Version After Upgrade]  23.26.3.0.0
-    ------------------------------------------
-    [Stage Name]    PRECHECKS
-    [Status]        SUCCESS
-    [Start Time]    2026-08-12 05:06:19
-    [Duration]      0:00:14
-    [Log Directory] /home/oracle/logs/pdb-replay-upg-terracotta/CDB19/100/prechecks
-    [Detail]        /home/oracle/logs/pdb-replay-upg-terracotta/CDB19/100/prechecks/cdb19_preupgrade.log
-                    Check passed and no manual intervention needed
-    ------------------------------------------
+    Job 101 completed
+    ------------------- Final Summary --------------------
+    Number of databases            [ 1 ]
+
+    Jobs finished                  [1]
+    Jobs failed                    [0]
+    Jobs restored                  [0]
+    Jobs pending                   [0]
+
+
+    Please check the summary report at:
+    /home/oracle/logs/pdb-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/pdb-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
 
-## Task 2: Upgrade and Convert
-
-Inside your maintenance window, you perform the upgrade.
-
-1. Still in the *blue* 🟦 terminal. Now, you start the pre-upgrade fixups. This prepares the database for upgrade. In the interest of time, you skip this part in the lab. The command is shown only for learning purposes.
-
-    ``` bash
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-replay-upg-terracotta.cfg -mode fixups
-    ```
-
-    * Do not execute the command.
-
-2. Set the environment to the source CDB, *CDB19*, and connect.
+2. Set the environment and connect.
 
     ``` bash
     <copy>
-    . cdb19
+    . cdb26
     sql / as sysdba
-    </copy>
-    ```
-
-3. Unplug the *TERRACOTTA* PDB and remove it.
-
-    ``` bash
-    <copy>
-    alter pluggable database terracotta close;
-    alter pluggable database terracotta unplug into '/home/oracle/scripts/terracotta.xml';
-    drop pluggable database terracotta keep datafiles;     
     </copy>
 
     # Be sure to hit RETURN
     ```
 
-    * First, you close the PDB.
-    * Next, you unplug the PDB and generate a manifest file. The manifest file is an overview of the PDB, its data files and additional information.
-    * Finally, remove the PDB from source CDB.
+3. Switch to the *ORANGE* PDB and check the `COMPATIBLE` parameter.
+
+    ``` sql
+    <copy>
+    alter session set container=ORANGE;
+    select value from v$parameter where name='compatible';
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    * The `COMPATIBLE` parameter is set to `23.0.0`.
+    * Do you remember the previous setting? Before upgrade it was set to `19.0.0`.
+    * You didn't use the config file parameter `raise_compatible`, so why did it change?
+    * This is a consequence of the multitenant architecture. Within a CDB, all PDBs must have the same `COMPATIBLE` setting. 
+    * During plug-in, `COMPATIBLE` was automatically adjusted. This happens for all plug-in operations using AutoUpgrade or not.
+    * Although the new `COMPATIBLE` setting allows the use of all new functionality, it also means that you can no longer downgrade this PDB.
+    * If you want to preserve the possibility of downgrading, you must plug in to a 26ai CDB with `COMPATIBLE` set to `19.0.0`. 
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+        VALUE
+    _________
+    23.0.0
+    ```
+
+    </details>
+
+4. Check the data files locations.
+
+    ``` bash
+    <copy>
+    select name from v$datafile;
+    </copy>
+    ```
+
+    * You instructed AutoUpgrade to copy the data files on plug-in.
+    * All data files are located in the OMF compliant location. 
+    * Notice how *CDB26* is part of the directory structure. 
+    * The identifier after *CDB26* is the PDB GUID which is also part of the OMF-compliant directory structure.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    NAME
+    ____________________________________________________________________________________________
+    /u02/oradata/CDB26/579E7F7248B97654E0635C00000A9ED3/datafile/o1_mf_system_o7r0c46l_.dbf
+    /u02/oradata/CDB26/579E7F7248B97654E0635C00000A9ED3/datafile/o1_mf_sysaux_o7r0c46w_.dbf
+    /u02/oradata/CDB26/579E7F7248B97654E0635C00000A9ED3/datafile/o1_mf_undotbs1_o7r0c46x_.dbf
+    ```
+
+    </details>
+
+5. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```    
+
+
+## Task 2: Check Replay Upgrade
+
+1. Switch the *blue* 🟦 terminal. The replay upgrade should have completed now. The command returns an error:
+
+    ``` text
+    SQL> alter pluggable database terracotta open;
+    ORA-24344: A compilation error occurred while creating an object.
+    Help: https://docs.oracle.com/error-help/db/ora-24344/
+    24344. 00000 -  "A compilation error occurred while creating an object."
+    *Cause:    A SQL or PL/SQL compilation error occurred while creating an
+            object.
+    *Action:   Return OCI_SUCCESS_WITH_INFO with the error code.
+
+    Pluggable database TERRACOTTA altered.
+    ```
+
+    * This is expected. 
+    * The `open` command runs most of the upgrade, but you must still run Datapatch to finish the upgrade.
+
+2. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```
+
+3. Set the environment and call Datapatch.
+
+    ``` bash
+    <copy>
+    . cdb26
+    $ORACLE_HOME/OPatch/datapatch -pdbs terracotta
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    * Explore the subdirectories.
+    * Notice how each job number has its own dedicated directory.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL Patching tool version 23.26.3.0.0 Production on Wed Aug 12 07:41:44 2026
+    Copyright (c) 2012, 2026, Oracle.  All rights reserved.
+
+    Log file for this invocation: /u01/app/oracle/product/26/cfgtoollogs/sqlpatch/  sqlpatch_sid_CDB26_ts_2026_08_12_07_41_44_pid_284489/sqlpatch_invocation.log
+
+    Connecting to database...OK
+    Gathering database info...done
+
+    Note:  Datapatch will only apply or rollback SQL fixes for PDBs
+           that are in an open state, no patches will be applied to closed PDBs.
+           Please refer to Note: Datapatch: Database 12c Post Patch SQL Automation
+           (Doc ID 1585822.1)
+
+    Bootstrapping registry and package to current versions...done
+    Determining current state...done
+
+    Current state of interim SQL patches:
+    Interim patch 39593097 (DATAPUMP BUNDLE PATCH 23.26.3.0.0):
+      Binary registry: Installed
+      PDB TERRACOTTA: Not installed
+
+    Current state of release update SQL patches:
+      Binary registry:
+        23.26.3.0.0 Release_Update 260705162604: Installed
+      PDB TERRACOTTA:
+        Applied 23.26.3.0.0 Release_Update 260705162604 successfully
+
+    Adding patches to installation queue and performing prereq checks...done
+    Installation queue:
+      For the following PDBs: TERRACOTTA
+        No interim patches need to be rolled back
+        No release update patches need to be installed
+        The following interim patches will be applied:
+          39593097 (DATAPUMP BUNDLE PATCH 23.26.3.0.0)
+
+    Bypass install queue:
+      For the following PDBs: TERRACOTTA
+        No interim rollbacks will bypass install
+        Patch 39578879 (Database Release Update : 23.26.3.0.0 (39578879) Gold Image): will bypass install
+          Apply from 23.26.3.0.0 Release_Update 260705162604 to 23.26.3.0.0 Release_Update 260705162604
+        No interim applys will bypass install
+
+
+    Installation queue after removing bypass entries...
+    Installation queue:
+      For the following PDBs: TERRACOTTA
+        No interim patches need to be rolled back
+        No release update patches need to be installed
+        The following interim patches will be applied:
+          39593097 (DATAPUMP BUNDLE PATCH 23.26.3.0.0)
+
+    Installing patches...
+    Patch installation complete.  Total patches installed: 1
+
+    Validating logfiles...done
+    Patch 39593097 apply (pdb TERRACOTTA): SUCCESS
+      logfile: /u01/app/oracle/product/26/cfgtoollogs/sqlpatch/sqlpatch_sid_CDB26_ts_2026_08_12_07_41_44_pid_284489/    39593097_apply_CDB26_TERRACOTTA_2026Aug12_07_41_53.log (no errors)
+
+    Processing bypass install queue:
+      Patch 39578879 apply (pdb TERRACOTTA): SUCCESS (bypass_install)
+
+    SQL Patching tool complete on Wed Aug 12 07:49:06 2026    
+    ```
+
+    </details>
+
+4. Reconnect to the database.
+
+    ``` bash
+    <copy>
+    sql / as sysdba
+    </copy>
+    ```
+
+5. Restart the PDB.
+
+    ``` bash
+    <copy>
+    alter pluggable database terracotta close;
+    alter pluggable database terracotta open;
+    select open_mode, restricted from v$pdbs where name='TERRACOTTA';
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    * The PDB now opens without problems; read write and unrestricted.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -141,111 +261,95 @@ Inside your maintenance window, you perform the upgrade.
 
     Pluggable database TERRACOTTA altered.
 
-    SQL> alter pluggable database terracotta unplug into '/home/oracle/scripts/terracotta.xml';
+    SQL> alter pluggable database terracotta open;
 
     Pluggable database TERRACOTTA altered.
 
-    SQL> drop pluggable database terracotta keep datafiles;
+    SQL> select open_mode, restricted from v$pdbs where name='TERRACOTTA';
 
-    Pluggable database TERRACOTTA dropped.    
+    OPEN_MODE     RESTRICTED
+    _____________ _____________
+    READ WRITE    NO
     ```
 
     </details>
 
-4. Exit SQLcl.
+4. Check the data files locations.
+
+    ``` bash
+    <copy>
+    alter session set container=TERRACOTTA;
+    select name from v$datafile;
+    </copy>
+    ```
+
+    * You instructed AutoUpgrade to reuse the data files on plug-in.
+    * All data files are located in the OMF compliant location of the source CDB, *CDB19*. 
+    * Notice how *CDB19* is part of the directory structure. 
+    * This violates the OMF naming standard, but it works and the database doesn't care. 
+    * But humans might care about this anomaly and might choose to move the data files.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    NAME
+    ____________________________________________________________________________________________
+    /u02/oradata/CDB19/579E7F7248B97654E0635C00000A9ED3/datafile/o1_mf_system_o7r0c46l_.dbf
+    /u02/oradata/CDB19/579E7F7248B97654E0635C00000A9ED3/datafile/o1_mf_sysaux_o7r0c46w_.dbf
+    /u02/oradata/CDB19/579E7F7248B97654E0635C00000A9ED3/datafile/o1_mf_undotbs1_o7r0c46x_.dbf
+    ```
+
+    </details>
+    
+7. Exit SQLcl.
 
     ``` sql
     <copy>
     exit
     </copy>
+ 
     ```
-5. Now set the environment to the target CDB, *CDB26*, and connect.
+
+8. Execute the post-upgrade fixups.
 
     ``` bash
     <copy>
-    . cdb26
-    sql / as sysdba
-    </copy>
-    ```
-6. Plug in the *TERRACOTTA* PDB.
-
-    ``` bash
-    <copy>
-    create pluggable database terracotta using '/home/oracle/scripts/terracotta.xml';
+    java -jar autoupgrade.jar -preupgrade "dir=/home/oracle/logs/pdb-replay-upg-terracotta/postfixups,inclusion_list=TERRACOTTA" -mode postfixups
     </copy>
     ```
 
-    * The target CDB now reads the manifest file and plugs in the *TERRACOTTA* PDB.
-    * It reuses the data files in their current location. You can copy or move the data files by modifying the `CREATE PLUGGABLE DATABASE` statement.
-    
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> create pluggable database terracotta using '/home/oracle/scripts/terracotta.xml';
-
-    Pluggable database TERRACOTTA created.
-    ```
-
-    </details>
-
-7. Ensure replay upgrade is enabled.
-
-    ``` sql
-    <copy>
-    select property_name, property_value 
-    from   database_properties 
-    where  property_name like '%ON_OPEN';
-    </copy>
-    ```
-
-    * `UPGRADE_PDB_ON_OPEN` is true, so replay upgrade is turned on.
-    * There is also a property called `CONVERT_NONCDB_ON_OPEN`. This controls whether non-CDB databases are automatically converted instead of manually calling the `noncdb_to_pdb.sql` script. 
-    
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    PROPERTY_NAME             PROPERTY_VALUE
-    _________________________ _________________
-    CONVERT_NONCDB_ON_OPEN    true
-    UPGRADE_PDB_ON_OPEN       true
-    ```
-
-    </details>
-
-8. Open the PDB.
-
-    ``` bash
-    <copy>
-    alter pluggable database terracotta open;
-    </copy>
-    ```
-
-    * The `open` command triggers the replay upgrade.
-    * Although, it appears the command is hanging it is not the case.
-    * Behind the scenes the database is upgrading the PDB.
+    * Normally, AutoUpgrade executes the post-upgrade fixups.
+    * For replay upgrade, you use a special mode in AutoUpgrade to execute them.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
+    AutoUpgrade 26.4.260701 launched with default internal options
+    Processing config file ...
+    +--------------------------------+
+    | Starting AutoUpgrade execution |
+    +--------------------------------+
+    1 PDB(s) will be processed
+    Job 100 database cdb26
+    Job 100 completed
+    ------------------- Final Summary --------------------
+    Number of databases            [ 1 ]
+
+    Jobs finished                  [1]
+    Jobs failed                    [0]
+
+    Please check the summary report at:
+    /home/oracle/logs/pdb-replay-upg-terracotta/postfixups/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/pdb-replay-upg-terracotta/postfixups/cfgtoollogs/upgrade/auto/status/status.log    
     ```
 
     </details>
 
-3. Leave the upgrade running. Do not exit. 
-
-4. You return to this upgrade in a later lab.
+You've now upgraded both databases. 
 
 You may now [*proceed to the next lab*](#next).
-
-## Learn More
-
-Upgrading a single PDB using replay upgrade is a convenient method. Originally developed for Oracle Autonomous AI Database it fits very well in uniform environments where PDBs are alike. However, there's no customization of the upgrade like you know from AutoUpgrade and the logging is not as extensive.
-
-* Webinar, [Move to Oracle Database 23ai – Everything you need to know about Oracle Multitenant – Part 2](https://www.youtube.com/watch?v=Sm75OIWagkE&t=4469s)
-* Slides, [Move to Oracle Database 23ai – Everything you need to know about Oracle Multitenant – Part 2](https://dohdatabase.com/wp-content/uploads/2024/06/vc20_multitenant_part2-1.pdf)
 
 ## Acknowledgements
 
