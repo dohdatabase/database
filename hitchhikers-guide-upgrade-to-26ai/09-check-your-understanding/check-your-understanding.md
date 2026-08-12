@@ -20,7 +20,7 @@ Complete the earlier workshop labs, or review the workshop material before takin
 
 ```quiz-config
 passing: 75
-badge: images/upgrade-badge.png
+badge: 09-check-your-understanding/images/upgrade-badge.png
 ```
 
 ## Task 1: Complete the quiz
@@ -68,7 +68,7 @@ badge: images/upgrade-badge.png
     ```quiz score
     Q: Which upgrade method involves unplugging a PDB from one CDB and plugging it into another CDB?
     - Rolling upgrade
-    * Unplug/Plugin upgrade
+    * Unplug-plug upgrade
     - Data Pump migration
     - Logical standby upgrade
     > Unplug/plugin upgrade moves a PDB from one CDB to another by unplugging it from the source and plugging it into the target.
