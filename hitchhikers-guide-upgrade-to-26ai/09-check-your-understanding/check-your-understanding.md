@@ -20,7 +20,7 @@ Complete the earlier workshop labs, or review the workshop material before takin
 
 ```quiz-config
 passing: 75
-badge: 09-check-your-understanding/images/upgrade-badge.png
+badge: ../../09-check-your-understanding/images/upgrade-badge.png
 ```
 
 ## Task 1: Complete the quiz
