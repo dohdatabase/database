@@ -1041,52 +1041,11 @@ While the upgrade runs, let's look at some of the details.
     </copy>
     ```
 
-## Task 7: Restart FTEX source database
-
-AutoUpgrade stops the source non-CDB immediately after the final refresh. This ensures no one enters data into the wrong database during the migration, or add new data to it. The *FTEX* database is used in other labs, so you need to restart it. You would not do this in a real migration.
-
-1. Set the environment to the *FTEX* database and connect.
-
-    ``` sql
-    <copy>
-    . ftex
-    sql / as sysdba
-    </copy>
-    ```
-
-2. Start the database.
-
-    ``` sql
-    <copy>
-    startup
-    </copy>
-    ```
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    ORACLE instance started.
-
-    Total System Global Area 1157627144 bytes
-    Fixed Size		    8924424 bytes
-    Variable Size		  369098752 bytes
-    Database Buffers	  771751936 bytes
-    Redo Buffers		    7852032 bytes
-    Database mounted.
-    Database opened.
-    ```
-
-    </details>
-
-3. Exit SQLcl.
-
-    ``` sql
-    <copy>
-    exit
-    </copy>
-    ```
-
+5. AutoUpgrade stops the source non-CDB immediately after the final refresh when the source non-CDB and target CDB are on the same system. 
+    * This ensures no one enters data into the wrong database during the migration, or add new data to it. 
+    * You can control this behavior with the `close_source` config file parameter. 
+    * If the databases are on different systems, you must manually shut down the source non-CDB after the migration.
+    
 **Congratulations!** You have now:
 
 * Upgraded the *FTEX* database
