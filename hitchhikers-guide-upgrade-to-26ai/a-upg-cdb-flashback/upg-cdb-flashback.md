@@ -67,7 +67,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     </copy>
     ```
 
-    * There is one user-created PDBs in the CDB, *MOCHA*.
+    * There is one user-created PDB in the CDB, *MOCHA*.
 
     <details>
     <summary>*click to see the output*</summary>

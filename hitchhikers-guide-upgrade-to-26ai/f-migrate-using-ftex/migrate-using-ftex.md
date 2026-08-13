@@ -10,8 +10,6 @@ You will use the easiest method for transportable tablespaces, Full Transportabl
 
 Estimated Time: 15 minutes
 
-[Lab 13 walk-through](videohub:1_swnymxf8)
-
 ### Objectives
 
 In this lab, you will:
@@ -22,8 +20,6 @@ In this lab, you will:
 ### Prerequisites
 
 None.
-
-This lab uses the *FTEX* and *CDB26* databases. Don't do this lab at the same time as lab 11 and 12.
 
 ## Task 1: Data Pump export
 
@@ -189,7 +185,7 @@ You need to prepare a few things before you can start FTEX.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-13-migrate-using-ftex-exp.par
+    cat /home/oracle/scripts/upg-migrate-using-ftex-exp.par
     </copy>
     ```
 
@@ -220,7 +216,7 @@ You need to prepare a few things before you can start FTEX.
 
     ``` bash
     <copy>
-    expdp ftexuser/ftexuser parfile=/home/oracle/scripts/upg-13-migrate-using-ftex-exp.par
+    expdp ftexuser/ftexuser parfile=/home/oracle/scripts/upg-migrate-using-ftex-exp.par
     </copy>
     ```
 
@@ -236,7 +232,7 @@ You need to prepare a few things before you can start FTEX.
     Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
 
     Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-    29-MAY-24 13:31:12.853: Starting "FTEXUSER"."SYS_EXPORT_FULL_01":  ftexuser/******** parfile=/home/oracle/scripts/upg-13-migrate-using-ftex-exp.par
+    29-MAY-24 13:31:12.853: Starting "FTEXUSER"."SYS_EXPORT_FULL_01":  ftexuser/******** parfile=/home/oracle/scripts/upg-migrate-using-ftex-exp.par
     29-MAY-24 13:31:13.540: W-1 Startup took 1 seconds
     29-MAY-24 13:31:15.094: W-2 Startup took 1 seconds
     29-MAY-24 13:31:16.400: W-1 Processing object type DATABASE_EXPORT/EARLY_OPTIONS/VIEWS_AS_TABLES/TABLE_DATA
@@ -490,7 +486,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-13-migrate-using-ftex-imp.par
+    cat /home/oracle/scripts/upg-migrate-using-ftex-imp.par
     </copy>
     ```
 
@@ -521,7 +517,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     ``` bash
     <copy>
-    impdp ftexuser/ftexuser@localhost/maroon parfile=/home/oracle/scripts/upg-13-migrate-using-ftex-imp.par
+    impdp ftexuser/ftexuser@localhost/maroon parfile=/home/oracle/scripts/upg-migrate-using-ftex-imp.par
     </copy>
     ```
 
@@ -538,7 +534,7 @@ You need a few more changes to the new PDB before you can start the import.
     29-MAY-24 14:01:13.959: W-1 Startup on instance 1 took 0 seconds
     29-MAY-24 14:01:15.408: W-1 Master table "FTEXUSER"."SYS_IMPORT_TRANSPORTABLE_01" successfully loaded/unloaded
     29-MAY-24 14:01:15.943: W-1 Source time zone is +02:00 and target time zone is +00:00.
-    29-MAY-24 14:01:15.946: Starting "FTEXUSER"."SYS_IMPORT_TRANSPORTABLE_01":  ftexuser/********@localhost/maroon parfile=/home/oracle/scripts/upg-13-migrate-using-ftex-imp.par
+    29-MAY-24 14:01:15.946: Starting "FTEXUSER"."SYS_IMPORT_TRANSPORTABLE_01":  ftexuser/********@localhost/maroon parfile=/home/oracle/scripts/upg-migrate-using-ftex-imp.par
     29-MAY-24 14:01:16.037: W-1 Processing object type DATABASE_EXPORT/PRE_SYSTEM_IMPCALLOUT/MARKER/SCHEDULER
     29-MAY-24 14:01:16.066: W-1      Completed 1 SCHEDULER objects in 0 seconds
     29-MAY-24 14:01:16.069: W-1 Processing object type DATABASE_EXPORT/PRE_SYSTEM_IMPCALLOUT/MARKER/WMSYS

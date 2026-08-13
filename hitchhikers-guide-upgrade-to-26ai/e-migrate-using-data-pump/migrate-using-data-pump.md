@@ -10,8 +10,6 @@ You will perform a full export from the *FTEX* database and import into a new PD
 
 Estimated Time: 15 minutes
 
-[Lab 12 walk-through](videohub:1_vy467cbr)
-
 ### Objectives
 
 In this lab, you will:
@@ -120,7 +118,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-12-migrate-using-data-pump-exp.par
+    cat /home/oracle/scripts/upg-migrate-using-data-pump-exp.par
     </copy>
     ```
 
@@ -152,7 +150,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
     ``` bash
     <copy>
-    expdp expuser/expuser parfile=/home/oracle/scripts/upg-12-migrate-using-data-pump-exp.par
+    expdp expuser/expuser parfile=/home/oracle/scripts/upg-migrate-using-data-pump-exp.par
     </copy>
     ```
 
@@ -166,7 +164,7 @@ You need to prepare a few things before you can start a Data Pump export.
     Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
 
     Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-    28-MAY-24 03:23:48.178: Starting "EXPUSER"."SYS_EXPORT_FULL_01":  expuser/******** parfile=/home/oracle/scripts/upg-12-migrate-using-data-pump-exp.par
+    28-MAY-24 03:23:48.178: Starting "EXPUSER"."SYS_EXPORT_FULL_01":  expuser/******** parfile=/home/oracle/scripts/upg-migrate-using-data-pump-exp.par
     28-MAY-24 03:23:48.554: W-1 Startup took 0 seconds
     28-MAY-24 03:23:49.875: W-2 Startup took 0 seconds
     28-MAY-24 03:23:50.769: W-2 Processing object type DATABASE_EXPORT/EARLY_OPTIONS/VIEWS_AS_TABLES/TABLE_DATA
@@ -437,11 +435,11 @@ You need a few more changes to the new PDB before you can start the import.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-12-migrate-using-data-pump-imp.par
+    cat /home/oracle/scripts/upg-migrate-using-data-pump-imp.par
     </copy>
     ```
 
-    * `parallel` is higher in the import. Export and import parallel settings are independent of each other. Typically, the target system is more powerful than the source system. In such a case, you can use more parallel processes to complete the import faster.
+    * `parallel` is set to *1* because we found a bug. How embarassing is that. Normally, you would set it higher. Export and import parallel settings are independent of each other. Typically, the target system is more powerful than the source system. In such a case, you can use more parallel processes to complete the import faster.
     * `metrics` and `logtime` puts additional diagnostic information into the Data Pump log file.
     * `exclude=tablespace` skips creation of tablespaces during import. We already have all tablespaces in the target PDB. Normally, pay attention when importing tablespace defintions. The data file use the same definition, including file path, as on the source database. This may lead to undesired situations.
     * `transform=lob_storage:securefile` ensures that Data Pump converts any old BasicFile LOBs to modern SecureFile LOBs during import.
@@ -466,7 +464,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     ``` bash
     <copy>
-    impdp impuser/impuser@localhost/purple parfile=/home/oracle/scripts/upg-12-migrate-using-data-pump-imp.par
+    impdp impuser/impuser@localhost/purple parfile=/home/oracle/scripts/upg-migrate-using-data-pump-imp.par
     </copy>
     ```
 
@@ -482,7 +480,7 @@ You need a few more changes to the new PDB before you can start the import.
     Connected to: Oracle AI Database 26ai Enterprise Edition Release 23.26.0.0.0 - for Oracle Cloud and Engineered Systems
     28-MAY-24 03:26:47.767: W-1 Startup on instance 1 took 0 seconds
     28-MAY-24 03:26:48.982: W-1 Master table "IMPUSER"."SYS_IMPORT_FULL_01" successfully loaded/unloaded
-    28-MAY-24 03:26:49.306: Starting "IMPUSER"."SYS_IMPORT_FULL_01":  impuser/********@localhost/purple parfile=/home/oracle/scripts/upg-12-migrate-using-data-pump-imp.par
+    28-MAY-24 03:26:49.306: Starting "IMPUSER"."SYS_IMPORT_FULL_01":  impuser/********@localhost/purple parfile=/home/oracle/scripts/upg-migrate-using-data-pump-imp.par
     28-MAY-24 03:26:49.377: W-1 Processing object type DATABASE_EXPORT/PRE_SYSTEM_IMPCALLOUT/MARKER/SCHEDULER
     28-MAY-24 03:26:49.400: W-1      Completed 1 SCHEDULER objects in 0 seconds
     28-MAY-24 03:26:49.402: W-1 Processing object type DATABASE_EXPORT/PRE_SYSTEM_IMPCALLOUT/MARKER/WMSYS
