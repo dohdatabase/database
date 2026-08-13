@@ -1,8 +1,8 @@
-# Upgrade CDB and Roll Back Using Flashback Database
+# Upgrade CDB and Restore
 
 ## Introduction
 
-In this lab, you will start by checking an entire CDB that was already upgraded to a new version of Oracle AI Database. Then, you will practice a rollback and the restoration option in AutoUpgrade. This uses Flashback Database to get the database back to the starting point.
+In this lab, you upgrade an entire CDB to Oracle AI Database 26ai. Then, you will practice a rollback and the restoration option in AutoUpgrade. This uses Flashback Database to get the database back to the starting point.
 
 Estimated Time: 60 minutes
 
@@ -10,26 +10,26 @@ Estimated Time: 60 minutes
 
 In this lab, you will:
 
-* Check the upgraded CDB
-* Restore CDB
+* Upgrade the *COBALT* CDB
+* Use AutoUpgrade restoration to flash back the database
 
 ### Prerequisites
 
 None.
 
-This lab uses the *CDBRES* databases.
+## Task 1: Prepare for Upgrade
 
-## Task 1: Check your environment
+You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. It's currently running Oracle Database 19c.
 
-You start by checking the *CDBRES* database. This database was originally on Oracle Database 19c and later upgraded to a newer version of Oracle AI Database. You should imagine that you already upgraded the database, and now you find a critical problem and decide to roll back to the previous release.
-
-1. Set the environment to the new Oracle home and connect to the upgraded *CDBRES* database.
+1. Set the environment and connect.
 
     ``` sql
     <copy>
-    . cdbres
+    . cobalt
     sql / as sysdba
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
 2. Start the database.
@@ -39,9 +39,7 @@ You start by checking the *CDBRES* database. This database was originally on Ora
     startup
     </copy>
     ```
-
-    * The *CDBRES* database might be running already. If so, you will get `ORA-01081: cannot start already-running ORACLE - shut it down first`. You can safely ignore the error.
-
+    
     <details>
     <summary>*click to see the output*</summary>
 
@@ -61,28 +59,7 @@ You start by checking the *CDBRES* database. This database was originally on Ora
 
     </details>
 
-3. Verify that the database is on Oracle AI Database 26ai.
-
-    ``` sql
-    <copy>
-    select banner from v$version;
-    </copy>
-    ```
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> select banner from v$version;
-
-    BANNER
-    ________________________________________________________________________________________________________
-    Oracle AI Database 26ai Enterprise Edition Release 23.26.0.0.0 - for Oracle Cloud and Engineered Systems
-    ```
-
-    </details>
-
-4. Get a list of PDBs.
+3. Get a list of PDBs.
 
     ``` sql
     <copy>
@@ -90,7 +67,7 @@ You start by checking the *CDBRES* database. This database was originally on Ora
     </copy>
     ```
 
-    * There is one user-created PDBs in the CDB, *GREY*.
+    * There is one user-created PDBs in the CDB, *MOCHA*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -99,35 +76,12 @@ You start by checking the *CDBRES* database. This database was originally on Ora
     CON_ID     CON_NAME           OPEN MODE  RESTRICTED
     ---------- ------------------ ---------- ----------
              2 PDB$SEED           READ ONLY  NO
-             3 GREY               READ WRITE NO
+             3 MOCHA              READ WRITE NO
     ```
 
     </details>
 
-5. Get a list of restore points.
-
-    ``` sql
-    <copy>
-    select scn, storage_size, time, preserved, name from v$restore_point;
-    </copy>
-    ```
-
-    * There is one restore point named "AUTOUPGRADE\_9212\_CDBRES1928000".
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> select scn, storage_size, time, preserved, name from v$restore_point;
-
-          SCN    STORAGE_SIZE TIME                               PRESERVED    NAME
-    _________ _______________ __________________________________ ____________ _________________________________
-       715819      1677721600 24-JUL-25 03.15.50.000000000 PM    YES          AUTOUPGRADE_9212_CDBRES1928000
-    ```
-
-    </details>
-
-6. Exit SQLcl.
+4. Exit SQLcl.
 
     ``` sql
     <copy>
@@ -135,40 +89,78 @@ You start by checking the *CDBRES* database. This database was originally on Ora
     </copy>
     ```
 
-7. To upgrade this database from 19c to the new release, we used the *upg-10-cdbres.cfg* config file. Examine config file.
+5. Examine the AutoUpgrade config file.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-10-cdbres.cfg
+    cat /home/oracle/scripts/upg-cdb-restore.cfg
     </copy>
     ```
 
-    * `restoration=yes` ensured that AutoUpgrade created a guaranteed restore point that you can use to roll back. The default value is *yes* but it is shown here for clarity.
+    * `sid` is the database to upgrade.
+    * It currently runs in `source_home`.
+    * But you want to upgrade to `target_home`.
+    * To ensure a rollback option you set `restoration=YES`. This creates a guaranteed restore point before the upgrade.
+    * In the interest of time, you'll skip the timezone file upgrade using the `timezone_upg` parameter.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.autoupg_log_dir=/home/oracle/logs/upg-cdb-flashback
+    global.global_log_dir=/home/oracle/logs/upg-cdb-restore
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
-    upg1.sid=CDBRES
-    upg1.restoration=yes
-    upg1.timezone_upg=NO
+    upg1.sid=COBALT
+    upg1.restoration=YES
+    upg1.timezone_upg=NO    
     ```
 
     </details>
 
-8. By the config file contents, you can tell the logs are placed on */home/oracle/logs/upg-cdb-flashback*. Check AutoUpgrade the log contents.
+7. Assess the upgrade readiness of the database.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/upg-cdb-flashback/cfgtoollogs/upgrade/auto/status/status.log
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-cdb-restore.cfg -mode analyze
     </copy>
     ```
 
-    * Notice the *GRP* stage. AutoUpgrade wrote the name of the restore point to the log file.
-    * It is the same restore point that you found in the query above.
+    * The preupgrade analysis usually completes quickly. Wait for it to complete.
+    * Notice how AutoUpgrade informs you that it analyzes 1 CDB plus 2 PDBs. 
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    Processing config file ...
+    +--------------------------------+
+    | Starting AutoUpgrade execution |
+    +--------------------------------+
+    1 CDB(s) plus 2 PDB(s) will be analyzed
+    Type 'help' to list console commands
+    upg> Job 100 completed
+    ------------------- Final Summary --------------------
+    Number of databases            [ 1 ]
+
+    Jobs finished                  [1]
+    Jobs failed                    [0]
+
+    Please check the summary report at:
+    /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.log
+    ```
+
+    </details>
+
+8. Check the summary report.
+
+    ``` bash
+    <copy>
+    cat /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.log
+    </copy>
+    ```
+
+    * It reports *Check passed and no manual intervention needed*. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -177,96 +169,257 @@ You start by checking the *CDBRES* database. This database was originally on Ora
     ==========================================
               Autoupgrade Summary Report
     ==========================================
-    [Date]           Thu Jul 24 16:26:24 GMT 2025
+    [Date]           Thu Aug 13 09:20:36 GMT 2026
     [Number of Jobs] 1
     ==========================================
     [Job ID] 100
     ==========================================
-    [DB Name]                cdbres
-    [Version Before Upgrade] 19.28.0.0.0
-    [Version After Upgrade]  23.26.0.0.0
-    ------------------------------------------
-    [Stage Name]    GRP
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 15:15:50
-    [Duration]      0:00:02
-    [Detail]        Please drop the following GRPs after Autoupgrade completes:
-                     AUTOUPGRADE_9212_CDBRES1928000
-    ------------------------------------------
-    [Stage Name]    PREUPGRADE
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 15:15:52
-    [Duration]      0:00:00
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/preupgrade
+    [DB Name]                cobalt
+    [Version Before Upgrade] 19.31.0.0.0
+    [Version After Upgrade]  23.26.3.0.0
     ------------------------------------------
     [Stage Name]    PRECHECKS
     [Status]        SUCCESS
-    [Start Time]    2025-07-24 15:15:52
-    [Duration]      0:00:32
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/prechecks
-    [Detail]        /home/oracle/logs/upg-cdb-flashback/CDBRES/100/prechecks/cdbres_preupgrade.log
+    [Start Time]    2026-08-13 09:20:23
+    [Duration]      0:00:13
+    [Log Directory] /home/oracle/logs/upg-cdb-restore/COBALT/100/prechecks
+    [Detail]        /home/oracle/logs/upg-cdb-restore/COBALT/100/prechecks/cobalt_preupgrade.log
                     Check passed and no manual intervention needed
     ------------------------------------------
-    [Stage Name]    PREFIXUPS
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 15:16:24
-    [Duration]      0:02:48
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/prefixups
-    [Detail]        /home/oracle/logs/upg-cdb-flashback/CDBRES/100/prefixups/prefixups.html
-    ------------------------------------------
-    [Stage Name]    DRAIN
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 15:19:13
-    [Duration]      0:00:43
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/drain
-    ------------------------------------------
-    [Stage Name]    DBUPGRADE
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 15:19:57
-    [Duration]      0:48:01
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/dbupgrade
-    ------------------------------------------
-    [Stage Name]    POSTCHECKS
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 16:08:12
-    [Duration]      0:00:04
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/postchecks
-    [Detail]        /home/oracle/logs/upg-cdb-flashback/CDBRES/100/postchecks/cdbres_postupgrade.log
-                    Check passed and no manual intervention needed
-    ------------------------------------------
-    [Stage Name]    POSTFIXUPS
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 16:08:18
-    [Duration]      0:17:33
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/postfixups
-    [Detail]        /home/oracle/logs/upg-cdb-flashback/CDBRES/100/postfixups/postfixups.html
-    ------------------------------------------
-    [Stage Name]    POSTUPGRADE
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 16:25:51
-    [Duration]      0:00:31
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/postupgrade
-    ------------------------------------------
-    [Stage Name]    SYSUPDATES
-    [Status]        SUCCESS
-    [Start Time]    2025-07-24 16:26:23
-    [Duration]      0:00:01
-    [Log Directory] /home/oracle/logs/upg-cdb-flashback/CDBRES/100/sysupdates
-    ------------------------------------------
-    Summary:/home/oracle/logs/upg-cdb-flashback/CDBRES/100/dbupgrade/upg_summary.log
     ```
 
     </details>
 
-## Task 2: Restore database using AutoUpgrade
-
-Suppose your tests find a critical error and you would like to go back to Oracle Database 19c. AutoUpgrade automatically created a guaranteed restore point, and you can use Flashback Database to go back to the starting point.
-
-1. Check the *oratab* registration.
+9. Take a look at the preupgrade report.
 
     ``` bash
     <copy>
-    cat /etc/oratab | grep CDBRES
+    less /home/oracle/logs/upg-cdb-restore/COBALT/100/prechecks/cobalt_preupgrade.log
+    </copy>
+    ```
+
+    * It contains three sections. One for each container: *CDB$ROOT*, *PDB$SEED* and *MOCHA*.
+    * Notice how the report starts with *Container Name: CDB$ROOT* in one of the first lines.
+    * Use *PAGE UP* and *PAGE DOWN* to scroll through the report.
+    * Find the sections for the other containers: *PDB$SEED* and *MOCHA*.
+    * Take a look at some of the findings.
+    * Press *q* to exit the report.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    Upgrade-To version: 23.0.0.0.0
+
+    =======================================
+    Status of the database prior to upgrade
+    =======================================
+          Database Name:  COBALT
+         Container Name:  CDB$ROOT
+           Container ID:  1
+                Version:  19.31.0.0.0
+         DB Patch Level:  Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
+             Compatible:  19.0.0
+              Blocksize:  8192
+               Platform:  Linux x86 64-bit
+          Timezone File:  45
+      Database log mode:  ARCHIVELOG
+               Readonly:  false
+                Edition:  EE
+
+      Oracle Component                       Upgrade Action    Current Status
+      ----------------                       --------------    --------------
+      Oracle Server                          [to be upgraded]  VALID
+      Oracle Workspace Manager               [to be upgraded]  VALID
+      Real Application Clusters              [to be upgraded]  OPTION OFF
+      Oracle XML Database                    [to be upgraded]  VALID
+
+      *
+      * ALL Components in This Database Registry:
+      *
+      Component   Current      Current      Original     Previous     Component
+      CID         Version      Status       Version      Version      Schema
+      ----------  -----------  -----------  -----------  -----------  ------------    
+        CATALOG     19.31.0.0.0  VALID        19.31.0.0.0               SYS
+      CATPROC     19.31.0.0.0  VALID        19.31.0.0.0               SYS
+      OWM         19.31.0.0.0  VALID        19.31.0.0.0               WMSYS
+      RAC         19.31.0.0.0  OPTION OFF   19.31.0.0.0               SYS
+      XDB         19.31.0.0.0  VALID        19.31.0.0.0               XDB
+
+    ==============
+    BEFORE UPGRADE
+    ==============
+
+      REQUIRED ACTIONS
+      ================
+      None
+
+      RECOMMENDED ACTIONS
+      ===================
+      1.
+            CheckName                                     FixUp Available
+            UNIFIED_AUDIT_ON                              NO
+
+            Severity                                      Stage
+            WARNING                                       PRECHECKS
+
+          Convert your traditional audit configurations to unified audit policies
+          and enable them. To continue using traditional audit in 23, make sure
+          initialization parameters AUDIT_TRAIL and AUDIT_SYS_OPERATIONS are set in
+          the database after the upgrade process. This is intended as a temporary
+          measure until you have time to convert to unified audit. Refer to MOS
+
+    (output truncated)      
+    ```
+
+    </details>
+
+## Task 2: Start the Upgrade
+
+1. Upgrade the database by starting AutoUpgrade in deploy mode.
+
+    ``` bash
+    <copy>
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-cdb-restore.cfg -mode deploy
+    </copy>
+    ```
+
+    * AutoUpgrade now re-analyzes the database and executes any pre-upgrade actions.
+    * It creates a guaranteed restore point before restarting the database in the target Oracle home.
+    * Next, the upgrade starts with CDB$ROOT. Then it moves on with PDB$SEED and MOCHA in parallel.
+    * Finally, it'll run the post-upgrade actions. 
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    Processing config file ...
+    +--------------------------------+
+    | Starting AutoUpgrade execution |
+    +--------------------------------+
+    1 CDB(s) plus 2 PDB(s) will be processed
+    Type 'help' to list console commands
+    upg>
+    ```
+
+    </details>
+
+2. Monitor the upgrade.
+
+    ``` bash
+    <copy>
+    status -job 101 -a 30
+    </copy>
+    ```
+
+4. Wait for the upgrade to complete. Do not exit AutoUpgrade.
+    * It takes around 30-40 minutes. 
+    * You can open a new terminal and do other labs.
+
+5. When the upgrade completes, AutoUpgrade writes information to the console.
+
+    * There is a guaranteed restore point (GRP) that you should drop when no longer needed.
+    * Links to the upgrade summary report.
+    * You use the GRP later on to restore the database back to the pre-upgrade state.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    Job 101 completed
+    ------------------- Final Summary --------------------
+    Number of databases            [ 1 ]
+
+    Jobs finished                  [1]
+    Jobs failed                    [0]
+    Jobs restored                  [0]
+    Jobs pending                   [0]
+
+    ---- Drop GRP at your convenience once you consider it is no longer needed ----
+    Drop GRP from COBALT: drop restore point AUTOUPGRADE_9212_COBALT1931000
+
+
+    Please check the summary report at:
+    /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.log    
+    ```
+
+    </details>
+
+6. Set the environment and connect.
+
+    ``` bash
+    <copy>
+    export ORACLE_HOME=/u01/app/oracle/product/26
+    export PATH=$ORACLE_HOME/bin:$PATH
+    export ORACLE_SID=COBALT
+    sql / as sysdba
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+7. Check the database release.
+
+    ``` bash
+    <copy>
+    select version_full from v$instance;
+    </copy>
+    ```
+
+    * The database is running on the new release, Oracle AI Database 26ai.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    VERSION_FULL
+    _______________
+    23.26.3.0.0
+    ```
+
+    </details>
+
+8. Check the PDBs.
+
+    ``` bash
+    <copy>
+    show pdbs
+    </copy>
+    ```
+
+    * The *MOCHA* PDB is open *READ WRITE* and unrestricted.
+    * All looks fine.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+       CON_ID CON_NAME    OPEN MODE     RESTRICTED
+    _________ ___________ _____________ _____________
+            2 PDB$SEED    READ ONLY     NO
+            3 MOCHA       READ WRITE    NO
+    ```
+
+    </details>
+
+9. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```    
+
+## Task 3: Undo the Upgrade
+
+Suppose your tests find a critical error and you would like to go back to Oracle Database 19c. AutoUpgrade automatically created a guaranteed restore point, and you can use Flashback Database to go back to the starting point.
+
+1. Check the oratab registration.
+
+    ``` bash
+    <copy>
+    cat /etc/oratab | grep COBALT
     </copy>
     ```
 
@@ -277,21 +430,21 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     <summary>*click to see the output*</summary>
 
     ``` text
-    CDBRES:/u01/app/oracle/product/26:N
+    COBALT:/u01/app/oracle/product/26:N
     ```
 
     </details>
 
-2. Get the database back to the starting point; the guaranteed restore point that AutoUpgrade automatically created before the upgrade.
+2. Undo the upgrade and get the database back to the starting point; the guaranteed restore point that AutoUpgrade automatically created before the upgrade.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-10-cdbres.cfg -restore -jobs 100
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-cdb-restore.cfg -restore -jobs 101
     </copy>
     ```
 
-    * You start the restoration based on the *job ID*.
-    * Job *100* was the job that upgraded the database.
+    * You start the restoration based on the job ID.
+    * Job 101 was the job that upgraded the database.
     * If you had multiple jobs to restore, you can supply a comma-separated list.
 
     <details>
@@ -302,13 +455,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     Total jobs being restored: 1
     +--------------------------------+
     | Starting AutoUpgrade execution |
-    +--------------------------------+
-    +----+-------+---------+---------+--------+------------+-------+-------+
-    |Job#|DB_NAME|    STAGE|OPERATION|  STATUS|  START_TIME|UPDATED|MESSAGE|
-    +----+-------+---------+---------+--------+------------+-------+-------+
-    | 100| CDBRES|COMPLETED|  STOPPED|FINISHED|Jul-31 09:15|       |       |
-    +----+-------+---------+---------+--------+------------+-------+-------+
-    Total jobs 1
+    +--------------------------------+    
     ```
 
     </details>
@@ -319,18 +466,18 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     <summary>*click to see the output*</summary>
 
     ``` text
-    Job 100 completed
+    Job 101 completed
     ------------------- Final Summary --------------------
     Number of databases            [ 1 ]
 
     Jobs restored                  [1]
     Jobs failed                    [0]
     -------------------- JOBS PENDING --------------------
-    Job 100 for CDBRES
+    Job 101 for COBALT
 
     Please check the summary report at:
-    /home/oracle/logs/upg-cdb-flashback/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/upg-cdb-flashback/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-cdb-restore/cfgtoollogs/upgrade/auto/status/status.log
     Exiting
     ```
 
@@ -340,9 +487,8 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
     ``` sql
     <copy>
-    . cdbres
-    export ORACLE_HOME=/u01/app/oracle/product/19
-    sqlplus / as sysdba
+    . cobalt
+    sql / as sysdba
     </copy>
     ```
 
@@ -362,12 +508,12 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
     INSTANCE_NAME    VERSION
     ---------------- -----------------
-    CDBRES           19.0.0.0.0
+    COBALT           19.0.0.0.0
     ```
 
     </details>
 
-6. Exit SQL*Plus.
+6. Exit SQLcl.
 
     ``` sql
     <copy>
@@ -379,7 +525,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
     ``` bash
     <copy>
-    cat /etc/oratab | grep CDBRES
+    cat /etc/oratab | grep COBALT
     </copy>
     ```
 
@@ -390,7 +536,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     <summary>*click to see the output*</summary>
 
     ``` text
-    CDBRES:/u01/app/oracle/product/19:N
+    COBALT:/u01/app/oracle/product/19:N
     ```
 
     </details>
@@ -399,7 +545,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
     ``` bash
     <copy>
-    ll $ORACLE_HOME/dbs/*CDBRES*
+    ll $ORACLE_HOME/dbs/*COBALT*
     </copy>
     ```
 
@@ -409,16 +555,16 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     <summary>*click to see the output*</summary>
 
     ``` text
-    -rw-r-----. 1 oracle oinstall       24 May 23 11:52 /u01/app/oracle/product/19/dbs/lkCDBRES
-    -rw-r-----. 1 oracle oinstall     2048 May 23 12:20 /u01/app/oracle/product/19/dbs/orapwCDBRES
-    -rw-r-----. 1 oracle oinstall 19120128 May 26 05:23 /u01/app/oracle/product/19/dbs/snapcf_CDBRES.f
-    -rw-r-----. 1 oracle oinstall     3584 May 26 05:24 /u01/app/oracle/product/19/dbs/spfileCDBRES.ora
-    -rw-rw----. 1 oracle oinstall     1544 May 26 05:24 /u01/app/oracle/product/19/dbs/hc_CDBRES.dat
+    -rw-rw----. 1 oracle oinstall     1544 Aug 13 10:24 /u01/app/oracle/product/19/dbs/hc_COBALT.dat
+    -rw-r-----. 1 oracle oinstall       24 Aug 12 23:07 /u01/app/oracle/product/19/dbs/lkCOBALT
+    -rw-r-----. 1 oracle oinstall     2048 Aug 12 20:24 /u01/app/oracle/product/19/dbs/orapwCOBALT
+    -rw-r-----. 1 oracle oinstall 19152896 Aug 13 10:23 /u01/app/oracle/product/19/dbs/snapcf_COBALT.f
+    -rw-r-----. 1 oracle oinstall     3584 Aug 13 10:24 /u01/app/oracle/product/19/dbs/spfileCOBALT.ora
     ```
 
     </details>
 
-**You have now restored the *CDBRES* database.**
+**You have now restored the *COBALT* database.**
 
 You may now [*proceed to the next lab*](#next).
 

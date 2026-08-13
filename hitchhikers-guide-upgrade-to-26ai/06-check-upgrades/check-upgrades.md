@@ -38,8 +38,8 @@ You have completed:
 
 
     Please check the summary report at:
-    /home/oracle/logs/pdb-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/pdb-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
@@ -315,7 +315,7 @@ You have completed:
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -preupgrade "dir=/home/oracle/logs/pdb-replay-upg-terracotta/postfixups,inclusion_list=TERRACOTTA" -mode postfixups
+    java -jar autoupgrade.jar -preupgrade "dir=/home/oracle/logs/upg-replay-upg-terracotta/postfixups,inclusion_list=TERRACOTTA" -mode postfixups
     </copy>
     ```
 
@@ -326,7 +326,6 @@ You have completed:
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 26.4.260701 launched with default internal options
     Processing config file ...
     +--------------------------------+
     | Starting AutoUpgrade execution |
@@ -341,8 +340,8 @@ You have completed:
     Jobs failed                    [0]
 
     Please check the summary report at:
-    /home/oracle/logs/pdb-replay-upg-terracotta/postfixups/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/pdb-replay-upg-terracotta/postfixups/cfgtoollogs/upgrade/auto/status/status.log    
+    /home/oracle/logs/upg-replay-upg-terracotta/postfixups/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-replay-upg-terracotta/postfixups/cfgtoollogs/upgrade/auto/status/status.log    
     ```
 
     </details>

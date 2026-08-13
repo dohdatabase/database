@@ -29,7 +29,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     <copy>
     cd
     mkdir auzip
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-unplug-plug-orange.cfg -zip -d auzip
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-unplug-plug-orange.cfg -zip -d auzip
     </copy>
 
     # Be sure to hit RETURN
@@ -75,7 +75,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     -rw-r--r--. 1 oracle oinstall      501 Aug 12 09:29 autoupgrade_config_pointers.log
     drwxr-xr-x. 5 oracle oinstall       40 Aug 12 09:30 CDB19
     drwxr-xr-x. 3 oracle oinstall       21 Aug 12 09:30 cfgtoollogs
-    -rw-r--r--. 1 oracle oinstall      263 Aug 12 09:29 pdb-unplug-plug-orange.cfg
+    -rw-r--r--. 1 oracle oinstall      263 Aug 12 09:29 upg-unplug-plug-orange.cfg
     drwxr-xr-x. 2 oracle oinstall       79 Aug 12 09:30 trace    
     ```
 

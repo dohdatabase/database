@@ -4,7 +4,7 @@
 
 In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will use refreshable clone PDB. This feature creates a copy of the database and keeps it up-to-date with redo. This minimizes the downtime needed and still keeps the source database untouched for rollback.
 
-You will upgrade the *FTEX* database and plug it into the *CDB26* database.
+You will upgrade the *BEIGE* database and plug it into the *CDB26* database.
 
 Estimated Time: 35 minutes
 
@@ -24,11 +24,11 @@ None.
 
 Refreshable clone PDB works via a database link. You must create a user and grant privileges in the source non-CDB. Also, you must create a database link in the target CDB connecting to the source non-CDB.
 
-1. Use the *yellow* 🟨 terminal. Set the environment to the source non-CDB database (*FTEX*) and connect.
+1. Use the *yellow* 🟨 terminal. Set the environment to the source non-CDB database (*BEIGE*) and connect.
 
     ``` sql
     <copy>
-    . ftex
+    . beige
     sql / as sysdba
     </copy>
     ```
@@ -92,14 +92,14 @@ Refreshable clone PDB works via a database link. You must create a user and gran
     </copy>
     ```
 
-5. Create a database link pointing to the *FTEX* database.
+5. Create a database link pointing to the *BEIGE* database.
 
     ``` sql
     <copy>
     create database link clonepdb
     connect to dblinkuser
     identified by dblinkuser
-    using 'localhost/ftex';
+    using 'localhost/beige';
     </copy>
     ```
 
@@ -110,7 +110,7 @@ Refreshable clone PDB works via a database link. You must create a user and gran
     SQL> create database link clonepdb
       2  connect to dblinkuser
       3  identified by dblinkuser
-      4  using 'localhost/ftex';
+      4  using 'localhost/beige';
 
     Database link created.
     ```
@@ -154,14 +154,14 @@ You check the source database for upgrade readiness.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-refresh-clone-ftex.cfg
+    cat /home/oracle/scripts/upg-refresh-clone-beige.cfg
     </copy>
     ```
 
     * `sid` specifies the source non-CDB.
     * `target_cdb` is the CDB where you want to plug in.
     * `source_dblink` is the name of the database link in the target CDB, plus the refresh rate. Here, it's set to 60 seconds which is too low for a realistic scenario, but suitable for demo purposes.
-    * `target_pdb_name` renames the database from *FTEX* to *TEAL*.
+    * `target_pdb_name` renames the database from *BEIGE* to *TEAL*.
     * `target_pdb_copy_option` instructs the CDB to use Oracle Managed Files (OMF).
     * `parallel_pdb_creation_clause` instructs the CDB to use parallel execution servers to copy the new PDB's data files to a new location. This may result in faster creation of the PDB. If unset, then the CDB automatically chooses the number of parallel execution servers to use.
     * `start_time` is set to 100 hours from starting AutoUpgrade. We set the process start time far ahead so we can later control the execution using the *proceed* command.
@@ -170,15 +170,15 @@ You check the source database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.autoupg_log_dir=/home/oracle/logs/ftex-refresh
+    global.global_log_dir=/home/oracle/logs/beige-refresh
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
-    upg1.sid=FTEX
+    upg1.sid=BEIGE
     upg1.target_cdb=CDB26
-    upg1.source_dblink.FTEX=CLONEPDB 60
-    upg1.target_pdb_name.FTEX=TEAL
-    upg1.target_pdb_copy_option.FTEX=file_name_convert=none
-    upg1.parallel_pdb_creation_clause.FTEX=2
+    upg1.source_dblink.BEIGE=CLONEPDB 60
+    upg1.target_pdb_name.BEIGE=TEAL
+    upg1.target_pdb_copy_option.BEIGE=file_name_convert=none
+    upg1.parallel_pdb_creation_clause.BEIGE=2
     upg1.start_time=+100h
     upg1.timezone_upg=NO
     ```
@@ -192,7 +192,7 @@ You check the source database for upgrade readiness.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-refresh-clone-ftex.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-refresh-clone-beige.cfg -mode analyze
     </copy>
     ```
 
@@ -200,7 +200,7 @@ You check the source database for upgrade readiness.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/ftex-refresh/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/beige-refresh/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
@@ -218,7 +218,7 @@ You check the source database for upgrade readiness.
     ==========================================
     [Job ID] 100
     ==========================================
-    [DB Name]                ftex
+    [DB Name]                beige
     [Version Before Upgrade] 19.31.0.0.0
     [Version After Upgrade]  23.26.3.0.0
     ------------------------------------------
@@ -226,8 +226,8 @@ You check the source database for upgrade readiness.
     [Status]        SUCCESS
     [Start Time]    2026-08-10 09:23:48
     [Duration]      0:00:15
-    [Log Directory] /home/oracle/logs/ftex-refresh/FTEX/100/prechecks
-    [Detail]        /home/oracle/logs/ftex-refresh/FTEX/100/prechecks/ftex_preupgrade.log
+    [Log Directory] /home/oracle/logs/beige-refresh/BEIGE/100/prechecks
+    [Detail]        /home/oracle/logs/beige-refresh/BEIGE/100/prechecks/beige_preupgrade.log
                     Check passed and no manual intervention needed
     ------------------------------------------
     ```
@@ -250,7 +250,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-refresh-clone-ftex.cfg -mode deploy
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-refresh-clone-beige.cfg -mode deploy
     </copy>
     ```
 
@@ -264,7 +264,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     +--------------------------------+
     1 Non-CDB(s) will be processed
     Type 'help' to list console commands
-    upg> Copying remote database 'FTEX' as 'TEAL' for job 101
+    upg> Copying remote database 'BEIGE' as 'TEAL' for job 101
     ```
 
     </details>
@@ -279,13 +279,13 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     </copy>
     ```
 
-    AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *FTEX* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
+    AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
 
-4. Do not exit AutoUpgrade. Switch to the blue 🟦 terminal. Set the environment to the *FTEX* database.
+4. Do not exit AutoUpgrade. Switch to the blue 🟦 terminal. Set the environment to the *BEIGE* database.
 
     ``` sql
     <copy>
-    . ftex
+    . beige
     sql / as sysdba
     </copy>
     ```
@@ -377,17 +377,17 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     Details
 
     	Job No           101
-    	Oracle SID       FTEX
+    	Oracle SID       BEIGE
     	Start Time       26/08/10 09:32:19
     	Elapsed (min):   3
     	End time:        N/A
 
     Logfiles
 
-    	Logs Base:    /home/oracle/logs/ftex-refresh/FTEX
-    	Job logs:     /home/oracle/logs/ftex-refresh/FTEX/101
-    	Stage logs:   /home/oracle/logs/ftex-refresh/FTEX/101/dbupgrade
-    	TimeZone:     /home/oracle/logs/ftex-refresh/FTEX/temp
+    	Logs Base:    /home/oracle/logs/beige-refresh/BEIGE
+    	Job logs:     /home/oracle/logs/beige-refresh/BEIGE/101
+    	Stage logs:   /home/oracle/logs/beige-refresh/BEIGE/101/dbupgrade
+    	TimeZone:     /home/oracle/logs/beige-refresh/BEIGE/temp
     	Remote Dirs:
 
     Stages
@@ -445,11 +445,11 @@ While the upgrade runs, let's look at some of the details.
     ``` text
     Opatch validation is skipped for PDB TEAL (con_id=0)
     2024-05-27T07:42:30.747705+00:00
-    create pluggable database "TEAL"  FROM FTEX@CLONEPDB   file_name_convert=none  tempfile reuse  REFRESH MODE MANUAL
+    create pluggable database "TEAL"  FROM BEIGE@CLONEPDB   file_name_convert=none  tempfile reuse  REFRESH MODE MANUAL
     --
     2024-05-27T07:42:47.488916+00:00
     TEAL(5):.... (PID:561068): Media Recovery Complete [dbsdrv.c:15613]
-    Completed: create pluggable database "TEAL"  FROM FTEX@CLONEPDB   file_name_convert=none  tempfile reuse  REFRESH MODE MANUAL
+    Completed: create pluggable database "TEAL"  FROM BEIGE@CLONEPDB   file_name_convert=none  tempfile reuse  REFRESH MODE MANUAL
 
     (output varies)
     ```
@@ -501,7 +501,7 @@ While the upgrade runs, let's look at some of the details.
 
     ``` bash
     <copy>
-    cd /home/oracle/logs/ftex-refresh/FTEX
+    cd /home/oracle/logs/beige-refresh/BEIGE
     ls -l
     </copy>
 
@@ -527,7 +527,7 @@ While the upgrade runs, let's look at some of the details.
 
     ``` bash
     <copy>
-    cd /home/oracle/logs/ftex-refresh/FTEX/101
+    cd /home/oracle/logs/beige-refresh/BEIGE/101
     ls -l
     </copy>
 
@@ -556,7 +556,7 @@ While the upgrade runs, let's look at some of the details.
 
     ``` bash
     <copy>
-    cd /home/oracle/logs/ftex-refresh/FTEX/101/dbupgrade
+    cd /home/oracle/logs/beige-refresh/BEIGE/101/dbupgrade
     ls -l
     </copy>
 
@@ -578,7 +578,7 @@ While the upgrade runs, let's look at some of the details.
     -rw-r-----. 1 oracle oinstall        0 Aug 10 09:46 catupgrd20260810092529teal_datapatch_upgrade.err
     -rw-r-----. 1 oracle oinstall     2229 Aug 10 09:46 catupgrd20260810092529teal_datapatch_upgrade.log
     -rw-r-----. 1 oracle oinstall    10363 Aug 10 09:47 catupgrd20260810092529teal_stderr.log
-    -rw-r-----. 1 oracle oinstall     3127 Aug 10 09:32 ftex_autocompile20260810093239cdbroot.log
+    -rw-r-----. 1 oracle oinstall     3127 Aug 10 09:32 beige_autocompile20260810093239cdbroot.log
     -rw-r-----. 1 oracle oinstall    34284 Aug 10 09:32 phase.log
     ```
 
@@ -641,15 +641,15 @@ While the upgrade runs, let's look at some of the details.
     <summary>*click to see the output*</summary>
 
     ``` text
-    build.version 26.4.260701
-    build.date 2026/07/01 21:57:45 +0000
-    build.hash 211bf76de
-    build.hash_date 2026/06/27 01:28:23 +0000
+    build.version 26.5.260807
+    build.date 2026/08/07 17:06:01 +0000
+    build.hash 0d4f2f519
+    build.hash_date 2026/07/31 15:26:55 +0000
     build.supported_target_versions 12.2,18,19,21,23,26
     build.type production
-    build.label (HEAD, tag: v26.4, origin/stable_devel, stable_devel)
+    build.label (HEAD, tag: v26.5, origin/stable_devel, stable_devel)
     build.MOS_NOTE KB123450
-    build.MOS_LINK https://support.oracle.com/support/?anchorId=&kmContentId=2485457&page=sptemplate&sptemplate=km-article    
+    build.MOS_LINK https://support.oracle.com/support/?anchorId=&kmContentId=2485457&page=sptemplate&sptemplate=km-article 
     ```
 
     </details>
@@ -989,8 +989,8 @@ While the upgrade runs, let's look at some of the details.
 
 
     Please check the summary report at:
-    /home/oracle/logs/ftex-refresh/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/ftex-refresh/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/beige-refresh/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/beige-refresh/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
@@ -1048,7 +1048,7 @@ While the upgrade runs, let's look at some of the details.
     
 **Congratulations!** You have now:
 
-* Upgraded the *FTEX* database
+* Upgraded the *BEIGE* database
 * Converted it to a PDB
 * Renamed it to *TEAL*
 * Left the source database intact for rollback

@@ -26,7 +26,7 @@ None.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/pdb-replay-upg-terracotta.cfg
+    cat /home/oracle/scripts/upg-replay-upg-terracotta.cfg
     </copy>
     ```
 
@@ -38,8 +38,7 @@ None.
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.global_log_dir=/home/oracle/logs/pdb-replay-upg-terracotta
-    global.global_log_dir=/home/oracle/logs/pdb-replay-upg-terracotta
+    global.global_log_dir=/home/oracle/logs/upg-replay-upg-terracotta
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
     upg1.sid=CDB19
@@ -53,7 +52,7 @@ None.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-replay-upg-terracotta.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-replay-upg-terracotta.cfg -mode analyze
     </copy>
     ```
 
@@ -63,7 +62,7 @@ None.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/pdb-replay-upg-terracotta/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/upg-replay-upg-terracotta/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
@@ -89,8 +88,8 @@ None.
     [Status]        SUCCESS
     [Start Time]    2026-08-12 05:06:19
     [Duration]      0:00:14
-    [Log Directory] /home/oracle/logs/pdb-replay-upg-terracotta/CDB19/100/prechecks
-    [Detail]        /home/oracle/logs/pdb-replay-upg-terracotta/CDB19/100/prechecks/cdb19_preupgrade.log
+    [Log Directory] /home/oracle/logs/upg-replay-upg-terracotta/CDB19/100/prechecks
+    [Detail]        /home/oracle/logs/upg-replay-upg-terracotta/CDB19/100/prechecks/cdb19_preupgrade.log
                     Check passed and no manual intervention needed
     ------------------------------------------
     ```
@@ -104,7 +103,7 @@ Inside your maintenance window, you perform the upgrade.
 1. Still in the *blue* 🟦 terminal. Now, you start the pre-upgrade fixups. This prepares the database for upgrade. In the interest of time, you skip this part in the lab. The command is shown only for learning purposes.
 
     ``` bash
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-replay-upg-terracotta.cfg -mode fixups
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-replay-upg-terracotta.cfg -mode fixups
     ```
 
     * Do not execute the command.

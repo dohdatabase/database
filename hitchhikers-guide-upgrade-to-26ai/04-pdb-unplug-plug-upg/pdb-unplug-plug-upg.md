@@ -24,14 +24,12 @@ None.
 
 You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles the entire process. You start by checking the source database for upgrade readiness.
 
-1. Use the *yellow* 🟨 terminal. Start *CDB19*. 
+1. Use the *yellow* 🟨 terminal. Set the environment to *CDB19* and connect. 
 
     ``` bash
     <copy>
     . cdb19
-    sqlplus / as sysdba<<EOF
-        startup
-    EOF
+    sqlplus / as sysdba
     </copy>
 
     # Be sure to hit RETURN
@@ -66,7 +64,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/pdb-unplug-plug-orange.cfg
+    cat /home/oracle/scripts/upg-unplug-plug-orange.cfg
     </copy>
     ```
 
@@ -78,7 +76,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.global_log_dir=/home/oracle/logs/pdb-unplug-plug-orange
+    global.global_log_dir=/home/oracle/logs/upg-unplug-plug-orange
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
     upg1.sid=CDB19
@@ -93,7 +91,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-unplug-plug-orange.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-unplug-plug-orange.cfg -mode analyze
     </copy>
     ```
 
@@ -103,7 +101,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/pdb-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/upg-unplug-plug-orange/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
@@ -129,8 +127,8 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     [Status]        SUCCESS
     [Start Time]    2026-08-12 05:06:19
     [Duration]      0:00:14
-    [Log Directory] /home/oracle/logs/pdb-unplug-plug-orange/CDB19/100/prechecks
-    [Detail]        /home/oracle/logs/pdb-unplug-plug-orange/CDB19/100/prechecks/cdb19_preupgrade.log
+    [Log Directory] /home/oracle/logs/upg-unplug-plug-orange/CDB19/100/prechecks
+    [Detail]        /home/oracle/logs/upg-unplug-plug-orange/CDB19/100/prechecks/cdb19_preupgrade.log
                     Check passed and no manual intervention needed
     ------------------------------------------
     ```
@@ -145,7 +143,7 @@ Inside your maintenance window, you start AutoUpgrade to perform the upgrade.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/pdb-unplug-plug-orange.cfg -mode deploy
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-unplug-plug-orange.cfg -mode deploy
     </copy>
     ```
 

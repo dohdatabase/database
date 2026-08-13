@@ -24,6 +24,157 @@ This lab uses the *FTEX* and *CDB26* databases. It also encrypts both databases 
 
 ## Task 1: Encrypt source non-CDB
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SQL> alter session set container=PLUM;
+
+Session altered.
+
+SQL>  administer key management set key identified by "oracle_4U" with backup;
+ administer key management set key identified by "oracle_4U" with backup
+*
+ERROR at line 1:
+ORA-46658: keystore not open in the container
+
+
+SQL> administer key management set key force keystore identified by "oracle_4U" with backup;
+
+keystore altered.
+
+SQL> create tablespace users encryption encrypt;
+
+Tablespace created.
+
+SQL> create user appuser identified by oracle;
+
+User created.
+
+SQL> grant resource to appuser;
+
+Grant succeeded.
+
+SQL> alter appuser quota unlimited on users;
+alter appuser quota unlimited on users
+      *
+ERROR at line 1:
+ORA-00940: invalid ALTER command
+
+
+SQL> alter user appuser quota unlimited on users;
+
+User altered.
+
+SQL> create table appuser.t1 as select systimestamp, 'Hello' from dual;
+create table appuser.t1 as select systimestamp, 'Hello' from dual
+                                  *
+ERROR at line 1:
+ORA-00998: must name this expression with a column alias
+
+
+SQL> create table appuser.t1 as select systimestamp as ts, 'Hello' from duasas;
+create table appuser.t1 as select systimestamp as ts, 'Hello' from duasas
+                                                                   *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> create table appuser.t1 tablespace users as select systimestamp as ts, 'Hello' from dual;
+create table appuser.t1 tablespace users as select systimestamp as ts, 'Hello' from dual
+                                                                       *
+ERROR at line 1:
+ORA-00998: must name this expression with a column alias
+
+
+SQL> create table appuser.t1 tablespace users as select systimestamp as ts, 'Hello' as msg from dual;
+
+Table created.
+
+SQL> select tablespace_name, encryption from dba_tablespaces;
+select tablespace_name, encryption from dba_tablespaces
+                        *
+ERROR at line 1:
+ORA-00904: "ENCRYPTION": invalid identifier
+
+
+SQL> desc dba_tablespaces
+ Name					   Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ TABLESPACE_NAME			   NOT NULL VARCHAR2(30)
+ BLOCK_SIZE				   NOT NULL NUMBER
+ INITIAL_EXTENT 				    NUMBER
+ NEXT_EXTENT					    NUMBER
+ MIN_EXTENTS				   NOT NULL NUMBER
+ MAX_EXTENTS					    NUMBER
+ MAX_SIZE					    NUMBER
+ PCT_INCREASE					    NUMBER
+ MIN_EXTLEN					    NUMBER
+ STATUS 					    VARCHAR2(9)
+ CONTENTS					    VARCHAR2(21)
+ LOGGING					    VARCHAR2(9)
+ FORCE_LOGGING					    VARCHAR2(3)
+ EXTENT_MANAGEMENT				    VARCHAR2(10)
+ ALLOCATION_TYPE				    VARCHAR2(9)
+ PLUGGED_IN					    VARCHAR2(3)
+ SEGMENT_SPACE_MANAGEMENT			    VARCHAR2(6)
+ DEF_TAB_COMPRESSION				    VARCHAR2(8)
+ RETENTION					    VARCHAR2(11)
+ BIGFILE					    VARCHAR2(3)
+ PREDICATE_EVALUATION				    VARCHAR2(7)
+ ENCRYPTED					    VARCHAR2(3)
+ COMPRESS_FOR					    VARCHAR2(30)
+ DEF_INMEMORY					    VARCHAR2(8)
+ DEF_INMEMORY_PRIORITY				    VARCHAR2(8)
+ DEF_INMEMORY_DISTRIBUTE			    VARCHAR2(15)
+ DEF_INMEMORY_COMPRESSION			    VARCHAR2(17)
+ DEF_INMEMORY_DUPLICATE 			    VARCHAR2(13)
+ SHARED 					    VARCHAR2(13)
+ DEF_INDEX_COMPRESSION				    VARCHAR2(8)
+ INDEX_COMPRESS_FOR				    VARCHAR2(13)
+ DEF_CELLMEMORY 				    VARCHAR2(14)
+ DEF_INMEMORY_SERVICE				    VARCHAR2(12)
+ DEF_INMEMORY_SERVICE_NAME			    VARCHAR2(1000)
+ LOST_WRITE_PROTECT				    VARCHAR2(7)
+ CHUNK_TABLESPACE				    VARCHAR2(1)
+
+SQL> select tablespace_name, encrypted from dba_tablespaces;
+
+TABLESPACE_NAME 	       ENC
+------------------------------ ---
+SYSTEM			       NO
+SYSAUX			       NO
+UNDOTBS1		       NO
+TEMP			       NO
+USERS			       YES
+
+SQL>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Currently, the *FTEX* database is not encrypted. You must start by preparing the database for encryption, and by encrypting an existing tablespace.
 
 1. Create a directory to hold the database keystore.
@@ -340,7 +491,7 @@ Analyze the *FTEX* database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.autoupg_log_dir=/home/oracle/logs/encrypted-db-upg-conv
+    global.global_log_dir=/home/oracle/logs/encrypted-db-upg-conv
     global.keystore=/u01/app/oracle/keystore/autoupgrade
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
