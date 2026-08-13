@@ -1,4 +1,4 @@
-# Downgrade a PDB
+# Downgrade PDB
 
 ## Introduction
 
@@ -7,8 +7,6 @@ In this lab, you will try a database downgrade. After an upgrade, if a serious p
 The PDB, *YELLOW*, has already been upgraded from to the new release of Oracle AI Database. It's currently placed in *CDB26COM*. You will downgrade *YELLOW* and plug it into the *CDB19* running on Oracle Database 19c.
 
 Estimated Time: 20 minutes
-
-[Lab 15 walk-through](videohub:1_gxluetcu)
 
 ### Objectives
 
@@ -20,8 +18,6 @@ In this lab, you will:
 ### Prerequisites
 
 None.
-
-This lab uses the *CDB19* databases. Don't do this lab at the same time as lab 10.
 
 ## Task 1: Prepare for downgrade
 
@@ -214,6 +210,8 @@ Now that the PDB is open in downgrade mode, you can start the process.
     alter pluggable database YELLOW close;
     alter pluggable database YELLOW unplug into '/home/oracle/scripts/upg-15-yellow.xml';
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
     <details>
@@ -253,35 +251,6 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
     ```
 
     * Use SQL\*Plus when running downgrade scripts.
-
-2. Start up *CDB19*.
-
-    ``` sql
-    <copy>
-    startup
-    </copy>
-    ```
-
-    * The *CDB19* database might be running already. If so, you will get `ORA-01081: cannot start already-running ORACLE - shut it down first`. You can safely ignore the error.
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> startup
-    ORACLE instance started.
-
-    Total System Global Area 4294964616 bytes
-    Fixed Size                  9172360 bytes
-    Variable Size             855638016 bytes
-    Database Buffers         3422552064 bytes
-    Redo Buffers                7602176 bytes
-
-    Database mounted.
-    Database opened.
-    ```
-
-    </details>
 
 3. Plug in *YELLOW* and open it in *upgrade* mode.
 
