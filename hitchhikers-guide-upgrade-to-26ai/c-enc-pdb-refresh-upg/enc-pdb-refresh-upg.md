@@ -1,259 +1,259 @@
-# Upgrade Encrypted Non-CDB and Convert
+# Upgrade encrypted PDB Using Refreshable Clone
 
 ## Introduction
 
-This lab focuses on databases encrypted using Transparent Data Encryption (TDE). You will upgrade an encrypted non-CDB to a new release of Oracle AI Database and convert it to a PDB. This requires the database keystore passwords for the non-CDB and CDB. For this purpose, AutoUpgrade has its own keystore which you will use.
+This lab focuses on databases encrypted using Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. This requires the database keystore passwords. For this purpose, AutoUpgrade has its own keystore which you will use. You will use refreshable clone PDB to copy the PDB over a database link. Then, you keep it current with redo until you do a final refresh and upgrade. This technique preserves the source PDB for rollback.
 
 Estimated Time: 25 minutes
-
-[Lab 14 walk-through](videohub:1_gnqp040b)
 
 ### Objectives
 
 In this lab, you will:
 
+* Upgrade an encrypted PDB, *CORAL*.
+* Create a refreshable clone PDB in 26ai CDB, *CDB26ENC*.
+* Refresh and upgrade.
 * Use the AutoUpgrade keystore
-* Use the summary report to check keystore password requirements
-* Upgrade and convert an encrypted database
 
 ### Prerequisites
 
 None.
 
-This lab uses the *FTEX* and *CDB26* databases. It also encrypts both databases which have an effect on the other labs. We recommend that you perform this lab as the last one.
+## Task 1: Encrypt PDB and Prepare
 
-## Task 1: Encrypt source non-CDB
+The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
-Currently, the *FTEX* database is not encrypted. You must start by preparing the database for encryption, and by encrypting an existing tablespace.
-
-1. Create a directory to hold the database keystore.
+1. Set the environment to the 19c source CDB, *CDB19ENC*, and connect.
 
     ``` bash
     <copy>
-    mkdir -p /u01/app/oracle/admin/FTEX/wallet/tde
-    </copy>
-    ```
-
-2. Set the environment to the *FTEX* database and connect.
-
-    ``` sql
-    <copy>
-    . ftex
+    . cdb19enc
     sql / as sysdba
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
-3. Configure the database to store its keystore in the directory you just created. It's a static parameter requiring a restart of the database.
+2. Start the database.
 
-    ``` sql
+    ``` bash
     <copy>
-    alter system set wallet_root='/u01/app/oracle/admin/FTEX/wallet' scope=spfile;
-    shutdown immediate
     startup
     </copy>
     ```
 
-    <details>
-    <summary>*click to see the output*</summary>
+    * If the database is already running, you get `ORA-01081: cannot start already-running ORACLE - shut it down first`. Ignore it and continue.    
 
-    ``` text
-    SQL> alter system set wallet_root='/u01/app/oracle/admin/FTEX/wallet' scope=spfile;
+1. Connect to the *CORAL* PDB, create an encryption key and an encrypted tablespace.
 
-    System altered.
-
-    SQL> shutdown immediate
-
-    Database closed.
-    Database dismounted.
-    ORACLE instance shut down.
-
-    SQL> startup
-
-    ORACLE instance started.
-
-    Total System Global Area 1157627144 bytes
-    Fixed Size                  8924424 bytes
-    Variable Size             419430400 bytes
-    Database Buffers          721420288 bytes
-    Redo Buffers                7852032 bytes
-
-    Database mounted.
-    Database opened.
-    ```
-
-    </details>
-
-4. Configure the database to use a software keystore (in the directory specified in `WALLET_ROOT`).
-
-    ``` sql
+    ``` bash
     <copy>
-    alter system set tde_configuration='keystore_configuration=file' scope=both;
+    alter session set container=CORAL;
+    administer key management set key force keystore identified by "oracle_4U" with backup;
+    create tablespace users datafile size 50m autoextend on next 50m encryption using 'AES256' encrypt;
     </copy>
+
+    # Be sure to hit RETURN
     ```
+
+    * The PDB is configured to use a unified keystore. This is the default configuration.
+    * You must use the CDB keystore password (`oracle_4U`) to create a new encryption key in the PDB.
+    * You create the tablespace with the AES256 algorithm. This is a stronger algorithm than the default, AES128. 
+    * In Oracle AI Database 26ai, the default is changed to AES256 to meet the modern-day security requirements.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter system set tde_configuration='keystore_configuration=file' scope=both;
+    SQL> alter session set container=CORAL;
 
-    System altered.
+    Session altered.
+
+    SQL> administer key management set key force keystore identified by "oracle_4U" with backup;
+
+    Key MANAGEMENT succeeded.
+
+    SQL> create tablespace users datafile size 50m autoextend on next 50m encryption using 'AES256' encrypt;
+
+    Tablespace USERS created.
     ```
 
     </details>
 
-5. Create the keystore, open it, set a TDE master key and configure an auto-login keystore.
+2. Create a schema and sample data in the encrypted tablespace.
 
-    ``` sql
+    ``` bash
     <copy>
-    administer key management create keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
-    administer key management set keystore open force keystore identified by "oracle_4U";
-    administer key management set key identified by "oracle_4U" with backup;
-    administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
+    create user appuser no authentication;
+    grant resource to appuser;
+    alter user appuser quota unlimited on users;
+    create table appuser.t1 
+        tablespace users 
+        as select systimestamp as ts, 'Hello' as msg from dual;    
     </copy>
+
+    # Be sure to hit RETURN
     ```
+
+    * Notice the *no authencation* clause on the `CREATE USER` statement.
+    * No one can connect as this user. But you connect to the schema through another user, so called proxy authentication.
+    * This is useful for application schema that should only hold data; not be used for connections.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> administer key management create keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
+    SQL> create user appuser no authentication;
 
-    keystore altered.
+    User APPUSER created.
 
-    SQL> administer key management set keystore open force keystore identified by "oracle_4U";
+    SQL> grant resource to appuser;
 
-    keystore altered.
+    Grant succeeded.
 
-    SQL> administer key management set key identified by "oracle_4U" with backup;
+    SQL> alter user appuser quota unlimited on users;
 
-    keystore altered.
+    User APPUSER altered.
 
-    SQL> administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
+    SQL> create table appuser.t1
+      2     tablespace users
+      3*    as select systimestamp as ts, 'Hello' as msg from dual;
 
-    keystore altered.
+    Table APPUSER.T1 created.    
     ```
 
     </details>
 
-6. Encrypt the *USERS* tablespace. It is an online operation.
+3. Verify the sample data is stored in the encrypted tablespace, *USERS*.
 
-    ``` sql
-    <copy>
-    alter tablespace users encryption encrypt;
-    </copy>
-    ```
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> alter tablespace users encryption encrypt;
-
-    Tablespace altered.
-    ```
-
-    </details>
-
-7. Verify that the *USERS* tablespace is encrypted.
-
-    ``` sql
+    ``` bash
     <copy>
     select tablespace_name, encrypted from dba_tablespaces;
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select tablespace_name, encrypted from dba_tablespaces;
-
-    TABLESPACE_NAME                ENC
-    ------------------------------ ---
-    SYSTEM                          NO
-    SYSAUX                          NO
-    TEMP                            NO
-    USERS                          YES
-    UNDOTBS100                      NO
+       TABLESPACE_NAME    ENCRYPTED
+    __________________ ____________
+    SYSTEM             NO
+    SYSAUX             NO
+    UNDOTBS1           NO
+    TEMP               NO
+    USERS              YES    
     ```
 
     </details>
 
-8. Exit SQLcl.
+5. Create a user and grant the necessary privileges. You use the user to connect via the database link.
+
+    ``` sql
+    <copy>
+    create user dblinkuser identified by dblinkuser;
+    grant create session to dblinkuser;
+    grant select_catalog_role to dblinkuser;
+    grant create pluggable database to dblinkuser;
+    grant read on sys.enc$ to dblinkuser;
+    </copy>
+    ```
+
+    * You use the user to connect from the target CDB via a database link.
+    * You can drop the user after the migration.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> create user dblinkuser identified by dblinkuser;
+
+    User created.
+
+    SQL> grant create session to dblinkuser;
+
+    Grant succeeded.
+
+    SQL> grant select_catalog_role to dblinkuser;
+
+    Grant succeeded.
+
+    SQL> grant create pluggable database dblinkuser;
+
+    Grant succeeded.
+
+    SQL> grant read on sys.enc$ to dblinkuser;
+
+    Grant succeeded.
+    ```
+
+    </details>    
+
+5. Exit SQLcl.
 
     ``` sql
     <copy>
     exit
     </copy>
-    ```
+    ```    
 
-## Task 2: Encrypt target CDB
+## Task 2: Prepare Target CDB
 
-Currently, the *CDB26* database is not encrypted. You must start by preparing the database for encryption.
-
-1. Create a directory to hold the database keystore.
+1. Set the environment to the 26ai source CDB, *CDB26ENC*, and connect.
 
     ``` bash
     <copy>
-    mkdir -p /u01/app/oracle/admin/CDB26/wallet/tde
-    </copy>
-    ```
-
-2. Set the environment to the *CDB26* database and connect.
-
-    ``` sql
-    <copy>
-    . cdb26
+    . cdb26enc
     sql / as sysdba
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
-3. Configure the database to store its keystore in the directory you just created. It's a static parameter requiring a restart of the database.
+2. Start the database.
 
-    ``` sql
+    ``` bash
     <copy>
-    alter system set wallet_root='/u01/app/oracle/admin/CDB26/wallet' scope=spfile;
-    shutdown immediate
     startup
     </copy>
     ```
 
+    * If the database is already running, you get `ORA-01081: cannot start already-running ORACLE - shut it down first`. Ignore it and continue.
+
+3. Create a database link pointing to the *CORAL* database.
+
+    ``` sql
+    <copy>
+    create database link clonepdb
+    connect to dblinkuser
+    identified by dblinkuser
+    using 'localhost/coral';
+    </copy>
+    ```
+
+    * You connect as the user you just created.
+
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter system set wallet_root='/u01/app/oracle/admin/CDB26/wallet' scope=spfile;
+    SQL> create database link clonepdb
+      2  connect to dblinkuser
+      3  identified by dblinkuser
+      4  using 'localhost/beige';
 
-    System altered.
-
-    SQL> shutdown immediate
-
-    Database closed.
-    Database dismounted.
-    ORACLE instance shut down.
-
-    SQL> startup
-
-    ORACLE instance started.
-
-    Total System Global Area 4292413984 bytes
-    Fixed Size                  5368352 bytes
-    Variable Size            1157627904 bytes
-    Database Buffers         3120562176 bytes
-    Redo Buffers                8855552 bytes
-
-    Database mounted.
-    Database opened.
+    Database link created.
     ```
 
     </details>
 
-4. Configure the database to use a software keystore (in the directory specified in `WALLET_ROOT`).
+4. Ensure that the database link works.
 
     ``` sql
     <copy>
-    alter system set tde_configuration='keystore_configuration=file' scope=both;
+    select * from dual@clonepdb;
     </copy>
     ```
 
@@ -261,102 +261,73 @@ Currently, the *CDB26* database is not encrypted. You must start by preparing th
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter system set tde_configuration='keystore_configuration=file' scope=both;
-
-    System altered.
+    SQL> select * from dual@clonepdb;
+    
+    DUMMY
+    ________
+    X
     ```
 
-    </details>
+    </details>    
 
-5. Create the keystore, open it, set a TDE master key and configure an auto-login keystore.
-
-    ``` sql
-    <copy>
-    administer key management create keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-    administer key management set keystore open force keystore identified by "oracle_4U";
-    administer key management set key identified by "oracle_4U" with backup;
-    administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-    </copy>
-    ```
-
-    * You used the same keystore password in *CDB26* as well for simplicity. Realistically, you would choose different keystore passwords.
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> administer key management create keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-
-    keystore altered.
-
-    SQL> administer key management set keystore open force keystore identified by "oracle_4U";
-
-    keystore altered.
-
-    SQL> administer key management set key identified by "oracle_4U" with backup;
-
-    keystore altered.
-
-    SQL> administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-
-    keystore altered.
-    ```
-
-    </details>
-
-6. Exit SQLcl.
+5. Exit SQLcl.
 
     ``` sql
     <copy>
     exit
     </copy>
-    ```
+    ```        
 
 ## Task 3: Analyze the database
 
-Analyze the *FTEX* database for upgrade readiness.
+Analyze the *CORAL* database for upgrade readiness.
 
-1. To enable AutoUpgrade to work with encrypted databases, it must have access to a directory where it can store a special keystore just for AutoUpgrade.
-
-    ``` bash
-    <copy>
-    mkdir -p /u01/app/oracle/keystore/autoupgrade
-    </copy>
-    ```
-
-2. In this lab, you will use a pre-created AutoUpgrade config file. Examine the config file.
+1. In this lab, you will use a pre-created AutoUpgrade config file. Examine the config file.
 
     ``` bash
     <copy>
-    cat /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg
+    cat /home/oracle/scripts/upg-coral.cfg
     </copy>
     ```
 
-    * The location for the AutoUpgrade keystore is defined by `global.keystore`.
-    * `target_cdb` specified the CDB where you want to plug in the non-CDB specified by `sid`.
-    * `target_pdb_name` renames the *FTEX* database on plug-in to *CYAN*.
+    * AutoUpgrade has its own keystore where it can store sensitive information, like database keystore passwords.
+    * The location for the AutoUpgrade keystore is defined by `global.keystore`. 
+    * The AutoUpgrade keystore is not to be confused with the database keystore (which holds the tablespace encryption keys).
+    * `sid` and `target_cdb` are the source and target CDBs.
+    * `pdbs` is a comma-separated list of PDBs to upgrade.
+    * `source_dblink` is the name of the database link and the refresh rate in seconds. 60 is unrealistically low and used only for purpose of the exercise.
+    * `target_pdb_name` allows you to rename the PDB to *CHERRY*. 
+    * `target_pdb_copy_option` tells where to create the data files. You use OMF and set it to `file_name_convert=none`. 
+    * `parallel_pdb_creation_clause` is used to avoid overloading the source CDB. Only two channels are used for the initial copy of the database.
+    * `start_time` is set to 100 hours from starting AutoUpgrade. We set the process start time far ahead so we can later control the execution using the *proceed* command.
+    * `timezone_upg` is used to disable the upgrade of the timezone file. You do this to save time.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.global_log_dir=/home/oracle/logs/encrypted-db-upg-conv
-    global.keystore=/u01/app/oracle/keystore/autoupgrade
+    global.global_log_dir=/home/oracle/logs/upg-coral
+    global.keystore=/u01/app/oracle/keystore/autoupgrade/coral
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
-    upg1.sid=FTEX
-    upg1.target_cdb=CDB26
-    upg1.target_pdb_name=CYAN
+    upg1.sid=CDB19ENC
+    upg1.target_cdb=CDB26ENC
+    upg1.pdbs=CORAL
+    upg1.source_dblink.CORAL=CLONEPDB 60
+    upg1.target_pdb_name.CORAL=CHERRY
+    upg1.target_pdb_copy_option.CORAL=file_name_convert=none
+    upg1.parallel_pdb_creation_clause.CORAL=2
+    upg1.start_time=+100h
     upg1.timezone_upg=NO
     ```
 
     </details>
 
-3. Start AutoUpgrade in analyze mode. Wait for it to complete.
+2. Start AutoUpgrade in analyze mode. Wait for it to complete.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode analyze
     </copy>
     ```
 
@@ -364,12 +335,11 @@ Analyze the *FTEX* database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 25.6.251016 launched with default internal options
     Processing config file ...
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    1 Non-CDB(s) will be analyzed
+    1 PDB(s) will be analyzed
     Type 'help' to list console commands
     upg> Job 100 completed
     ------------------- Final Summary --------------------
@@ -379,23 +349,22 @@ Analyze the *FTEX* database for upgrade readiness.
     Jobs failed                    [0]
 
     Please check the summary report at:
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
 
-4. Check the *summary report*.
+3. Check the *summary report*.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
     * *PRECHECKS* has status *FAILURE*. The database is **not** ready for upgrade.
     * The check *TDE_PASSWORDS_REQUIRED* failed.
-    * The check *TARGET_CDB_COMPATIBILITY* might fail as well, but you disregard that for now.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -404,42 +373,44 @@ Analyze the *FTEX* database for upgrade readiness.
     ==========================================
               Autoupgrade Summary Report
     ==========================================
-    [Date]           Fri May 31 05:05:37 GMT 2024
+    [Date]           Fri Aug 14 11:58:13 GMT 2026
     [Number of Jobs] 1
     ==========================================
     [Job ID] 100
     ==========================================
-    [DB Name]                FTEX
-    [Version Before Upgrade] 19.28.0.0.0
-    [Version After Upgrade]  23.26.0.0.0
+    [DB Name]                cdb19enc
+    [Version Before Upgrade] 19.31.0.0.0
+    [Version After Upgrade]  23.26.3.0.0
     ------------------------------------------
     [Stage Name]    PRECHECKS
     [Status]        FAILURE
-    [Start Time]    2024-05-31 05:05:31
-    [Duration]
-    [Log Directory] /home/oracle/logs/encrypted-db-upg-conv/FTEX/100/prechecks
-    [Detail]        /home/oracle/logs/encrypted-db-upg-conv/FTEX/100/prechecks/ftex_preupgrade.log
-                    Check failed for FTEX, manual intervention needed for the below checks
+    [Start Time]    2026-08-14 11:58:03
+    [Duration]      0:00:10
+    [Log Directory] /home/oracle/logs/upg-coral/CDB19ENC/100/prechecks
+    [Detail]        /home/oracle/logs/upg-coral/CDB19ENC/100/prechecks/cdb19enc_preupgrade.log
+                    Check failed for CORAL, manual intervention needed for the below checks
                     [TDE_PASSWORDS_REQUIRED]
-    Cause:Check failed for FTEX, manual intervention needed for the below checks :     [AUDUNIFIED_LOB_TYPE HIDDEN_PARAMS INVALID_OBJECTS_EXIST POST_DICTIONARY POST_FIXED_OBJECTS     OLD_TIME_ZONES_EXIST PARAMETER_DEPRECATED MIN_RECOVERY_AREA_SIZE MANDATORY_UPGRADE_CHANGES     DATAPATCH_TIMEOUT_SETTINGS RMAN_RECOVERY_VERSION TABLESPACES_INFO TIMESTAMP_MISMATCH POST_UTLRP     COMPONENT_INFO INVALID_ORA_OBJ_INFO INVALID_APP_OBJ_INFO TDE_PASSWORDS_REQUIRED     PARAM_VALUES_IN_MEM_ONLY EM_EXPRESS_PRESENT TARGET_CDB_COMPATIBILITY_WARNINGS ]
-    Reason:Database Checks has Failed details in /home/oracle/logs/encrypted-db-upg-conv/FTEX/100/    prechecks
+    Cause:The following checks have ERROR severity and no auto fixup is available or
+    the fixup failed to resolve the issue. Fix them before continuing:
+    CORAL TDE_PASSWORDS_REQUIRED
+    Reason:Database Checks has Failed details in /home/oracle/logs/upg-coral/CDB19ENC/100/prechecks
     Action:[MANUAL]
     Info:Return status is ERROR
     ExecutionError:No
-    Error Message:The following checks have ERROR severity and no fixup is available or
-    the fixup failed to resolve the issue. Fix them manually before continuing:
-    FTEX TDE_PASSWORDS_REQUIRED
+    Error Message:The following checks have ERROR severity and no auto fixup is available or
+    the fixup failed to resolve the issue. Fix them before continuing:
+    CORAL TDE_PASSWORDS_REQUIRED
 
     ------------------------------------------
     ```
 
     </details>
 
-5. You find additional details in the preupgrade log file. There is a *required action* that you must do before the upgrade.
+4. You find additional details in the preupgrade log file. There is a *required action* that you must do before the upgrade.
 
-    * You must load the database keystore password into the AutoUpgrade keystore for the databases *FTEX* and *CDB26*.
-    * AutoUpgrade must have access to keystore password to complete the process.
-    * Optionally, you can check the entire preupgrade log file. It is in `/home/oracle/logs/encrypted-db-upg-conv/FTEX/100/prechecks/ftex_preupgrade.log`.
+    * You must load the database keystore password into the AutoUpgrade keystore for the database *CDB26ENC*.
+    * AutoUpgrade must have access to keystore password of the target CDB to complete the process.
+    * Optionally, you can check the entire preupgrade log file. It is in `/home/oracle/logs/upg-coral/CDB19ENC/100/prechecks/cdb19enc_preupgrade.log`.
 
     ``` text
     (output truncated)
@@ -450,7 +421,14 @@ Analyze the *FTEX* database for upgrade readiness.
 
       REQUIRED ACTIONS
       ================
-      1.  Perform the specified action for each database in order to satisfy
+      1.
+            CheckName                                     FixUp Available
+            TDE_PASSWORDS_REQUIRED                        NO
+
+            Severity                                      Stage
+            ERROR                                         PRECHECKS
+
+          Perform the specified action for each database in order to satisfy
           AutoUpgrade's TDE keystore requirements. This will involve adding the TDE
           keystore password for the database into either AutoUpgrade's keystore
           using the -load_password command line option or into a Secure External
@@ -459,17 +437,6 @@ Analyze the *FTEX* database for upgrade readiness.
           to rerun the upgrade, the AutoUpgrade keystore file(s) can be removed
           from the directory or path referenced by the global.keystore
           configuration parameter.
-
-          At this point, either (1) the TDE keystore password(s) required by
-          AutoUpgrade have not been loaded into AutoUpgrade's keystore or a Secure
-          External Password Store or (2) the auto-login keystore status of the
-          database has not been modified. Review the required actions for each of
-          the following databases:
-
-          ORACLE_SID                      Action Required
-          ------------------------------  ----------------------------------------
-          CDB26                           Add TDE password
-          FTEX                            Add TDE password
 
           For AutoUpgrade to upgrade a database using Oracle Transparent Data
           Encryption (TDE), the following conditions must be met:
@@ -489,17 +456,30 @@ Analyze the *FTEX* database for upgrade readiness.
 
           3. To upgrade a non-CDB or an entire CDB, the TDE keystore must be an
           auto-login keystore. This requirement also applies to a non-CDB to PDB
-          operation, but only if the target CDB is at an Oracle AI Database Release
+          operation, but only if the target CDB is at an Oracle Database Release
+          earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
+          operation, but only if the target CDB is at an Oracle Database Release
           earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
           upgrade of the non-CDB to the target version prior to creating the PDB in
           the target CDB.
+
+          At this point, either (1) the TDE keystore password(s) required by
+          AutoUpgrade have not been loaded into AutoUpgrade's keystore or a Secure
+          External Password Store or (2) the auto-login keystore status of the
+          database has not been modified. Review the required actions for each of
+          the following databases:
+
+          ORACLE_SID                      Action Required
+          ------------------------------  ----------------------------------------
+          ORACLE_SID                      Action Required
+          CDB26ENC                        Add TDE password      
     ```
 
-6. Load the database keystore passwords into the AutoUpgrade keystore. Start the password loader.
+5. Load the database keystore password into the AutoUpgrade keystore. Start the password loader.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -load_password
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -load_password
     </copy>
     ```
 
@@ -535,42 +515,15 @@ Analyze the *FTEX* database for upgrade readiness.
 
     </details>
 
-8. Add the database keystore password for *FTEX*.
+9. Add the database keystore password for *CDB26ENC*.
 
     ``` bash
     <copy>
-    add FTEX
+    add CDB26ENC
     </copy>
     ```
 
-    Enter the *FTEX* database keystore password twice:
-
-    ``` bash
-    <copy>
-    oracle_4U
-    </copy>
-    ```
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    TDE> add FTEX
-    Enter your secret/Password:
-    Re-enter your secret/Password:
-    ```
-
-    </details>
-
-9. Add the database keystore password for *CDB26*.
-
-    ``` bash
-    <copy>
-    add CDB26
-    </copy>
-    ```
-
-    Enter the *CDB26* database keystore password twice:
+    Enter the *CDB26ENC* database keystore password twice:
 
     ``` bash
     <copy>
@@ -582,7 +535,7 @@ Analyze the *FTEX* database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    TDE> add CDB26
+    TDE> add CDB26ENC
     Enter your secret/Password:
     Re-enter your secret/Password:
     ```
@@ -598,13 +551,15 @@ Analyze the *FTEX* database for upgrade readiness.
     ```
 
     * Enter *YES* when prompted to convert to an auto-login keystore.
+    * An auto-login keystore works only on the system it was created.
+    * You could also enter *SHARED*. A shared auto-login keystore works in any system.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
     TDE> save
-    Convert the AutoUpgrade keystore to auto-login [YES|NO] ? YES
+    Select auto-login mode for the AutoUpgrade keystore [YES|NO|SHARED]: YES
     ```
 
     </details>
@@ -632,22 +587,26 @@ Analyze the *FTEX* database for upgrade readiness.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode analyze
     </copy>
     ```
+
+    * The analysis must run on the source system. Since source and target is the same in this lab, you don't need to worry about it.
+    * If the target is on a remote host, you can use the parameter `target_is_remote`. 
+    * Notice the console messages about the AutoUpgrade keystore.
+    * Since you've created an AutoUpgrade keystore, AutoUpgrade now reads it on startup. 
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 25.6.251016 launched with default internal options
     Processing config file ...
     Loading AutoUpgrade keystore
-    AutoUpgrade keystore was successfully loaded
+    AutoUpgrade keystore is loaded
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    1 Non-CDB(s) will be analyzed
+    1 PDB(s) will be analyzed
     Type 'help' to list console commands
     upg> Job 101 completed
     ------------------- Final Summary --------------------
@@ -657,8 +616,8 @@ Analyze the *FTEX* database for upgrade readiness.
     Jobs failed                    [0]
 
     Please check the summary report at:
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
@@ -667,7 +626,7 @@ Analyze the *FTEX* database for upgrade readiness.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
@@ -681,58 +640,65 @@ Analyze the *FTEX* database for upgrade readiness.
     ==========================================
               Autoupgrade Summary Report
     ==========================================
-    [Date]           Fri May 31 05:21:50 GMT 2024
+    [Date]           Fri Aug 14 11:04:53 GMT 2026
     [Number of Jobs] 1
     ==========================================
     [Job ID] 101
     ==========================================
-    [DB Name]                FTEX
-    [Version Before Upgrade] 19.28.0.0.0
-    [Version After Upgrade]  23.26.0.0.0
+    [DB Name]                cdb19enc
+    [Version Before Upgrade] 19.31.0.0.0
+    [Version After Upgrade]  23.26.3.0.0
     ------------------------------------------
     [Stage Name]    PRECHECKS
     [Status]        SUCCESS
-    [Start Time]    2024-05-31 05:21:45
-    [Duration]
-    [Log Directory] /home/oracle/logs/encrypted-db-upg-conv/FTEX/101/prechecks
-    [Detail]        /home/oracle/logs/encrypted-db-upg-conv/FTEX/101/prechecks/ftex_preupgrade.log
+    [Start Time]    2026-08-14 11:04:45
+    [Duration]      0:00:08
+    [Log Directory] /home/oracle/logs/upg-coral/CDB19ENC/101/prechecks
+    [Detail]        /home/oracle/logs/upg-coral/CDB19ENC/101/prechecks/cdb19enc_preupgrade.log
                     Check passed and no manual intervention needed
     ------------------------------------------
     ```
 
     </details>
 
-## Task 4: Upgrade and convert
+## Task 4: Build Refreshable Clone
 
-All prerequisites have been meet. You can now start the upgrade and conversion.
+All prerequisites have been meet. You can now start the initial clone of the PDB.
 
-1. Start AutoUpgrade in deploy. This starts the upgrade and conversion in one fully automated process.
+1. Start AutoUpgrade in deploy mode. 
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -mode deploy
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode deploy
     </copy>
     ```
+    * The deploy must run on the target system. Since source and target is the same in this lab, you don't need to worry about it.
+    * AutoUpgrade creates the clone by copying the data files over the database link.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 25.6.251016 launched with default internal options
     Processing config file ...
     Loading AutoUpgrade keystore
-    AutoUpgrade keystore was successfully loaded
+    AutoUpgrade keystore is loaded
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    1 Non-CDB(s) will be processed
+    1 PDB(s) will be processed
     Type 'help' to list console commands
-    upg>
+    upg> Copying remote database 'CORAL' as 'CHERRY' for job 102
     ```
 
     </details>
 
-2. Monitor the progress.
+2. After a short while, AutoUpgrade reports that the initial copy was made.
+
+    ``` text
+    Remote database 'CORAL' created as PDB 'CHERRY' for job 102
+    ```
+
+3. Hit *ENTER* to bring up the console. Monitor the progress.
 
     ``` bash
     <copy>
@@ -740,23 +706,182 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     </copy>
     ```
 
+    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *CORAL* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
+
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    +----+-------+----------+---------+-------+----------+-------+-------+
-    |Job#|DB_NAME|     STAGE|OPERATION| STATUS|START_TIME|UPDATED|MESSAGE|
-    +----+-------+----------+---------+-------+----------+-------+-------+
-    | 102|   FTEX|POSTFIXUPS|EXECUTING|RUNNING|  05:22:43| 9s ago|       |
-    +----+-------+----------+---------+-------+----------+-------+-------+
+    +----+--------+----------+---------+-------+----------+-------+-----------------------+
+    |Job#| DB_NAME|     STAGE|OPERATION| STATUS|START_TIME|UPDATED|                MESSAGE|
+    +----+--------+----------+---------+-------+----------+-------+-----------------------+
+    | 102|CDB19ENC|REFRESHPDB|EXECUTING|RUNNING|  16:02:18| 3s ago|Starts in 5,997 minutes|
+    +----+--------+----------+---------+-------+----------+-------+-----------------------+
     Total jobs 1
 
-    The command lsj is running every 30 seconds. PRESS ENTER TO EXIT
+    The command lsj is running every 30 seconds. PRESS ENTER TO EXIT    
     ```
 
     </details>
 
-3. The upgrade and conversion takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade prints *Job 102 completed* and exits.
+4. Do not exit AutoUpgrade. Leave it running
+
+## Task 5: Refresh
+
+So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Every 60 seconds, *CDB26ENC* fetches redo over the database link and keep *CORAL* current.
+
+1. Start a new terminal. Do not use the original terminal. 
+
+2. Set the environment to the *CDB19ENC* database and connect.
+
+    ``` sql
+    <copy>
+    . cdb19enc
+    sql / as sysdba
+    </copy>
+    ```
+
+3. Add more test data to the source PDB.
+
+    ``` bash
+    <copy>
+    alter session set container=CORAL;
+    insert into appuser.t1 values(systimestamp, 'World');
+    commit;
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> alter session set container=CORAL;
+
+    Session altered.
+
+    SQL> insert into appuser.t1 values(systimestamp, 'World');
+
+    1 row inserted.
+
+    SQL> commit;
+
+    Commit complete.
+    ```
+
+    </details>
+
+4. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```
+
+## Task 6: Upgrade
+
+Now the maintenance window has started. You're ready to perform the final refresh and upgrade.
+
+The *REFRESHPDB* phase would stay technically for the next 100 hours. Reason we defined that long time is to have a full control when to start the process. Imagine, for example, we are waiting for a *go* or approval from another team to shut the application down so we can start our migration.
+
+When the upgrade starts, AutoUpgrade executes a final refresh to bring over the latest changes. So no more changes will be captured from the source database. Then, it disconnects the PDB and starts the upgrade.
+
+1. Start the pre-upgrade fixups.
+
+    * The fixups must run on the source system.
+    * In the interest of time, you skip the fixups in this exercise.
+
+    ``` bash
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode fixups
+    ```
+
+2. **Switch back to the original terminal**.
+
+3. Press ENTER just to stop *lsj* from spooling the job status. Next, run the `proceed` command to force the start of upgrade process **now**.
+
+    ``` bash
+    <copy>
+    proceed -job 102
+    </copy>
+    ```
+
+    * AutoUpgrade will start shortly.
+    * You can also specify a new start time using *proceed -job <#> -newStartTime [dd/mm/yyyy hh:mm:ss, +<#>h<#>m]*.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    upg> proceed -job 102
+    New start time for job 102 is scheduled 0 minute(s) from now, at 14/08/2026 12:57:07
+    ```
+
+    </details>
+
+4. Monitor the progress.
+
+    ``` sql
+    <copy>
+    status -job 102 -a 10
+    </copy>
+    ```
+
+    * AutoUpgrade was holding in *REFRESHPDB*; applying redo at the specified interval.
+    * When you issued the `proceed` command, AutoUpgrade made a final refresh before moving on to the next phase.
+    * Any changes made in the source database at this point in time, would not come over to the target PDB.
+    * In the *DBUPGRADE* stage, AutoUpgrade is upgrading the PDB to the new release. The CDB is already on the new release, so only the PDB is upgraded which is much faster than a complete database upgrade.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    Details
+
+    	Job No           102
+    	Oracle SID       CDB19ENC
+    	Start Time       26/08/14 12:57:07
+    	Elapsed (min):   0
+    	End time:        N/A
+
+    Logfiles
+
+    	Logs Base:    /home/oracle/logs/upg-coral/CDB19ENC
+    	Job logs:     /home/oracle/logs/upg-coral/CDB19ENC/102
+    	Stage logs:   /home/oracle/logs/upg-coral/CDB19ENC/102/dbupgrade
+    	TimeZone:     /home/oracle/logs/upg-coral/CDB19ENC/temp
+    	Remote Dirs:
+
+    Stages
+    	SETUP            <1 min
+    	PREUPGRADE       <1 min
+    	DRAIN            <1 min
+    	CLONEPDB         <1 min
+    	REFRESHPDB       54 min
+    	DISPATCH         <1 min
+    	DISPATCH         <1 min
+    	DBUPGRADE        ~0 min (RUNNING)
+    	UNPLUGWORK
+    	POSTCHECKS
+    	POSTFIXUPS
+    	POSTUPGRADE
+    	SYSUPDATES
+
+    Stage-Progress Per Container
+
+    	+--------+---------+
+    	|Database|DBUPGRADE|
+    	+--------+---------+
+    	|  CHERRY|    0  % |
+    	+--------+---------+
+
+    The command status is running every 10 seconds. PRESS ENTER TO EXIT
+    ```
+
+    </details>
+
+5. The upgrade takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade prints *Job 102 completed* and exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -772,33 +897,29 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     Jobs pending                   [0]
 
 
-
     Please check the summary report at:
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-coral/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
 
-4. Set the environment to *CDB26* and connect.
+6. Set the environment to *CDB26ENC* and connect.
 
     ``` sql
     <copy>
-    . cdb26
+    . cdb26enc
     sql / as sysdba
     </copy>
     ```
 
-5. Ensure that the *FTEX* database has been plugged in and is open *READ WRITE* and unrestricted.
+7. Ensure that the *CHERRY* database has been plugged in and is open *READ WRITE* and unrestricted.
 
     ``` sql
     <copy>
     show pdbs
     </copy>
     ```
-
-    * You renamed *FTEX* to *CYAN*.
-    * You might see other PDBs from other labs. Focus on *CYAN*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -808,21 +929,38 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
 
         CON_ID CON_NAME                        OPEN MODE  RESTRICTED
     ---------- ------------------------------ ---------- ----------
-        2 PDB$SEED                           READ ONLY  NO
-        3 RED                                READ WRITE NO
-        4 BLUE                               MOUNTED
-        5 GREEN                              MOUNTED
-        6 UPGR                               MOUNTED
-        7 CYAN                               READ WRITE NO
+        2 PDB$SEED                            READ ONLY  NO
+        3 CHERRY                              READ WRITE NO
     ```
 
     </details>
 
-6. Switch to the *CYAN* PDB and ensure the *USERS* tablespace is still encrypted.
+8. Drop the database link used for the migration.
+
+    ``` bash
+    <copy>
+    drop database link clonepdb;
+    </copy>
+    ```
+
+    * You could also have used the AutoUpgrade config file parameter `drop_dblink`.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> drop database link clonepdb;
+
+    Database link CLONEPDB dropped.
+    ```
+
+    </details>
+
+9. Switch to the *CHERRY* PDB and ensure the *USERS* tablespace is still encrypted.
 
     ``` sql
     <copy>
-    alter session set container=CYAN;
+    alter session set container=CHERRY;
     select tablespace_name, encrypted from dba_tablespaces;
     </copy>
     ```
@@ -831,7 +969,7 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter session set container=CYAN;
+    SQL> alter session set container=CORAL;
 
     Session altered.
 
@@ -841,14 +979,15 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     ------------------------------ ---
     SYSTEM                         NO
     SYSAUX                         NO
+    UNDOTBS1                       NO
     TEMP                           NO
     USERS                          YES
-    UNDOTBS100                     NO
+    
     ```
 
     </details>
 
-7. Verify that the PDB is using a keystore.
+10. Verify that the PDB is using a keystore.
 
     ``` sql
     <copy>
@@ -864,18 +1003,47 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
 
     WRL_TYPE             STATUS     WALLET_TYPE          KEYSTORE
     -------------------- ---------- -------------------- --------
-    FILE                 OPEN       PASSWORD             UNITED
+    FILE                 OPEN       LOCAL_AUTOLOGIN      UNITED
     ```
 
     </details>
 
-8. Exit SQLcl.
+11. Ensure all data is present in the application.
+
+    ``` bash
+    <copy>
+    select * from appuser.t1 order by ts;
+    </copy>
+    ```
+
+    * Both records are present. 
+    * The *Hello* initially created, and *World* created right before the final refresh.
+    * This proves that changes made after the initial copy of data files are still in the PDB after the upgrade.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    TS                                     MSG
+    ______________________________________ ________
+    14-AUG-26 11.57.02.258264000 AM GMT    Hello
+    14-AUG-26 12.48.24.185881000 PM GMT    World    
+    ```
+
+    </details>
+
+12. Exit SQLcl.
 
     ``` sql
     <copy>
     exit
     </copy>
     ```
+
+13. AutoUpgrade stops the source PDB immediately after the final refresh when the source CDB and target CDB are on the same system. 
+    * This ensures no one enters data into the wrong database during the migration, or add new data to it. 
+    * You can control this behavior with the `close_source` config file parameter. 
+    * If the databases are on different systems, you must manually shut down the source PDB after the migration.    
 
 **Congratulations!** You have now upgraded your encrypted database to a new release of Oracle AI Database.
 

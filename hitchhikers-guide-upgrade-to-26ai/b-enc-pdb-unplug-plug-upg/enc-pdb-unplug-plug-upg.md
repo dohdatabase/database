@@ -1,513 +1,231 @@
-# Upgrade Encrypted Non-CDB and Convert
+# Upgrade Encrypted PDB Using Unplug-plug
 
 ## Introduction
 
-This lab focuses on databases encrypted using Transparent Data Encryption (TDE). You will upgrade an encrypted non-CDB to a new release of Oracle AI Database and convert it to a PDB. This requires the database keystore passwords for the non-CDB and CDB. For this purpose, AutoUpgrade has its own keystore which you will use.
+This lab focuses on databases encrypted using Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. This requires the database keystore passwords. For this purpose, AutoUpgrade has its own keystore which you will use.
 
 Estimated Time: 25 minutes
-
-[Lab 14 walk-through](videohub:1_gnqp040b)
 
 ### Objectives
 
 In this lab, you will:
 
+* Upgrade an encrypted PDB, *PLUM*.
+* Unplug from 19c CDB, *CDB19ENC*, and plug in to 26ai CDB, *CDB26ENC*.
 * Use the AutoUpgrade keystore
-* Use the summary report to check keystore password requirements
-* Upgrade and convert an encrypted database
 
 ### Prerequisites
 
 None.
 
-This lab uses the *FTEX* and *CDB26* databases. It also encrypts both databases which have an effect on the other labs. We recommend that you perform this lab as the last one.
+## Task 1: Start Databases
 
-## Task 1: Encrypt source non-CDB
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SQL> alter session set container=PLUM;
-
-Session altered.
-
-SQL>  administer key management set key identified by "oracle_4U" with backup;
- administer key management set key identified by "oracle_4U" with backup
-*
-ERROR at line 1:
-ORA-46658: keystore not open in the container
-
-
-SQL> administer key management set key force keystore identified by "oracle_4U" with backup;
-
-keystore altered.
-
-SQL> create tablespace users encryption encrypt;
-
-Tablespace created.
-
-SQL> create user appuser identified by oracle;
-
-User created.
-
-SQL> grant resource to appuser;
-
-Grant succeeded.
-
-SQL> alter appuser quota unlimited on users;
-alter appuser quota unlimited on users
-      *
-ERROR at line 1:
-ORA-00940: invalid ALTER command
-
-
-SQL> alter user appuser quota unlimited on users;
-
-User altered.
-
-SQL> create table appuser.t1 as select systimestamp, 'Hello' from dual;
-create table appuser.t1 as select systimestamp, 'Hello' from dual
-                                  *
-ERROR at line 1:
-ORA-00998: must name this expression with a column alias
-
-
-SQL> create table appuser.t1 as select systimestamp as ts, 'Hello' from duasas;
-create table appuser.t1 as select systimestamp as ts, 'Hello' from duasas
-                                                                   *
-ERROR at line 1:
-ORA-00942: table or view does not exist
-
-
-SQL> create table appuser.t1 tablespace users as select systimestamp as ts, 'Hello' from dual;
-create table appuser.t1 tablespace users as select systimestamp as ts, 'Hello' from dual
-                                                                       *
-ERROR at line 1:
-ORA-00998: must name this expression with a column alias
-
-
-SQL> create table appuser.t1 tablespace users as select systimestamp as ts, 'Hello' as msg from dual;
-
-Table created.
-
-SQL> select tablespace_name, encryption from dba_tablespaces;
-select tablespace_name, encryption from dba_tablespaces
-                        *
-ERROR at line 1:
-ORA-00904: "ENCRYPTION": invalid identifier
-
-
-SQL> desc dba_tablespaces
- Name					   Null?    Type
- ----------------------------------------- -------- ----------------------------
- TABLESPACE_NAME			   NOT NULL VARCHAR2(30)
- BLOCK_SIZE				   NOT NULL NUMBER
- INITIAL_EXTENT 				    NUMBER
- NEXT_EXTENT					    NUMBER
- MIN_EXTENTS				   NOT NULL NUMBER
- MAX_EXTENTS					    NUMBER
- MAX_SIZE					    NUMBER
- PCT_INCREASE					    NUMBER
- MIN_EXTLEN					    NUMBER
- STATUS 					    VARCHAR2(9)
- CONTENTS					    VARCHAR2(21)
- LOGGING					    VARCHAR2(9)
- FORCE_LOGGING					    VARCHAR2(3)
- EXTENT_MANAGEMENT				    VARCHAR2(10)
- ALLOCATION_TYPE				    VARCHAR2(9)
- PLUGGED_IN					    VARCHAR2(3)
- SEGMENT_SPACE_MANAGEMENT			    VARCHAR2(6)
- DEF_TAB_COMPRESSION				    VARCHAR2(8)
- RETENTION					    VARCHAR2(11)
- BIGFILE					    VARCHAR2(3)
- PREDICATE_EVALUATION				    VARCHAR2(7)
- ENCRYPTED					    VARCHAR2(3)
- COMPRESS_FOR					    VARCHAR2(30)
- DEF_INMEMORY					    VARCHAR2(8)
- DEF_INMEMORY_PRIORITY				    VARCHAR2(8)
- DEF_INMEMORY_DISTRIBUTE			    VARCHAR2(15)
- DEF_INMEMORY_COMPRESSION			    VARCHAR2(17)
- DEF_INMEMORY_DUPLICATE 			    VARCHAR2(13)
- SHARED 					    VARCHAR2(13)
- DEF_INDEX_COMPRESSION				    VARCHAR2(8)
- INDEX_COMPRESS_FOR				    VARCHAR2(13)
- DEF_CELLMEMORY 				    VARCHAR2(14)
- DEF_INMEMORY_SERVICE				    VARCHAR2(12)
- DEF_INMEMORY_SERVICE_NAME			    VARCHAR2(1000)
- LOST_WRITE_PROTECT				    VARCHAR2(7)
- CHUNK_TABLESPACE				    VARCHAR2(1)
-
-SQL> select tablespace_name, encrypted from dba_tablespaces;
-
-TABLESPACE_NAME 	       ENC
------------------------------- ---
-SYSTEM			       NO
-SYSAUX			       NO
-UNDOTBS1		       NO
-TEMP			       NO
-USERS			       YES
-
-SQL>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Currently, the *FTEX* database is not encrypted. You must start by preparing the database for encryption, and by encrypting an existing tablespace.
-
-1. Create a directory to hold the database keystore.
+1. Set the environment to the 26ai source CDB, *CDB26ENC*, and connect.
 
     ``` bash
     <copy>
-    mkdir -p /u01/app/oracle/admin/FTEX/wallet/tde
-    </copy>
-    ```
-
-2. Set the environment to the *FTEX* database and connect.
-
-    ``` sql
-    <copy>
-    . ftex
+    . cdb26enc
     sql / as sysdba
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
-3. Configure the database to store its keystore in the directory you just created. It's a static parameter requiring a restart of the database.
+2. Start the database.
 
-    ``` sql
+    ``` bash
     <copy>
-    alter system set wallet_root='/u01/app/oracle/admin/FTEX/wallet' scope=spfile;
-    shutdown immediate
     startup
     </copy>
     ```
 
-    <details>
-    <summary>*click to see the output*</summary>
+    * If the database is already running, you get `ORA-01081: cannot start already-running ORACLE - shut it down first`. Ignore it and continue.
 
-    ``` text
-    SQL> alter system set wallet_root='/u01/app/oracle/admin/FTEX/wallet' scope=spfile;
-
-    System altered.
-
-    SQL> shutdown immediate
-
-    Database closed.
-    Database dismounted.
-    ORACLE instance shut down.
-
-    SQL> startup
-
-    ORACLE instance started.
-
-    Total System Global Area 1157627144 bytes
-    Fixed Size                  8924424 bytes
-    Variable Size             419430400 bytes
-    Database Buffers          721420288 bytes
-    Redo Buffers                7852032 bytes
-
-    Database mounted.
-    Database opened.
-    ```
-
-    </details>
-
-4. Configure the database to use a software keystore (in the directory specified in `WALLET_ROOT`).
+3. Exit SQLcl.
 
     ``` sql
     <copy>
-    alter system set tde_configuration='keystore_configuration=file' scope=both;
+    exit
     </copy>
-    ```
+    ```        
 
-    <details>
-    <summary>*click to see the output*</summary>
+4. Set the environment to the 19c source CDB, *CDB19ENC*, and connect.
 
-    ``` text
-    SQL> alter system set tde_configuration='keystore_configuration=file' scope=both;
-
-    System altered.
-    ```
-
-    </details>
-
-5. Create the keystore, open it, set a TDE master key and configure an auto-login keystore.
-
-    ``` sql
+    ``` bash
     <copy>
-    administer key management create keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
-    administer key management set keystore open force keystore identified by "oracle_4U";
-    administer key management set key identified by "oracle_4U" with backup;
-    administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
+    . cdb19enc
+    sql / as sysdba
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
-    <details>
-    <summary>*click to see the output*</summary>
+5. Start the database.
 
-    ``` text
-    SQL> administer key management create keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
-
-    keystore altered.
-
-    SQL> administer key management set keystore open force keystore identified by "oracle_4U";
-
-    keystore altered.
-
-    SQL> administer key management set key identified by "oracle_4U" with backup;
-
-    keystore altered.
-
-    SQL> administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/FTEX/wallet/tde' identified by "oracle_4U";
-
-    keystore altered.
-    ```
-
-    </details>
-
-6. Encrypt the *USERS* tablespace. It is an online operation.
-
-    ``` sql
+    ``` bash
     <copy>
-    alter tablespace users encryption encrypt;
+    startup
     </copy>
     ```
+
+    * If the database is already running, you get `ORA-01081: cannot start already-running ORACLE - shut it down first`. Ignore it and continue.    
+
+
+## Task 2: Encrypt PDB
+
+The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
+
+1. Connect to the *PLUM* PDB, create an encryption key and an encrypted tablespace.
+
+    ``` bash
+    <copy>
+    alter session set container=PLUM;
+    administer key management set key force keystore identified by "oracle_4U" with backup;
+    create tablespace users datafile size 50m autoextend on next 50m encryption using 'AES256' encrypt;
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    * The PDB is configured to use a unified keystore. This is the default configuration.
+    * You must use the CDB keystore password (`oracle_4U`) to create a new encryption key in the PDB.
+    * You create the tablespace with the AES256 algorithm. This is a stronger algorithm than the default, AES128. 
+    * In Oracle AI Database 26ai, the default is changed to AES256 to meet the modern-day security requirements.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter tablespace users encryption encrypt;
+    SQL> alter session set container=PLUM;
 
-    Tablespace altered.
+    Session altered.
+
+    SQL> administer key management set key force keystore identified by "oracle_4U" with backup;
+
+    Key MANAGEMENT succeeded.
+
+    SQL> create tablespace users datafile size 50m autoextend on next 50m encryption using 'AES256' encrypt;
+
+    Tablespace USERS created.
     ```
 
     </details>
 
-7. Verify that the *USERS* tablespace is encrypted.
+2. Create a schema and sample data in the encrypted tablespace.
 
-    ``` sql
+    ``` bash
+    <copy>
+    create user appuser no authentication;
+    grant resource to appuser;
+    alter user appuser quota unlimited on users;
+    create table appuser.t1 
+        tablespace users 
+        as select systimestamp as ts, 'Hello' as msg from dual;    
+    </copy>
+
+    # Be sure to hit RETURN
+    ```
+
+    * Notice the *no authencation* clause on the `CREATE USER` statement.
+    * No one can connect as this user. But you connect to the schema through another user, so called proxy authentication.
+    * This is useful for application schema that should only hold data; not be used for connections.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> create user appuser no authentication;
+
+    User APPUSER created.
+
+    SQL> grant resource to appuser;
+
+    Grant succeeded.
+
+    SQL> alter user appuser quota unlimited on users;
+
+    User APPUSER altered.
+
+    SQL> create table appuser.t1
+      2     tablespace users
+      3*    as select systimestamp as ts, 'Hello' as msg from dual;
+
+    Table APPUSER.T1 created.    
+    ```
+
+    </details>
+
+3. Verify the sample data is stored in the encrypted tablespace, *USERS*.
+
+    ``` bash
     <copy>
     select tablespace_name, encrypted from dba_tablespaces;
     </copy>
+
+    # Be sure to hit RETURN
     ```
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select tablespace_name, encrypted from dba_tablespaces;
-
-    TABLESPACE_NAME                ENC
-    ------------------------------ ---
-    SYSTEM                          NO
-    SYSAUX                          NO
-    TEMP                            NO
-    USERS                          YES
-    UNDOTBS100                      NO
+       TABLESPACE_NAME    ENCRYPTED
+    __________________ ____________
+    SYSTEM             NO
+    SYSAUX             NO
+    UNDOTBS1           NO
+    TEMP               NO
+    USERS              YES    
     ```
 
     </details>
 
-8. Exit SQLcl.
+4. Exit SQLcl.
 
     ``` sql
     <copy>
     exit
     </copy>
-    ```
+    ```    
+## Task 2: Analyze the database
 
-## Task 2: Encrypt target CDB
+Analyze the *PLUM* database for upgrade readiness.
 
-Currently, the *CDB26* database is not encrypted. You must start by preparing the database for encryption.
-
-1. Create a directory to hold the database keystore.
-
-    ``` bash
-    <copy>
-    mkdir -p /u01/app/oracle/admin/CDB26/wallet/tde
-    </copy>
-    ```
-
-2. Set the environment to the *CDB26* database and connect.
-
-    ``` sql
-    <copy>
-    . cdb26
-    sql / as sysdba
-    </copy>
-    ```
-
-3. Configure the database to store its keystore in the directory you just created. It's a static parameter requiring a restart of the database.
-
-    ``` sql
-    <copy>
-    alter system set wallet_root='/u01/app/oracle/admin/CDB26/wallet' scope=spfile;
-    shutdown immediate
-    startup
-    </copy>
-    ```
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> alter system set wallet_root='/u01/app/oracle/admin/CDB26/wallet' scope=spfile;
-
-    System altered.
-
-    SQL> shutdown immediate
-
-    Database closed.
-    Database dismounted.
-    ORACLE instance shut down.
-
-    SQL> startup
-
-    ORACLE instance started.
-
-    Total System Global Area 4292413984 bytes
-    Fixed Size                  5368352 bytes
-    Variable Size            1157627904 bytes
-    Database Buffers         3120562176 bytes
-    Redo Buffers                8855552 bytes
-
-    Database mounted.
-    Database opened.
-    ```
-
-    </details>
-
-4. Configure the database to use a software keystore (in the directory specified in `WALLET_ROOT`).
-
-    ``` sql
-    <copy>
-    alter system set tde_configuration='keystore_configuration=file' scope=both;
-    </copy>
-    ```
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> alter system set tde_configuration='keystore_configuration=file' scope=both;
-
-    System altered.
-    ```
-
-    </details>
-
-5. Create the keystore, open it, set a TDE master key and configure an auto-login keystore.
-
-    ``` sql
-    <copy>
-    administer key management create keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-    administer key management set keystore open force keystore identified by "oracle_4U";
-    administer key management set key identified by "oracle_4U" with backup;
-    administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-    </copy>
-    ```
-
-    * You used the same keystore password in *CDB26* as well for simplicity. Realistically, you would choose different keystore passwords.
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> administer key management create keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-
-    keystore altered.
-
-    SQL> administer key management set keystore open force keystore identified by "oracle_4U";
-
-    keystore altered.
-
-    SQL> administer key management set key identified by "oracle_4U" with backup;
-
-    keystore altered.
-
-    SQL> administer key management create local auto_login keystore from keystore '/u01/app/oracle/admin/CDB26/wallet/tde' identified by "oracle_4U";
-
-    keystore altered.
-    ```
-
-    </details>
-
-6. Exit SQLcl.
-
-    ``` sql
-    <copy>
-    exit
-    </copy>
-    ```
-
-## Task 3: Analyze the database
-
-Analyze the *FTEX* database for upgrade readiness.
-
-1. To enable AutoUpgrade to work with encrypted databases, it must have access to a directory where it can store a special keystore just for AutoUpgrade.
+1. In this lab, you will use a pre-created AutoUpgrade config file. Examine the config file.
 
     ``` bash
     <copy>
-    mkdir -p /u01/app/oracle/keystore/autoupgrade
+    cat /home/oracle/scripts/upg-plum.cfg
     </copy>
     ```
 
-2. In this lab, you will use a pre-created AutoUpgrade config file. Examine the config file.
-
-    ``` bash
-    <copy>
-    cat /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg
-    </copy>
-    ```
-
-    * The location for the AutoUpgrade keystore is defined by `global.keystore`.
-    * `target_cdb` specified the CDB where you want to plug in the non-CDB specified by `sid`.
-    * `target_pdb_name` renames the *FTEX* database on plug-in to *CYAN*.
+    * AutoUpgrade has its own keystore where it can store sensitive information, like database keystore passwords.
+    * The location for the AutoUpgrade keystore is defined by `global.keystore`. 
+    * The AutoUpgrade keystore is not to be confused with the database keystore (which holds the tablespace encryption keys).
+    * `sid` and `target_cdb` are the source and target CDBs.
+    * `pdbs` is a comma-separated list of PDBs to upgrade.
+    * You want to plug in and reuse the datafiles, so you omit `target_pdb_copy_option`. 
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    global.global_log_dir=/home/oracle/logs/encrypted-db-upg-conv
-    global.keystore=/u01/app/oracle/keystore/autoupgrade
+    global.global_log_dir=/home/oracle/logs/upg-plum
+    global.keystore=/u01/app/oracle/keystore/autoupgrade/plum
     upg1.source_home=/u01/app/oracle/product/19
     upg1.target_home=/u01/app/oracle/product/26
-    upg1.sid=FTEX
-    upg1.target_cdb=CDB26
-    upg1.target_pdb_name=CYAN
-    upg1.timezone_upg=NO
+    upg1.sid=CDB19ENC
+    upg1.target_cdb=CDB26ENC
+    upg1.pdbs=PLUM
     ```
 
     </details>
 
-3. Start AutoUpgrade in analyze mode. Wait for it to complete.
+2. Start AutoUpgrade in analyze mode. Wait for it to complete.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-plum.cfg -mode analyze
     </copy>
     ```
 
@@ -515,12 +233,11 @@ Analyze the *FTEX* database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 25.6.251016 launched with default internal options
     Processing config file ...
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    1 Non-CDB(s) will be analyzed
+    1 PDB(s) will be analyzed
     Type 'help' to list console commands
     upg> Job 100 completed
     ------------------- Final Summary --------------------
@@ -530,23 +247,22 @@ Analyze the *FTEX* database for upgrade readiness.
     Jobs failed                    [0]
 
     Please check the summary report at:
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
 
-4. Check the *summary report*.
+3. Check the *summary report*.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
     * *PRECHECKS* has status *FAILURE*. The database is **not** ready for upgrade.
     * The check *TDE_PASSWORDS_REQUIRED* failed.
-    * The check *TARGET_CDB_COMPATIBILITY* might fail as well, but you disregard that for now.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -555,42 +271,44 @@ Analyze the *FTEX* database for upgrade readiness.
     ==========================================
               Autoupgrade Summary Report
     ==========================================
-    [Date]           Fri May 31 05:05:37 GMT 2024
+    [Date]           Fri Aug 14 10:37:21 GMT 2026
     [Number of Jobs] 1
     ==========================================
     [Job ID] 100
     ==========================================
-    [DB Name]                FTEX
-    [Version Before Upgrade] 19.28.0.0.0
-    [Version After Upgrade]  23.26.0.0.0
+    [DB Name]                cdb19enc
+    [Version Before Upgrade] 19.31.0.0.0
+    [Version After Upgrade]  23.26.3.0.0
     ------------------------------------------
     [Stage Name]    PRECHECKS
     [Status]        FAILURE
-    [Start Time]    2024-05-31 05:05:31
-    [Duration]
-    [Log Directory] /home/oracle/logs/encrypted-db-upg-conv/FTEX/100/prechecks
-    [Detail]        /home/oracle/logs/encrypted-db-upg-conv/FTEX/100/prechecks/ftex_preupgrade.log
-                    Check failed for FTEX, manual intervention needed for the below checks
+    [Start Time]    2026-08-14 10:37:13
+    [Duration]      0:00:08
+    [Log Directory] /home/oracle/logs/upg-plum/CDB19ENC/100/prechecks
+    [Detail]        /home/oracle/logs/upg-plum/CDB19ENC/100/prechecks/cdb19enc_preupgrade.log
+                    Check failed for PLUM, manual intervention needed for the below checks
                     [TDE_PASSWORDS_REQUIRED]
-    Cause:Check failed for FTEX, manual intervention needed for the below checks :     [AUDUNIFIED_LOB_TYPE HIDDEN_PARAMS INVALID_OBJECTS_EXIST POST_DICTIONARY POST_FIXED_OBJECTS     OLD_TIME_ZONES_EXIST PARAMETER_DEPRECATED MIN_RECOVERY_AREA_SIZE MANDATORY_UPGRADE_CHANGES     DATAPATCH_TIMEOUT_SETTINGS RMAN_RECOVERY_VERSION TABLESPACES_INFO TIMESTAMP_MISMATCH POST_UTLRP     COMPONENT_INFO INVALID_ORA_OBJ_INFO INVALID_APP_OBJ_INFO TDE_PASSWORDS_REQUIRED     PARAM_VALUES_IN_MEM_ONLY EM_EXPRESS_PRESENT TARGET_CDB_COMPATIBILITY_WARNINGS ]
-    Reason:Database Checks has Failed details in /home/oracle/logs/encrypted-db-upg-conv/FTEX/100/    prechecks
+    Cause:The following checks have ERROR severity and no auto fixup is available or
+    the fixup failed to resolve the issue. Fix them before continuing:
+    PLUM TDE_PASSWORDS_REQUIRED
+    Reason:Database Checks has Failed details in /home/oracle/logs/upg-plum/CDB19ENC/100/prechecks
     Action:[MANUAL]
     Info:Return status is ERROR
     ExecutionError:No
-    Error Message:The following checks have ERROR severity and no fixup is available or
-    the fixup failed to resolve the issue. Fix them manually before continuing:
-    FTEX TDE_PASSWORDS_REQUIRED
+    Error Message:The following checks have ERROR severity and no auto fixup is available or
+    the fixup failed to resolve the issue. Fix them before continuing:
+    PLUM TDE_PASSWORDS_REQUIRED
 
     ------------------------------------------
     ```
 
     </details>
 
-5. You find additional details in the preupgrade log file. There is a *required action* that you must do before the upgrade.
+4. You find additional details in the preupgrade log file. There is a *required action* that you must do before the upgrade.
 
-    * You must load the database keystore password into the AutoUpgrade keystore for the databases *FTEX* and *CDB26*.
+    * You must load the database keystore password into the AutoUpgrade keystore for the databases *CDB19ENC* and *CDB26ENC*.
     * AutoUpgrade must have access to keystore password to complete the process.
-    * Optionally, you can check the entire preupgrade log file. It is in `/home/oracle/logs/encrypted-db-upg-conv/FTEX/100/prechecks/ftex_preupgrade.log`.
+    * Optionally, you can check the entire preupgrade log file. It is in `/home/oracle/logs/upg-plum/CDB19ENC/100/prechecks/cdb19enc_preupgrade.log`.
 
     ``` text
     (output truncated)
@@ -601,7 +319,14 @@ Analyze the *FTEX* database for upgrade readiness.
 
       REQUIRED ACTIONS
       ================
-      1.  Perform the specified action for each database in order to satisfy
+      1.
+            CheckName                                     FixUp Available
+            TDE_PASSWORDS_REQUIRED                        NO
+
+            Severity                                      Stage
+            ERROR                                         PRECHECKS
+
+          Perform the specified action for each database in order to satisfy
           AutoUpgrade's TDE keystore requirements. This will involve adding the TDE
           keystore password for the database into either AutoUpgrade's keystore
           using the -load_password command line option or into a Secure External
@@ -610,17 +335,6 @@ Analyze the *FTEX* database for upgrade readiness.
           to rerun the upgrade, the AutoUpgrade keystore file(s) can be removed
           from the directory or path referenced by the global.keystore
           configuration parameter.
-
-          At this point, either (1) the TDE keystore password(s) required by
-          AutoUpgrade have not been loaded into AutoUpgrade's keystore or a Secure
-          External Password Store or (2) the auto-login keystore status of the
-          database has not been modified. Review the required actions for each of
-          the following databases:
-
-          ORACLE_SID                      Action Required
-          ------------------------------  ----------------------------------------
-          CDB26                           Add TDE password
-          FTEX                            Add TDE password
 
           For AutoUpgrade to upgrade a database using Oracle Transparent Data
           Encryption (TDE), the following conditions must be met:
@@ -640,17 +354,31 @@ Analyze the *FTEX* database for upgrade readiness.
 
           3. To upgrade a non-CDB or an entire CDB, the TDE keystore must be an
           auto-login keystore. This requirement also applies to a non-CDB to PDB
-          operation, but only if the target CDB is at an Oracle AI Database Release
+          operation, but only if the target CDB is at an Oracle Database Release
+          earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
+          operation, but only if the target CDB is at an Oracle Database Release
           earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
           upgrade of the non-CDB to the target version prior to creating the PDB in
           the target CDB.
+
+          At this point, either (1) the TDE keystore password(s) required by
+          AutoUpgrade have not been loaded into AutoUpgrade's keystore or a Secure
+          External Password Store or (2) the auto-login keystore status of the
+          database has not been modified. Review the required actions for each of
+          the following databases:
+
+          ORACLE_SID                      Action Required
+          ------------------------------  ----------------------------------------
+          ORACLE_SID                      Action Required
+          CDB19ENC                        Add TDE password
+          CDB26ENC                        Add TDE password      
     ```
 
-6. Load the database keystore passwords into the AutoUpgrade keystore. Start the password loader.
+5. Load the database keystore passwords into the AutoUpgrade keystore. Start the password loader.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -load_password
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-plum.cfg -load_password
     </copy>
     ```
 
@@ -686,15 +414,15 @@ Analyze the *FTEX* database for upgrade readiness.
 
     </details>
 
-8. Add the database keystore password for *FTEX*.
+8. Add the database keystore password for *CDB19ENC*.
 
     ``` bash
     <copy>
-    add FTEX
+    add CDB19ENC
     </copy>
     ```
 
-    Enter the *FTEX* database keystore password twice:
+    Enter the *CDB19ENC* database keystore password twice:
 
     ``` bash
     <copy>
@@ -706,22 +434,22 @@ Analyze the *FTEX* database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    TDE> add FTEX
+    TDE> add CDB19ENC
     Enter your secret/Password:
     Re-enter your secret/Password:
     ```
 
     </details>
 
-9. Add the database keystore password for *CDB26*.
+9. Add the database keystore password for *CDB26ENC*.
 
     ``` bash
     <copy>
-    add CDB26
+    add CDB26ENC
     </copy>
     ```
 
-    Enter the *CDB26* database keystore password twice:
+    Enter the *CDB26ENC* database keystore password twice:
 
     ``` bash
     <copy>
@@ -733,7 +461,7 @@ Analyze the *FTEX* database for upgrade readiness.
     <summary>*click to see the output*</summary>
 
     ``` text
-    TDE> add CDB26
+    TDE> add CDB26ENC
     Enter your secret/Password:
     Re-enter your secret/Password:
     ```
@@ -749,13 +477,15 @@ Analyze the *FTEX* database for upgrade readiness.
     ```
 
     * Enter *YES* when prompted to convert to an auto-login keystore.
+    * An auto-login keystore works only on the system it was created.
+    * You could also enter *SHARED*. A shared auto-login keystore works in any system.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
     TDE> save
-    Convert the AutoUpgrade keystore to auto-login [YES|NO] ? YES
+    Select auto-login mode for the AutoUpgrade keystore [YES|NO|SHARED]: YES
     ```
 
     </details>
@@ -783,22 +513,24 @@ Analyze the *FTEX* database for upgrade readiness.
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -mode analyze
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-plum.cfg -mode analyze
     </copy>
     ```
+
+    * Notice the console messages about the AutoUpgrade keystore.
+    * Since you've created an AutoUpgrade keystore, AutoUpgrade now reads it on startup. 
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 25.6.251016 launched with default internal options
     Processing config file ...
     Loading AutoUpgrade keystore
-    AutoUpgrade keystore was successfully loaded
+    AutoUpgrade keystore is loaded
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    1 Non-CDB(s) will be analyzed
+    1 PDB(s) will be analyzed
     Type 'help' to list console commands
     upg> Job 101 completed
     ------------------- Final Summary --------------------
@@ -808,8 +540,8 @@ Analyze the *FTEX* database for upgrade readiness.
     Jobs failed                    [0]
 
     Please check the summary report at:
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
@@ -818,7 +550,7 @@ Analyze the *FTEX* database for upgrade readiness.
 
     ``` bash
     <copy>
-    cat /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    cat /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.log
     </copy>
     ```
 
@@ -832,36 +564,36 @@ Analyze the *FTEX* database for upgrade readiness.
     ==========================================
               Autoupgrade Summary Report
     ==========================================
-    [Date]           Fri May 31 05:21:50 GMT 2024
+    [Date]           Fri Aug 14 11:04:53 GMT 2026
     [Number of Jobs] 1
     ==========================================
     [Job ID] 101
     ==========================================
-    [DB Name]                FTEX
-    [Version Before Upgrade] 19.28.0.0.0
-    [Version After Upgrade]  23.26.0.0.0
+    [DB Name]                cdb19enc
+    [Version Before Upgrade] 19.31.0.0.0
+    [Version After Upgrade]  23.26.3.0.0
     ------------------------------------------
     [Stage Name]    PRECHECKS
     [Status]        SUCCESS
-    [Start Time]    2024-05-31 05:21:45
-    [Duration]
-    [Log Directory] /home/oracle/logs/encrypted-db-upg-conv/FTEX/101/prechecks
-    [Detail]        /home/oracle/logs/encrypted-db-upg-conv/FTEX/101/prechecks/ftex_preupgrade.log
+    [Start Time]    2026-08-14 11:04:45
+    [Duration]      0:00:08
+    [Log Directory] /home/oracle/logs/upg-plum/CDB19ENC/101/prechecks
+    [Detail]        /home/oracle/logs/upg-plum/CDB19ENC/101/prechecks/cdb19enc_preupgrade.log
                     Check passed and no manual intervention needed
     ------------------------------------------
     ```
 
     </details>
 
-## Task 4: Upgrade and convert
+## Task 4: Upgrade 
 
-All prerequisites have been meet. You can now start the upgrade and conversion.
+All prerequisites have been meet. You can now start the upgrade.
 
-1. Start AutoUpgrade in deploy. This starts the upgrade and conversion in one fully automated process.
+1. Start the upgrade using AutoUpgrade in deploy. 
 
     ``` bash
     <copy>
-    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-14-encrypted-db-upg-conv.cfg -mode deploy
+    java -jar autoupgrade.jar -config /home/oracle/scripts/upg-plum.cfg -mode deploy
     </copy>
     ```
 
@@ -869,16 +601,14 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     <summary>*click to see the output*</summary>
 
     ``` text
-    AutoUpgrade 25.6.251016 launched with default internal options
     Processing config file ...
     Loading AutoUpgrade keystore
-    AutoUpgrade keystore was successfully loaded
+    AutoUpgrade keystore is loaded
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    1 Non-CDB(s) will be processed
+    1 PDB(s) will be processed
     Type 'help' to list console commands
-    upg>
     ```
 
     </details>
@@ -907,7 +637,7 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
 
     </details>
 
-3. The upgrade and conversion takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade prints *Job 102 completed* and exits.
+3. The upgrade takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade prints *Job 102 completed* and exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -923,33 +653,29 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     Jobs pending                   [0]
 
 
-
     Please check the summary report at:
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.html
-    /home/oracle/logs/encrypted-db-upg-conv/cfgtoollogs/upgrade/auto/status/status.log
+    /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.html
+    /home/oracle/logs/upg-plum/cfgtoollogs/upgrade/auto/status/status.log
     ```
 
     </details>
 
-4. Set the environment to *CDB26* and connect.
+4. Set the environment to *CDB26ENC* and connect.
 
     ``` sql
     <copy>
-    . cdb26
+    . cdb26enc
     sql / as sysdba
     </copy>
     ```
 
-5. Ensure that the *FTEX* database has been plugged in and is open *READ WRITE* and unrestricted.
+5. Ensure that the *PLUM* database has been plugged in and is open *READ WRITE* and unrestricted.
 
     ``` sql
     <copy>
     show pdbs
     </copy>
     ```
-
-    * You renamed *FTEX* to *CYAN*.
-    * You might see other PDBs from other labs. Focus on *CYAN*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -960,20 +686,16 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
         CON_ID CON_NAME                        OPEN MODE  RESTRICTED
     ---------- ------------------------------ ---------- ----------
         2 PDB$SEED                           READ ONLY  NO
-        3 RED                                READ WRITE NO
-        4 BLUE                               MOUNTED
-        5 GREEN                              MOUNTED
-        6 UPGR                               MOUNTED
-        7 CYAN                               READ WRITE NO
+        3 PLUM                               READ WRITE NO
     ```
 
     </details>
 
-6. Switch to the *CYAN* PDB and ensure the *USERS* tablespace is still encrypted.
+6. Switch to the *PLUM* PDB and ensure the *USERS* tablespace is still encrypted.
 
     ``` sql
     <copy>
-    alter session set container=CYAN;
+    alter session set container=PLUM;
     select tablespace_name, encrypted from dba_tablespaces;
     </copy>
     ```
@@ -982,7 +704,7 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter session set container=CYAN;
+    SQL> alter session set container=PLUM;
 
     Session altered.
 
@@ -992,9 +714,10 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
     ------------------------------ ---
     SYSTEM                         NO
     SYSAUX                         NO
+    UNDOTBS1                       NO
     TEMP                           NO
     USERS                          YES
-    UNDOTBS100                     NO
+    
     ```
 
     </details>
@@ -1015,7 +738,7 @@ All prerequisites have been meet. You can now start the upgrade and conversion.
 
     WRL_TYPE             STATUS     WALLET_TYPE          KEYSTORE
     -------------------- ---------- -------------------- --------
-    FILE                 OPEN       PASSWORD             UNITED
+    FILE                 OPEN       LOCAL_AUTOLOGIN      UNITED
     ```
 
     </details>

@@ -279,7 +279,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     </copy>
     ```
 
-    AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
+    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
 
 4. Do not exit AutoUpgrade. Switch to the blue 🟦 terminal. Set the environment to the *BEIGE* database.
 
