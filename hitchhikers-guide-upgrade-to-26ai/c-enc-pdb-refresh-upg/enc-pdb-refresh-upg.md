@@ -10,7 +10,7 @@ Estimated Time: 25 minutes
 
 In this lab, you will:
 
-* Upgrade an encrypted PDB, *CORAL*.
+* Upgrade an encrypted PDB, *CORAL*, and rename it to *CHERRY*. 
 * Create a refreshable clone PDB in 26ai CDB, *CDB26ENC*.
 * Refresh and upgrade.
 * Use the AutoUpgrade keystore
@@ -1063,5 +1063,5 @@ For fully automated solutions, you should explore Secure External Password Store
 ## Acknowledgements
 
 * **Author** - Daniel Overby Hansen
-* **Contributors** - Klaus Gronau, Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Rodrigo Jorge, January 2026
+* **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
+* **Last Updated By/Date** - Daniel Overby Hansen, August 2026

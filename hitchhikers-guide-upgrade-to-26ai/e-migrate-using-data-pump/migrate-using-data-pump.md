@@ -1031,5 +1031,5 @@ You can avoid an in-place upgrade and PDB conversion by using Data Pump. The sou
 ## Acknowledgements
 
 * **Author** - Daniel Overby Hansen
-* **Contributors** - Klaus Gronau, Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Rodrigo Jorge, January 2026
+* **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
+* **Last Updated By/Date** - Daniel Overby Hansen, August 2026
