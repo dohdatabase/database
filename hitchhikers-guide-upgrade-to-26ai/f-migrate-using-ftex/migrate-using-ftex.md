@@ -479,7 +479,7 @@ You need a few more changes to the new PDB before you can start the import.
     i=1; for f in /u02/oradata/FTEX/datafile/o1_mf_users_*.dbf; do cp -av "$f" "/u02/oradata/CDB26/MAROON/users$(printf '%02d' $i).dbf"; ((i++)); done
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 5. Examine the precreated Data Pump import parameter file.

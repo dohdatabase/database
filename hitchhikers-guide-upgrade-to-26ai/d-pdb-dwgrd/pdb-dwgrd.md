@@ -172,7 +172,7 @@ Now that the PDB is open in downgrade mode, you can start the process.
     ./dbdowngrade -c 'YELLOW'
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Use `-c` to downgrade just that one PDB, not the entire CDB.
@@ -211,7 +211,7 @@ Now that the PDB is open in downgrade mode, you can start the process.
     alter pluggable database YELLOW unplug into '/home/oracle/scripts/upg-yellow.xml';
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>

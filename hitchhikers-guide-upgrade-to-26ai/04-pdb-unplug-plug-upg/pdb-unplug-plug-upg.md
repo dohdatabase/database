@@ -32,7 +32,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     sqlplus / as sysdba
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 2. Switch to the *ORANGE* PDB and check the `COMPATIBLE` parameter.
@@ -43,7 +43,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     select value from v$parameter where name='compatible';
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The `COMPATIBLE` parameter is set to `19.0.0`. 

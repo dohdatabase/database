@@ -32,7 +32,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-unplug-plug-orange.cfg -zip -d auzip
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The `-zip` parameter instructs AutoUpgrade to create a zip package.
@@ -60,7 +60,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     ls -l
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * It looks similar to the AutoUpgrade log directory.
@@ -89,7 +89,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     ls -l
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * AutoUpgrade included the alert log of both source and target CDB.
@@ -116,7 +116,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     rm -rf auzip
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 ## Task 2: Replay Upgrade
@@ -131,7 +131,7 @@ Replay upgrade have fewer log files than a classic upgrade, and you need to look
     sed -n '/alter pluggable database terracotta open/,$p' alert_CDB26.log | less
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Scroll through the output with *page up* and *page down*.

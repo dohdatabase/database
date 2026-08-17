@@ -126,7 +126,7 @@ Inside your maintenance window, you perform the upgrade.
     drop pluggable database terracotta keep datafiles;     
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * First, you close the PDB.

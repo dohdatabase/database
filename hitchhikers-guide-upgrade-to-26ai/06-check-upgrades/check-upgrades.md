@@ -52,7 +52,7 @@ You have completed:
     sql / as sysdba
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 3. Switch to the *ORANGE* PDB and check the `COMPATIBLE` parameter.
@@ -63,7 +63,7 @@ You have completed:
     select value from v$parameter where name='compatible';
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The `COMPATIBLE` parameter is set to `23.0.0`.
@@ -155,7 +155,7 @@ You have completed:
     $ORACLE_HOME/OPatch/datapatch -pdbs terracotta
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Explore the subdirectories.
@@ -248,7 +248,7 @@ You have completed:
     select open_mode, restricted from v$pdbs where name='TERRACOTTA';
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The PDB now opens without problems; read write and unrestricted.

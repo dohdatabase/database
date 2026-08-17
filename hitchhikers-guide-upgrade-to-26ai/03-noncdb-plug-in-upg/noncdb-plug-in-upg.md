@@ -782,7 +782,7 @@ While the upgrade continues (check on it if you want), you take a closer look at
     select version_full from v$instance;
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>

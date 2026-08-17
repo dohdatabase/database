@@ -29,7 +29,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     sql / as sysdba
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 2. Start the database.
@@ -356,7 +356,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     sql / as sysdba
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 7. Check the database release.

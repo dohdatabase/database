@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will use refreshable clone PDB. This feature creates a copy of the database and keeps it up-to-date with redo. This minimizes the downtime needed and still keeps the source database untouched for rollback.
+In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will use a refreshable clone PDB. This feature creates a copy of the database and keeps it synchronized by periodically applying redo from the source database. This minimizes the required downtime while keeping the source database untouched for rollback.
 
 You will upgrade the *BEIGE* database and plug it into the *CDB26* database.
 
@@ -12,8 +12,8 @@ Estimated Time: 35 minutes
 
 In this lab, you will:
 
-* Upgrade a non-CDB and convert to PDB
-* Plug in to existing CDB
+* Upgrade a non-CDB and convert it to PDB
+* Plug it in to existing CDB
 * Prepare databases for refreshable clone PDB
 
 ### Prerequisites
@@ -22,7 +22,7 @@ None.
 
 ## Task 1: Prepare your environment
 
-Refreshable clone PDB works via a database link. You must create a user and grant privileges in the source non-CDB. Also, you must create a database link in the target CDB connecting to the source non-CDB.
+A refreshable clone PDB uses a database link. You must create a user and grant the required privileges in the source non-CDB. Also, you must create a database link in the target CDB connecting to the source non-CDB.
 
 1. Use the *yellow* 🟨 terminal. Set the environment to the source non-CDB database (*BEIGE*) and connect.
 
@@ -33,7 +33,7 @@ Refreshable clone PDB works via a database link. You must create a user and gran
     </copy>
     ```
 
-2. Create a user and grant the necessary privileges
+2. Create a user and grant the necessary privileges.
 
     ``` sql
     <copy>
@@ -64,7 +64,7 @@ Refreshable clone PDB works via a database link. You must create a user and gran
 
     Grant succeeded.
 
-    SQL> grant create pluggable database dblinkuser;
+    SQL> grant create pluggable database to dblinkuser;
 
     Grant succeeded.
 
@@ -160,11 +160,11 @@ You check the source database for upgrade readiness.
 
     * `sid` specifies the source non-CDB.
     * `target_cdb` is the CDB where you want to plug in.
-    * `source_dblink` is the name of the database link in the target CDB, plus the refresh rate. Here, it's set to 60 seconds which is too low for a realistic scenario, but suitable for demo purposes.
+    * `source_dblink` is the name of the database link in the target CDB, plus the refresh rate. Here, it is set to 60 seconds, which is shorter than you would typically use in a production environment but is suitable for this lab.
     * `target_pdb_name` renames the database from *BEIGE* to *TEAL*.
     * `target_pdb_copy_option` instructs the CDB to use Oracle Managed Files (OMF).
     * `parallel_pdb_creation_clause` instructs the CDB to use parallel execution servers to copy the new PDB's data files to a new location. This may result in faster creation of the PDB. If unset, then the CDB automatically chooses the number of parallel execution servers to use.
-    * `start_time` is set to 100 hours from starting AutoUpgrade. We set the process start time far ahead so we can later control the execution using the *proceed* command.
+    * `start_time` is set to 100 hours from starting AutoUpgrade. We set the process start time far in the future so we can later control the execution using the *proceed* command.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -187,7 +187,7 @@ You check the source database for upgrade readiness.
 
 2. Start AutoUpgrade in *analyze* mode. The check usually completes very fast. Wait for it to complete.
 
-    * The analysis must run on the source system. Since source and target is the same in this lab, you don't need to worry about it.
+    * The analysis must run on the source system. Since the source and target are the same in this lab, you don't need to worry about it.
     * If the target is on a remote host, you can use the parameter `target_is_remote`. 
 
     ``` bash
@@ -236,7 +236,7 @@ You check the source database for upgrade readiness.
 
 4. Proceed with the pre-upgrade fixups.
 
-    * Normally, you would do this close to the final refresh (as dictated by `start_time` config file parameter or when you plan to run the *proceed* command). But in this lab we do it now.
+    * Normally, you would do this shortly before the final refresh (as dictated by `start_time` config file parameter or when you plan to run the *proceed* command). But in this lab we do it now.
     * The fixups must run on the source system.
     * In the interest of time, you skip the fixups in this exercise.
 
@@ -246,7 +246,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
 1. Use the *yellow* 🟨 terminal. Start AutoUpgrade in *deploy* mode.
 
-    * The deploy must run on the target system. Since source and target is the same in this lab, you don't need to worry about it.
+    * AutoUpgrade in deploy mode must run on the target system. Since source and target is the same in this lab, you don't need to worry about it.
 
     ``` bash
     <copy>
@@ -269,7 +269,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
     </details>
 
-2. Monitor the creation. AutoUpgrade creates the PDB and copies the data files in the phase *CLONEPDB*. The database is small so it completes fairly quick. Hit *RETURN* to bring the console forward.
+2. Monitor the creation. AutoUpgrade creates the PDB and copies the data files in the phase *CLONEPDB*. The database is small so it completes fairly quickly. Press *RETURN* to bring the console forward.
 
 3. Use the `lsj` command.
 
@@ -279,7 +279,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     </copy>
     ```
 
-    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
+    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial data file copy are propagated to the PDB in the PDB after the migration.
 
 4. Do not exit AutoUpgrade. Switch to the blue 🟦 terminal. Set the environment to the *BEIGE* database.
 
@@ -300,7 +300,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     </copy>
     ```
 
-    * Later, we use the test data to ensure that no data is lost.
+    * Later, you will use the test data to ensure that no data is lost.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -331,11 +331,11 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
 ## Task 4: Upgrade and convert to PDB
 
-The *REFRESHPDB* phase would stay technically for the next 100 hours. Reason we defined that long time is to have a full control when to start the process. Imagine, for example, we are waiting for a *go* or approval from another team to shut the application down so we can start our migration.
+The *REFRESHPDB* phase would normally remain active for the next 100 hours. We specified such a long interval so that we have full control over when to start the process. For example, you might be waiting for approval from another team to shut the application down so we can start our migration.
 
-When the upgrade starts, AutoUpgrade executes a final refresh to bring over the latest changes. So no more changes will be captured from the source database. Then, it disconnects the PDB from the non-CDB and starts the upgrade and conversion to PDB.
+When the upgrade starts, AutoUpgrade executes a final refresh to bring over the latest changes. So no more changes will be captured from the source database. Then, it stops refreshing the PDB from the non-CDB and starts the upgrade and conversion to PDB.
 
-1. Use the *yellow* 🟨 terminal. Press ENTER just to stop *lsj* from spooling the job status. Next, run the `proceed` command to force the start of upgrade process **now**.
+1. Use the *yellow* 🟨 terminal. Press *ENTER* to stop *lsj* from spooling the job status. Next, run the `proceed` command to force the start of the upgrade process **now**.
 
     ``` bash
     <copy>
@@ -364,11 +364,11 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     </copy>
     ```
 
-    * AutoUpgrade was holding in *REFRESHPDB*; applying redo at the specified interval.
+    * AutoUpgrade was waiting in the *REFRESHPDB* phase; applying redo at the specified interval.
     * When you issued the `proceed` command, AutoUpgrade made a final refresh before moving on to the next phase.
-    * Any changes made in the source database at this point in time, would not come over to the target PDB.
-    * In the *DBUPGRADE* stage, AutoUpgrade is upgrading the PDB to the new release. The CDB is already on the new release, so only the PDB is upgraded which is much faster than a complete database upgrade.
-    * Since the source database is a non-CDB, the PDB must also be converted to a proper PDB. AutoUpgrade does that in *NONCDBTOPDB* where it runs the `noncdb_to_pdb.sql` script.
+    * Any changes made in the source database at this point would not be transferred to the target PDB.
+    * In the *DBUPGRADE* stage, AutoUpgrade is upgrading the PDB to the new release. The CDB is already on the new release, so only the PDB is upgraded, which is much faster than a complete database upgrade.
+    * Since the source database is a non-CDB, the PDB must also be converted to a proper PDB. AutoUpgrade does this during the *NONCDBTOPDB* phase, where it runs the `noncdb_to_pdb.sql` script.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -397,7 +397,6 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     	CLONEPDB         <1 min
     	REFRESHPDB       3 min
     	DISPATCH         <1 min
-    	DISPATCH         <1 min
     	DBUPGRADE        ~2 min (RUNNING)
     	NONCDBTOPDB
     	POSTCHECKS
@@ -424,7 +423,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 While the upgrade runs, let's look at some of the details.
 
-1. Switch to the *blue* 🟦 terminal. Examine the alert log of *CDB26*, the target CDB, and see the creation of the refreshable clone PDB.
+1. Switch to the *blue* 🟦 terminal. Examine the alert log of *CDB26*, the target CDB, to see the creation of the refreshable clone PDB.
 
     ``` bash
     <copy>
@@ -432,12 +431,12 @@ While the upgrade runs, let's look at some of the details.
     grep -i -B2 "create pluggable database \"TEAL\"" alert_CDB26.log
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Notice how AutoUpgrade used the `CREATE PLUGGABLE DATABASE` statement.
     * The `@CLONEPDB` keyword specifies the use of remote cloning via the database link *CLONEPDB*.
-    * The `REFRESH` keyword specifies the use of refreshable clone PDB.
+    * The `REFRESH` clause creates the PDB as a refreshable clone.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -456,7 +455,7 @@ While the upgrade runs, let's look at some of the details.
 
     </details>
 
-2. Further, let's see the period refresh.
+2. Further, let's see the periodic refresh.
 
     ``` bash
     <copy>
@@ -465,7 +464,7 @@ While the upgrade runs, let's look at some of the details.
     ```
 
     * The `ALTER PLUGGABLE DATABASE ... REFRESH` command instructs the CDB to bring the latest redo from the source database and roll forward.
-    * Notice how the refresh happens every 60 seconds. The refresh rate specified in the config file.
+    * Notice how the refresh happens every 60 seconds. This is the refresh rate specified in the config file.
     * The refresh stopped when you used the `proceed` command. Now, AutoUpgrade executes a final refresh before moving on with the upgrade.
 
     <details>
@@ -497,7 +496,7 @@ While the upgrade runs, let's look at some of the details.
 
     </details>
 
-3. Let's examine the AutoUpgrade log files. Go to the *Logs Base* location. You can find this location using the AutoUpgrade console command `status`. 
+3. Let's examine the AutoUpgrade log files. Go to the *Logs Base* directory. You can find this location using the AutoUpgrade console command `status`. 
 
     ``` bash
     <copy>
@@ -505,7 +504,7 @@ While the upgrade runs, let's look at some of the details.
     ls -l
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Explore the subdirectories.
@@ -531,7 +530,7 @@ While the upgrade runs, let's look at some of the details.
     ls -l
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Each phase (*preupgrade*, *prefixups*, *drain*, *dbupgrade*, etc.) has its own subdirectory. 
@@ -552,7 +551,7 @@ While the upgrade runs, let's look at some of the details.
 
     </details>
 
-5. Examine the upgrade log files. You find those in the *dbupgrade* directory.
+5. Examine the upgrade log files. You find them in the *dbupgrade* directory.
 
     ``` bash
     <copy>
@@ -560,7 +559,7 @@ While the upgrade runs, let's look at some of the details.
     ls -l
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -615,10 +614,10 @@ While the upgrade runs, let's look at some of the details.
     </copy>
     ```
     
-    * Before AutoUpgrade this was an effective way of monitoring the upgrade.
-    * Nowadays, AutoUpgrade provides more meaningful output and monitors the upgrade for you.
+    * Before AutoUpgrade, this was an effective way of monitoring the upgrade.
+    * AutoUpgrade now provides more meaningful output and monitors the upgrade for you.
 
-8. Stop tailing. Hit *CTRL+C*. 
+8. Stop tailing. Press *CTRL+C*. 
 
 9. Examine some of the other log files.
 
@@ -630,7 +629,7 @@ While the upgrade runs, let's look at some of the details.
     java -jar autoupgrade.jar -version
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Any version of AutoUpgrade is backward compatible. Always use the latest version when you upgrade.
@@ -662,7 +661,7 @@ While the upgrade runs, let's look at some of the details.
     java -jar autoupgrade.jar -help    
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -1004,7 +1003,7 @@ While the upgrade runs, let's look at some of the details.
     </copy>
     ```
 
-3. Switch to *TEAL* and ensure that the *SALES.ORDERS* table exist.
+3. Switch to *TEAL* and ensure that the *SALES.ORDERS* table exists.
 
     ``` sql
     <copy>
@@ -1014,7 +1013,7 @@ While the upgrade runs, let's look at some of the details.
     </copy>
     ```
 
-    * If the query completes without errors, it means the table is present. This proves that changes made after the initial copy of data files are still in the PDB after the migration.
+    * If the query completes without errors, the table is present. This proves that changes made after the initial copy of data files are still in the PDB after the migration.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -1042,7 +1041,7 @@ While the upgrade runs, let's look at some of the details.
     ```
 
 5. AutoUpgrade stops the source non-CDB immediately after the final refresh when the source non-CDB and target CDB are on the same system. 
-    * This ensures no one enters data into the wrong database during the migration, or add new data to it. 
+    * This ensures that no one enters data into the wrong database or adds new data to the source database after the migration.
     * You can control this behavior with the `close_source` config file parameter. 
     * If the databases are on different systems, you must manually shut down the source non-CDB after the migration.
     
@@ -1057,7 +1056,7 @@ You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-Refreshable clone PDB is a good technique for multitenant migration. It leaves the source non-CDB intact for rollback. It also builds a copy of the non-CDB in advance which minimizes the downtime window. But you need additional disk space to hold a copy of the data files.
+Refreshable clone PDB is a good technique for multitenant migration. It leaves the source non-CDB intact for rollback. It also builds a copy of the non-CDB in advance, which minimizes the downtime window. However, you need additional disk space to hold a copy of the data files.
 
 You can also use the method for databases that are already a PDB, on-prem to cloud migrations, Exascale migrations, or anywhere where you can establish a database link.
 

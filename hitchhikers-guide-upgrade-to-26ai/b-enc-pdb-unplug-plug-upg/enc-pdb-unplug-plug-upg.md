@@ -28,7 +28,7 @@ None.
     sql / as sysdba
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 2. Start the database.
@@ -57,7 +57,7 @@ None.
     sql / as sysdba
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 5. Start the database.
@@ -84,7 +84,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     create tablespace users datafile size 50m autoextend on next 50m encryption using 'AES256' encrypt;
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The PDB is configured to use a unified keystore. This is the default configuration.
@@ -123,7 +123,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
         as select systimestamp as ts, 'Hello' as msg from dual;    
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Notice the *no authencation* clause on the `CREATE USER` statement.
@@ -162,7 +162,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     select tablespace_name, encrypted from dba_tablespaces;
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
