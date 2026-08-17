@@ -22,15 +22,16 @@ You can switch between environments with the shortcuts shown in the last column 
 
 ![Overview of the Oracle Homes and databases in the lab](./images/introduction-overview.png " ")
 
-The lab contains 15 labs.
+The lab contains:
+* 15 labs in total
+* 9 labs on the main track
+* 6 optional labs
 
-![Overview of the labs](./images/lab-overview.png " ")
-
-* You start by completing labs 1 and 2.
-* Track 1 is the primary track. You should focus on labs 3 to 9.
-* When time allows, you can work on tracks 2 and 3.
-* In tracks 2 and 3, the order of the individual labs don't matter. You can perform the labs in any order, but only one lab from one track at a time.
-* As the last lab, you can perform lab 14.
+Guidance:
+* You start by completing labs 1 to 9 in the specified order.
+* Then, you may complete the optional labs in any order.
+* You may also start an optional lab when time allows. For instance, if you're waiting for an upgrade.
+* All the optional labs are self-contained and can be run simultanously with other labs.
 
 ## Upgrade and data migration methods and processes
 

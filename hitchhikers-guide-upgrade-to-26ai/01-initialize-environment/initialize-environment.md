@@ -44,8 +44,9 @@ In this lab, you will:
     * Database Listener
         * LISTENER
     * Database Server Instances
-        * FTEX
+        * BEIGE
         * UPGR
+        * CDB19
         * CDB26
 
 2. Ensure the listener is started. Use the *yellow* terminal 🟨.
@@ -79,9 +80,10 @@ In this lab, you will:
 
     ``` text
     $ ps -ef | grep ora_ | grep pmon | grep -v grep
-    oracle      3851       1  0 20:19 ?        00:00:00 ora_pmon_UPGR
-    oracle      5110       1  0 20:19 ?        00:00:00 ora_pmon_FTEX
-    oracle      5345       1  0 20:19 ?        00:00:00 ora_pmon_CDB26
+    oracle      5505       1  0 05:09 ?        00:00:00 ora_pmon_BEIGE
+    oracle      5505       1  0 05:09 ?        00:00:00 ora_pmon_UPGR
+    oracle      5964       1  0 05:09 ?        00:00:00 ora_pmon_CDB19
+    oracle      6467       1  0 05:09 ?        00:00:01 ora_pmon_CDB26
     ```
 
     </details>
