@@ -2,9 +2,9 @@
 
 ## Introduction
 
-Instead of upgrading and migrating an entire database, you will try a different approach in this lab. A logical migration of your data into a brand new, empty database on the new release of Oracle AI Database. Using this approach, you can skip the usual upgrade and PDB conversion. Data Pump enables you to import data directly into a higher release database (and lower for that matter). Further, you can export from a non-CDB and directly into a pluggable database.
+Instead of upgrading and migrating an entire database, you will use a different approach in this lab. A logical migration moves your data into a brand-new, empty database running the new release of Oracle AI Database. Using this approach, you can skip the usual upgrade and PDB conversion. Data Pump enables you to import data directly into a higher release database (and into a lower release database as well). Further, you can export from a non-CDB and directly into a pluggable database.
 
-A migration with Data Pump is mostly suitable for smaller databases or when you have other changes to the database, like converting LOBs to SecureFile, character set migrations, or other schema changes.
+A Data Pump migration is most suitable for smaller databases or when you need to make other changes, such as converting LOBs to SecureFile, migrating character sets, or making other schema changes.
 
 You will perform a full export from the *FTEX* database and import into a new PDB in the *CDB26* database.
 
@@ -21,13 +21,11 @@ In this lab, you will:
 
 None.
 
-This lab uses the *FTEX* and *CDB26* databases. Don't do this lab at the same time as lab 11 and 13.
-
 ## Task 1: Data Pump export
 
-You need to prepare a few things before you can start a Data Pump export.
+You need to prepare a few things before you can start the Data Pump export.
 
-1. Data Pump needs access to a directory where it can put dump and log file. Create a directory in the file system.
+1. Data Pump needs access to a directory where it can put dump and log files. Create a directory in the file system.
 
     ``` bash
     <copy>
@@ -54,7 +52,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
     * If the database is already running, you get `ORA-01081: cannot start already-running ORACLE - shut it down first`. Ignore it and continue.        
 
-3. Gather dictionary statistics before starting Data Pump. Oracle recommends gathering dictionary stats before starting a Data Pump export job.
+3. Gather dictionary statistics before starting Data Pump. Oracle recommends gathering dictionary statistics before starting a Data Pump export job.
 
     **(In the interest of time, you skip it in this lab.)**
 
@@ -63,7 +61,7 @@ You need to prepare a few things before you can start a Data Pump export.
     exec dbms_stats.gather_schema_stats('SYSTEM');
     ```
 
-4. Create a database directory object. It must point to the directory in the operating system that you just created.
+4. Create a database directory object that points to the operating system directory you just created.
 
     ``` bash
     <copy>
@@ -133,10 +131,10 @@ You need to prepare a few things before you can start a Data Pump export.
     ```
 
     * `dumpfile` uses the `%L` wildcard that enables Data Pump to create many dump files.
-    * `filesize` splits the files into 5 GB chunks which is handy if you need to transfer the dump files to a remote system.
+    * `filesize` splits the files into 5 GB chunks, which is useful if you need to transfer the dump files to a remote system.
     * `parallel` specifies the number of parallel processes.
     * `metrics` and `logtime` print additional diagnostic information in the log file.
-    * `exclude` specifies to skip database statistics.
+    * `exclude` specifies that database statistics should be excluded.
     * `full` tells Data Pump to perform a full export containing more or less the entire database.
 
     <details>
@@ -311,8 +309,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
 ## Task 2: Create new PDB
 
-Create a new, empty PDB in the target release and import the data directly into it. This approach avoids an
-in-place upgrade and the PDB conversion.
+Create a new, empty PDB in the target release and import the data directly into it. This approach avoids an in-place upgrade and PDB conversion.
 
 1. Set the environment to the target database, *CDB26*, and connect.
 
@@ -378,9 +375,9 @@ in-place upgrade and the PDB conversion.
 
 ## Task 3: Data Pump import
 
-You need a few more changes to the new PDB before you can start the import.
+You need to make a few more changes to the new PDB before you can start the import.
 
-1. Create a database directory object that points to the same operating system directory that you created in the previous task.
+1. Create a database directory object that points to the same operating system directory you created in the previous task.
 
     ``` bash
     <copy>
@@ -450,8 +447,8 @@ You need a few more changes to the new PDB before you can start the import.
     ```
 
     * `parallel` is set to *1* because we found a bug. How embarassing is that. Normally, you would set it higher. Export and import parallel settings are independent of each other. Typically, the target system is more powerful than the source system. In such a case, you can use more parallel processes to complete the import faster.
-    * `metrics` and `logtime` puts additional diagnostic information into the Data Pump log file.
-    * `exclude=tablespace` skips creation of tablespaces during import. We already have all tablespaces in the target PDB. Normally, pay attention when importing tablespace defintions. The data file use the same definition, including file path, as on the source database. This may lead to undesired situations.
+    * `metrics` and `logtime` put additional diagnostic information into the Data Pump log file.
+    * `exclude=tablespace`  skips the creation of tablespaces during import. The target PDB already contains the required tablespaces. Normally, pay attention when importing tablespace definitions. The data files use the same definitions, including file paths, as on the source database. This may lead to unintended results.
     * `transform=lob_storage:securefile` ensures that Data Pump converts any old BasicFile LOBs to modern SecureFile LOBs during import.
 
     <details>
@@ -461,7 +458,7 @@ You need a few more changes to the new PDB before you can start the import.
     directory=impdir
     logfile=full_imp.log
     dumpfile=full_exp_%L.dmp
-    parallel=4
+    parallel=1
     metrics=yes
     logtime=all
     exclude=tablespace
@@ -912,12 +909,12 @@ You need a few more changes to the new PDB before you can start the import.
 
     </details>
 
-6. Examine the Data Pump log file for any critical issues. A full import usually produces a few errors or warnings, especially when going to a higher release and into a different architecture.
+6. Examine the Data Pump log file for critical issues. A full import can produce some errors or warnings, especially when moving to a higher release and a different architecture.
 
-    * The roles `EM_EXPRESS_ALL`, `EM_EXPRESS_BASIC` and `DATAPATCH_ROLE` do not exist in newer releases of Oracle AI Database cause the grants to fail.
+    * The roles `EM_EXPRESS_ALL`, `EM_EXPRESS_BASIC` and `DATAPATCH_ROLE` ddo not exist in newer releases of Oracle AI Database, causing the grants to fail.
     * The same applies to the `ORACLE_OCM` user.
-    * An error related to traditional auditing that is desupported in newer releases.
-    * This log file doesn't contain any critical issues.
+    * An error related to traditional auditing, which is desupported in newer releases.
+    * The import completed with 33 errors. In this lab, these errors are expected and are related to objects that do not exist in the target release. Review the log to confirm that there are no errors affecting the application data or objects you are migrating.
 
 7. Set the environment to the target database, *CDB26*, and connect.
 
@@ -938,7 +935,7 @@ You need a few more changes to the new PDB before you can start the import.
     exec dbms_stats.gather_schema_stats('SYSTEM');
     ```
 
-9. Gather database statistics. In the export, you excluded statistics, so, you need to re-gather statistics.
+9. Gather database statistics. Because statistics were excluded from the export, you need to gather them again.
 
     **(In the interest of time, you skip it in this lab.)**
 
@@ -948,7 +945,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     * You could also transfer the old statistics from the source database using `DBMS_STATS`.
 
-10. Verify your database has been imported. Check the number of objects in the *F1* schema.
+10. Verify that your data has been imported. Check the number of objects in the *F1* schema.
 
     ``` bash
     <copy>
@@ -1030,7 +1027,7 @@ You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-Data Pump is a very versatile utility. It allows you to import data into a higher release database and even from a non-CDB into a PDB. While doing so, you can use the powerful transformation options to customize the target database to fit your exact needs.
+Data Pump is a versatile utility. It allows you to import data into a higher release database and even from a non-CDB into a PDB. You can also use its transformation options to customize the target database to meet your requirements.
 
 You can avoid an in-place upgrade and PDB conversion by using Data Pump. The source database is left untouched in case a rollback is needed.
 
