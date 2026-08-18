@@ -151,7 +151,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 5. Create a user and grant the necessary privileges. You use the user to connect via the database link.
 
-    ``` sql
+    ``` bash
     <copy>
     create user dblinkuser identified by dblinkuser;
     grant create session to dblinkuser;
@@ -193,7 +193,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -224,7 +224,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 3. Create a database link pointing to the *CORAL* database.
 
-    ``` sql
+    ``` bash
     <copy>
     create database link clonepdb
     connect to dblinkuser
@@ -251,7 +251,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 4. Ensure that the database link works.
 
-    ``` sql
+    ``` bash
     <copy>
     select * from dual@clonepdb;
     </copy>
@@ -272,7 +272,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -734,7 +734,7 @@ So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Eve
 
 2. Set the environment to the *CDB19ENC* database and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb19enc
     sql / as sysdba
@@ -774,7 +774,7 @@ So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Eve
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -822,7 +822,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 4. Monitor the progress.
 
-    ``` sql
+    ``` bash
     <copy>
     status -job 102 -a 10
     </copy>
@@ -906,7 +906,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 6. Set the environment to *CDB26ENC* and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26enc
     sql / as sysdba
@@ -915,7 +915,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 7. Ensure that the *CHERRY* database has been plugged in and is open *READ WRITE* and unrestricted.
 
-    ``` sql
+    ``` bash
     <copy>
     show pdbs
     </copy>
@@ -958,7 +958,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 9. Switch to the *CHERRY* PDB and ensure the *USERS* tablespace is still encrypted.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=CHERRY;
     select tablespace_name, encrypted from dba_tablespaces;
@@ -989,7 +989,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 10. Verify that the PDB is using a keystore.
 
-    ``` sql
+    ``` bash
     <copy>
     select wrl_type, status, wallet_type, keystore_mode from v$encryption_wallet;
     </copy>
@@ -1034,7 +1034,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 12. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

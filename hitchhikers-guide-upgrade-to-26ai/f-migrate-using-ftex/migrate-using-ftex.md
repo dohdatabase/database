@@ -35,7 +35,7 @@ You need to prepare a few things before you can start FTEX.
 
 2. Set the environment to the source database and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . ftex
     sql / as sysdba
@@ -46,7 +46,7 @@ You need to prepare a few things before you can start FTEX.
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     exec dbms_stats.gather_schema_stats('SYS');
     exec dbms_stats.gather_schema_stats('SYSTEM');
     ```
@@ -68,7 +68,7 @@ You need to prepare a few things before you can start FTEX.
 
 4. Create a database directory object. It must point to the directory in the operating system that you just created.
 
-    ``` sql
+    ``` bash
     <copy>
     create or replace directory ftexdir as '/home/oracle/logs/migrate-using-ftex';
     </copy>
@@ -87,7 +87,7 @@ You need to prepare a few things before you can start FTEX.
 
 5. Create a dedicated user that you can use for the Data Pump export job.
 
-    ``` sql
+    ``` bash
     <copy>
     create user ftexuser identified by ftexuser default tablespace system;
     grant exp_full_database to ftexuser;
@@ -123,7 +123,7 @@ You need to prepare a few things before you can start FTEX.
 
 6. Generate a list of tablespaces to set read-only.
 
-    ``` sql
+    ``` bash
     <copy>
     select
        tablespace_name
@@ -156,7 +156,7 @@ You need to prepare a few things before you can start FTEX.
 
 7. Set the tablespace read-only.
 
-    ``` sql
+    ``` bash
     <copy>
     ALTER TABLESPACE USERS READ ONLY;
     </copy>
@@ -175,7 +175,7 @@ You need to prepare a few things before you can start FTEX.
 
 8. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -368,7 +368,7 @@ You create a new, empty PDB in the new release of Oracle AI Database and import 
 
 1. Set the environment to the target database, *CDB26*, and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -377,7 +377,7 @@ You create a new, empty PDB in the new release of Oracle AI Database and import 
 
 2. Create a new PDB called *MAROON* and open it.
 
-    ``` sql
+    ``` bash
     <copy>
     create pluggable database maroon admin user admin identified by admin;
     alter pluggable database maroon open;
@@ -410,7 +410,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 1. Create a database directory object that points to the same operating system directory that you created in the previous task. In this lab, the export and import share the same directory. This enables Data Pump to find the dump files. If you import on a remote system, you must copy the dump files.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=maroon;
     create directory ftexdir as '/home/oracle/logs/migrate-using-ftex';
@@ -430,7 +430,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 2. Create a dedicated user for the Data Pump import.
 
-    ``` sql
+    ``` bash
     <copy>
     create user ftexuser identified by ftexuser default tablespace system;
     grant imp_full_database to ftexuser;
@@ -464,7 +464,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 3. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -962,7 +962,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 8. Set the environment to the target database, *CDB26*, and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -973,7 +973,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     alter session set container=maroon;
     exec dbms_stats.gather_schema_stats('SYS');
     exec dbms_stats.gather_schema_stats('SYSTEM');
@@ -1002,7 +1002,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     exec dbms_stats.gather_database_stats;
     ```
 
@@ -1021,7 +1021,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 11. Verify your database has been imported. Check the number of objects in the *F1* schema.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=maroon;
     select object_type, count(*) from all_objects where owner='F1' group by object_type;
@@ -1046,7 +1046,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 12. Perform a more extensive check. Verify the actual data. Find all the races won by the legend, *Ayrton Senna*.
 
-    ``` sql
+    ``` bash
     <copy>
     select ra.name || ' ' || ra.year as race
     from f1.f1_races ra,
@@ -1129,7 +1129,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 13. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -1141,7 +1141,7 @@ You might need the *FTEX* database in another lab. In a real migration, you don'
 
 1. Set the tablespace to *READ WRITE* again.
 
-    ``` sql
+    ``` bash
     <copy>
     . ftex
     sql / as sysdba
@@ -1150,7 +1150,7 @@ You might need the *FTEX* database in another lab. In a real migration, you don'
 
 2. Set the tablespace *READ WRITE*.
 
-    ``` sql
+    ``` bash
     <copy>
     ALTER TABLESPACE USERS READ WRITE;
     </copy>
@@ -1169,7 +1169,7 @@ You might need the *FTEX* database in another lab. In a real migration, you don'
 
 3. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

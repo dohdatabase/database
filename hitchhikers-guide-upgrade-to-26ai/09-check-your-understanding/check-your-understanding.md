@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This lab reviews the main upgrade concepts from the workshop. Complete the scored questions to check your understanding of upgrade methods, supported source versions, architecture changes, and pre-upgrade checks.
+This lab reviews the key upgrade concepts from the workshop. Complete the scored questions to test your understanding of upgrade methods, supported source versions, architecture changes, and pre-upgrade checks.
 
 Estimated Time: 10 minutes
 
@@ -10,13 +10,13 @@ Estimated Time: 10 minutes
 
 In this lab, you will:
 
-* Review the primary upgrade method for Oracle AI Database 26ai
-* Confirm the supported direct upgrade source releases
-* Check your overall understanding
+* Review the primary recommended upgrade method for Oracle AI Database 26ai
+* Confirm the source releases that support direct upgrades
+* Assess your overall understanding
 
 ### Prerequisites
 
-Complete the earlier workshop labs, or review the workshop material before taking this quiz.
+Complete the earlier workshop labs or review the workshop material before taking this quiz.
 
 ```quiz-config
 passing: 75
@@ -25,9 +25,9 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
 
 ## Task 1: Complete the quiz
 
-1. Review the questions before you submit your answers.
+1. Review the questions before submitting your answers.
 
-2. Complete the scored quiz blocks below. You need 75% or higher to pass. 
+2. Complete the scored quizzes below. You need a score of 75% or higher to pass. 
 
     ```quiz score
     Q: Which tool is recommended as the primary method to upgrade to Oracle AI Database 26ai?
@@ -39,7 +39,7 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     ```
 
     ```quiz score
-    Q: Which database versions support a direct upgrade to Oracle AI Database 26ai?
+    Q: Which database versions support direct upgrades to Oracle AI Database 26ai?
     - 10g and 11g
     - 12c only
     * 19c and 21c
@@ -48,7 +48,7 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     ```
 
     ```quiz score
-    Q: What architecture is required in Oracle AI Database 26ai?
+    Q: What architecture is required for Oracle AI Database 26ai?
     - Single Instance only
     - Non-CDB architecture
     * Multitenant architecture (CDB/PDB)

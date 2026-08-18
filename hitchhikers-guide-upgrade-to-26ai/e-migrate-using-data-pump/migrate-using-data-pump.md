@@ -37,7 +37,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
 2. Set the environment to the source database and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . ftex
     sql / as sysdba
@@ -48,14 +48,14 @@ You need to prepare a few things before you can start a Data Pump export.
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     exec dbms_stats.gather_schema_stats('SYS');
     exec dbms_stats.gather_schema_stats('SYSTEM');
     ```
 
 4. Create a database directory object. It must point to the directory in the operating system that you just created.
 
-    ``` sql
+    ``` bash
     <copy>
     create directory expdir as '/home/oracle/logs/migrate-using-data-pump';
     </copy>
@@ -74,7 +74,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
 5. Create a dedicated user that you can use for the Data Pump export job.
 
-    ``` sql
+    ``` bash
     <copy>
     create user expuser identified by expuser default tablespace users;
     grant exp_full_database to expuser;
@@ -108,7 +108,7 @@ You need to prepare a few things before you can start a Data Pump export.
 
 6. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -306,7 +306,7 @@ in-place upgrade and the PDB conversion.
 
 1. Set the environment to the target database, *CDB26*, and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -315,7 +315,7 @@ in-place upgrade and the PDB conversion.
 
 2. Create a new PDB called *PURPLE* and open it.
 
-    ``` sql
+    ``` bash
     <copy>
     create pluggable database purple admin user admin identified by admin;
     alter pluggable database purple open;
@@ -344,7 +344,7 @@ in-place upgrade and the PDB conversion.
 
 3. Create a *USERS* tablespace in the new PDB.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=purple;
     create tablespace users datafile size 100m autoextend on next 100m maxsize 32767m;
@@ -372,7 +372,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 1. Create a database directory object that points to the same operating system directory that you created in the previous task.
 
-    ``` sql
+    ``` bash
     <copy>
     create directory impdir as '/home/oracle/logs/migrate-using-data-pump';
     </copy>
@@ -391,7 +391,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 2. Create a dedicated user for the Data Pump import.
 
-    ``` sql
+    ``` bash
     <copy>
     create user impuser identified by impuser default tablespace users;
     grant imp_full_database to impuser;
@@ -425,7 +425,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 3. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -911,7 +911,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 7. Set the environment to the target database, *CDB26*, and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -922,7 +922,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     alter session set container=purple;
     exec dbms_stats.gather_schema_stats('SYS');
     exec dbms_stats.gather_schema_stats('SYSTEM');
@@ -932,7 +932,7 @@ You need a few more changes to the new PDB before you can start the import.
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     exec dbms_stats.gather_database_stats;
     ```
 
@@ -940,7 +940,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 10. Verify your database has been imported. Check the number of objects in the *F1* schema.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=purple;
     select object_type, count(*) from all_objects where owner='F1' group by object_type;
@@ -969,7 +969,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 11. Perform a more extensive check. Verify the actual data. Find the best race of the Danish driver, *Kevin Magnussen*.
 
-    ``` sql
+    ``` bash
     <copy>
     select ra.name || ' ' || ra.year as race
     from f1.f1_races ra,
@@ -1008,7 +1008,7 @@ You need a few more changes to the new PDB before you can start the import.
 
 12. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

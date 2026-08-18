@@ -43,7 +43,7 @@ None.
 
 3. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -182,7 +182,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -662,7 +662,7 @@ All prerequisites have been meet. You can now start the upgrade.
 
 4. Set the environment to *CDB26ENC* and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26enc
     sql / as sysdba
@@ -671,7 +671,7 @@ All prerequisites have been meet. You can now start the upgrade.
 
 5. Ensure that the *PLUM* database has been plugged in and is open *READ WRITE* and unrestricted.
 
-    ``` sql
+    ``` bash
     <copy>
     show pdbs
     </copy>
@@ -693,7 +693,7 @@ All prerequisites have been meet. You can now start the upgrade.
 
 6. Switch to the *PLUM* PDB and ensure the *USERS* tablespace is still encrypted.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=PLUM;
     select tablespace_name, encrypted from dba_tablespaces;
@@ -724,7 +724,7 @@ All prerequisites have been meet. You can now start the upgrade.
 
 7. Verify that the PDB is using a keystore.
 
-    ``` sql
+    ``` bash
     <copy>
     select wrl_type, status, wallet_type, keystore_mode from v$encryption_wallet;
     </copy>
@@ -745,7 +745,7 @@ All prerequisites have been meet. You can now start the upgrade.
 
 8. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

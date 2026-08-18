@@ -25,7 +25,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 1. Connect to *CDB26COM*. This CDB currently holds the upgraded PDB.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26com
     sql / as sysdba
@@ -34,7 +34,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 2. Start the CDB.
 
-    ``` sql
+    ``` bash
     <copy>
     startup
     </copy>
@@ -60,7 +60,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 3. Switch to *YELLOW*.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=YELLOW;
     </copy>
@@ -79,7 +79,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 4. Verify that the PDB is still on the new release.
 
-    ``` sql
+    ``` bash
     <copy>
     select version_full from v$instance;
     </copy>
@@ -100,7 +100,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 5. Ensure that the `COMPATIBLE` parameter is still set at the old release setting, *19.0.0*.
 
-    ``` sql
+    ``` bash
     <copy>
     select value from v$parameter where name = 'compatible';
     </copy>
@@ -123,7 +123,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 6. Switch back to the root container and open the *YELLOW* in *downgrade* mode.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=CDB$ROOT;
     alter pluggable database yellow close immediate;
@@ -154,7 +154,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
 7. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -197,7 +197,7 @@ Now that the PDB is open in downgrade mode, you can start the process.
 
 2. Connect to *CDB26COM*.
 
-    ``` sql
+    ``` bash
     <copy>
     sql / as sysdba
     </copy>
@@ -205,7 +205,7 @@ Now that the PDB is open in downgrade mode, you can start the process.
 
 3. Shut down the PDB and unplug it from the *CDB26COM*.
 
-    ``` sql
+    ``` bash
     <copy>
     alter pluggable database YELLOW close;
     alter pluggable database YELLOW unplug into '/home/oracle/scripts/upg-yellow.xml';
@@ -231,7 +231,7 @@ Now that the PDB is open in downgrade mode, you can start the process.
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -243,7 +243,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 1. Set the environment to the *CDB19* and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb19
     sqlplus / as sysdba
@@ -254,7 +254,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 3. Plug in *YELLOW* and open it in *upgrade* mode.
 
-    ``` sql
+    ``` bash
     <copy>
     create pluggable database YELLOW using '/home/oracle/scripts/upg-yellow.xml';
     alter pluggable database YELLOW open upgrade;
@@ -278,7 +278,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 4. Switch to *YELLOW* and complete the downgrade. The *catrelod.sql* script reloads the appropriate version for each of the database components in the downgraded database.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=YELLOW;
     spool /home/oracle/logs/yellow-downgrade.log
@@ -323,7 +323,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 5. Recompile all invalid objects. The *utlrp.sql* script recompiles all existing PL/SQL modules that were previously in an *INVALID* state, such as packages, procedures, types, and so on.
 
-    ``` sql
+    ``` bash
     <copy>
     @$ORACLE_HOME/rdbms/admin/utlrp.sql
     </copy>
@@ -362,7 +362,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 6. Restart the PDB.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=cdb$root;
     alter pluggable database YELLOW close;
@@ -391,7 +391,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 7. Ensure that the PDB is open in *READ WRITE* mode and unrestricted.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=YELLOW;
     select open_mode, restricted from v$pdbs;
@@ -419,7 +419,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 8. Check the version of the PDB.
 
-    ``` sql
+    ``` bash
     <copy>
     select version_full from v$instance;
     </copy>
@@ -442,7 +442,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 9. Ensure all components have been downgraded and are *VALID* or *OPTION OFF*.
 
-    ``` sql
+    ``` bash
     <copy>
     set lines 1000
     select comp_id, version, status from dba_registry;
@@ -472,7 +472,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     **(In the interest of time, you skip it in this lab.)**
 
-    ``` sql
+    ``` bash
     exec dbms_stats.gather_dictionary_stats;
     exec dbms_stats.gather_fixed_objects_stats;
     ```
@@ -496,7 +496,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 11. Exit SQL\*Plus.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

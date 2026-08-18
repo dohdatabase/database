@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In previous labs, you started two PDB upgrades. One unplug-plug upgrade using AutoUpgrade and another using replay upgrade. In this lab, you check the outcome of the upgrades.
+In previous labs, you started two PDB upgrades: one unplug-plug upgrade using AutoUpgrade and another using Replay Upgrade. In this lab, you check the outcome of the upgrades.
 
 
 Estimated Time: 10 minutes
@@ -11,7 +11,7 @@ Estimated Time: 10 minutes
 
 In this lab, you will:
 
-* Check on the PDB upgrades
+* Check the PDB upgrades
 
 ### Prerequisites
 
@@ -21,7 +21,7 @@ You have completed:
 
 ## Task 1: Check AutoUpgrade
 
-1. Use the *yellow* 🟨 terminal. AutoUpgrade should be done by now. Otherwise, wait for it complete.
+1. Use the *yellow* 🟨 terminal. AutoUpgrade should be done by now. Otherwise, wait for it to complete.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -57,7 +57,7 @@ You have completed:
 
 3. Switch to the *ORANGE* PDB and check the `COMPATIBLE` parameter.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=ORANGE;
     select value from v$parameter where name='compatible';
@@ -67,12 +67,12 @@ You have completed:
     ```
 
     * The `COMPATIBLE` parameter is set to `23.0.0`.
-    * Do you remember the previous setting? Before upgrade it was set to `19.0.0`.
-    * You didn't use the config file parameter `raise_compatible`, so why did it change?
+    * Do you remember the previous setting? Before the upgrade, it was set to `19.0.0`.
+    * You did not use the config file parameter `raise_compatible`, so why did the value change?
     * This is a consequence of the multitenant architecture. Within a CDB, all PDBs must have the same `COMPATIBLE` setting. 
-    * During plug-in, `COMPATIBLE` was automatically adjusted. This happens for all plug-in operations using AutoUpgrade or not.
-    * Although the new `COMPATIBLE` setting allows the use of all new functionality, it also means that you can no longer downgrade this PDB.
-    * If you want to preserve the possibility of downgrading, you must plug in to a 26ai CDB with `COMPATIBLE` set to `19.0.0`. 
+    * During plug-in, `COMPATIBLE` was automatically adjusted. This happens for all plug-in operations, whether or not you use AutoUpgrade.
+    * Although the new `COMPATIBLE` setting allows the use of all new functionality, it also means that you can no longer downgrade the PDB.
+    * If you want to preserve the possibility of downgrading, you must plug the PDB into a 26ai CDB with `COMPATIBLE` set to `19.0.0`. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -85,7 +85,7 @@ You have completed:
 
     </details>
 
-4. Check the data files locations.
+4. Check the data file locations.
 
     ``` bash
     <copy>
@@ -94,9 +94,9 @@ You have completed:
     ```
 
     * You instructed AutoUpgrade to copy the data files on plug-in.
-    * All data files are located in the OMF compliant location. 
-    * Notice how *CDB26* is part of the directory structure. 
-    * The identifier after *CDB26* is the PDB GUID which is also part of the OMF-compliant directory structure.
+    * All data files are located in the OMF-compliant location. 
+    * Notice that *CDB26* is part of the directory structure. 
+    * The identifier after *CDB26* is the PDB GUID, which is also part of the OMF-compliant directory structure.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -113,7 +113,7 @@ You have completed:
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -122,7 +122,7 @@ You have completed:
 
 ## Task 2: Check Replay Upgrade
 
-1. Switch the *blue* 🟦 terminal. The replay upgrade should have completed now. The command returns an error:
+1. Switch to the *blue* 🟦 terminal. The Replay Upgrade should have completed by now. The command returns an error:
 
     ``` text
     SQL> alter pluggable database terracotta open;
@@ -137,17 +137,17 @@ You have completed:
     ```
 
     * This is expected. 
-    * The `open` command runs most of the upgrade, but you must still run Datapatch to finish the upgrade.
+    * The `open` command runs most of the upgrade, but you must still run Datapatch to complete it.
 
 2. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
     ```
 
-3. Set the environment and call Datapatch.
+3. Set the environment and run Datapatch.
 
     ``` bash
     <copy>
@@ -157,9 +157,6 @@ You have completed:
 
     # Be sure to press RETURN
     ```
-
-    * Explore the subdirectories.
-    * Notice how each job number has its own dedicated directory.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -251,7 +248,7 @@ You have completed:
     # Be sure to press RETURN
     ```
 
-    * The PDB now opens without problems; read write and unrestricted.
+    * The PDB now opens without problems in *READ WRITE* mode and unrestricted.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -274,7 +271,7 @@ You have completed:
 
     </details>
 
-4. Check the data files locations.
+6. Check the data files locations.
 
     ``` bash
     <copy>
@@ -283,11 +280,11 @@ You have completed:
     </copy>
     ```
 
-    * You instructed AutoUpgrade to reuse the data files on plug-in.
-    * All data files are located in the OMF compliant location of the source CDB, *CDB19*. 
-    * Notice how *CDB19* is part of the directory structure. 
-    * This violates the OMF naming standard, but it works and the database doesn't care. 
-    * But humans might care about this anomaly and might choose to move the data files.
+    * You instructed the target CDB, *CDB26*, to reuse the data files on plug-in.
+    * All data files are located in the OMF-compliant location of the source CDB, *CDB19*. 
+    * Notice that *CDB19* is part of the directory structure. 
+    * This violates the OMF naming standard, but it does not prevent the database from using the data files. 
+    * However, you might want to move the data files to avoid this naming anomaly.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -304,7 +301,7 @@ You have completed:
     
 7. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -320,7 +317,7 @@ You have completed:
     ```
 
     * Normally, AutoUpgrade executes the post-upgrade fixups.
-    * For replay upgrade, you use a special mode in AutoUpgrade to execute them.
+    * For Replay Upgrade, you use a special mode in AutoUpgrade to execute them.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -346,7 +343,7 @@ You have completed:
 
     </details>
 
-You've now upgraded both databases. 
+You've now upgraded both PDBs. 
 
 You may now [*proceed to the next lab*](#next).
 

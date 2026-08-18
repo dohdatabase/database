@@ -2,9 +2,9 @@
 
 ## Introduction
 
-In this lab, you will upgrade a single PDB using unplug-plug upgrades. You unplug the PDB from the 19c CDB, plug into a 26ai CDB and perform the upgrade. Unplug-plug upgrades are faster than full CDB upgrades, because you only need to upgrade PDB; not the full CDB. You will copy the data files during plug-in, which is slower but leaves you with a good rollback option. 
+In this lab, you will upgrade a single PDB using an unplug-plug upgrade. You unplug the PDB from the 19c CDB, plug it into a 26ai CDB, and perform the upgrade. Unplug-plug upgrades are faster than full CDB upgrades because you only need to upgrade the PDB, not the full CDB. You will copy the data files during plug-in. This takes longer but provides a better rollback option. 
 
-You will unplug the *ORANGE* PDB from *CDB19*, plug it into the *CDB26* database and upgrade.
+You will unplug the *ORANGE* PDB from *CDB19*, plug it into the *CDB26* and upgrade.
 
 Estimated Time: 10 minutes
 
@@ -20,16 +20,16 @@ In this lab, you will:
 
 None.
 
-## Task 1: Prepare for upgrade
+## Task 1: Prepare for Upgrade
 
-You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles the entire process. You start by checking the source database for upgrade readiness.
+You can plug it into an existing 26ai CDB on the same machine. AutoUpgrade handles the entire process. You start by checking the source database for upgrade readiness.
 
 1. Use the *yellow* 🟨 terminal. Set the environment to *CDB19* and connect. 
 
     ``` bash
     <copy>
     . cdb19
-    sqlplus / as sysdba
+    sql / as sysdba
     </copy>
 
     # Be sure to press RETURN
@@ -37,7 +37,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
 2. Switch to the *ORANGE* PDB and check the `COMPATIBLE` parameter.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=ORANGE;
     select value from v$parameter where name='compatible';
@@ -47,7 +47,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     ```
 
     * The `COMPATIBLE` parameter is set to `19.0.0`. 
-    * We'll discuss the parameter in a later lab.
+    * You will learn more about this parameter in a later lab.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -60,7 +60,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     </details>
 
-2. For this lab, you use a pre-created config file. Examine the pre-created config file.
+3. For this lab, you use a precreated config file. Examine the precreated config file.
 
     ``` bash
     <copy>
@@ -68,9 +68,9 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
     </copy>
     ```
 
-    * `sid` and `target_cdb` specify the SID of the source and target CDB.
-    * `pdbs` is a comma-separated list of PDBs to upgrade
-    * `target_pdb_copy_option` instructs AutoUpgrade how to copy the data files during plug-in. I have Oracle Managed Files (OMF), and I decide to use that with `file_name_convert=none`. 
+    * `sid` and `target_cdb` specify the SID of the source and target CDB. respectively.
+    * `pdbs` is a comma-separated list of PDBs to upgrade.
+    * `target_pdb_copy_option` instructs AutoUpgrade to copy the data files during plug-in. Because this environment uses Oracle Managed Files (OMF), the configuration specifies `file_name_convert=none`. 
     
     <details>
     <summary>*click to see the output*</summary>
@@ -87,7 +87,15 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     </details>
 
-2. Start AutoUpgrade in *analyze* mode. The check usually completes very fast. Wait for it to complete.
+4. Exit SQLcl.
+
+    ``` bash
+    <copy>
+    exit
+    </copy>
+    ```    
+
+5. Start AutoUpgrade in *analyze* mode. The check usually completes very quickly. Wait for it to complete.
 
     ``` bash
     <copy>
@@ -97,7 +105,7 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     * You can use the `lsj` command to get details.
 
-3. When AutoUpgrade completes, it prints the path to the summary report. Check the summary report.
+6. When AutoUpgrade completes, it displays the path to the summary report. Check the summary report.
 
     ``` bash
     <copy>
@@ -135,9 +143,9 @@ You can plug in to an existing 26ai CDB on the same machine. AutoUpgrade handles
 
     </details>
 
-## Task 2: Upgrade and Convert
+## Task 2: Unplug, Plug In, and Upgrade
 
-Inside your maintenance window, you start AutoUpgrade to perform the upgrade.
+During your maintenance window, start AutoUpgrade to perform the upgrade.
 
 1. Use the *yellow* 🟨 terminal. Start AutoUpgrade in *deploy* mode.
 
@@ -170,20 +178,20 @@ Inside your maintenance window, you start AutoUpgrade to perform the upgrade.
     </copy>
     ```
 
-    * AutoUpgrade now unplugs the database from *CDB19*. 
-    * When plugging in to *CDB26*, AutoUpgrade instructs the CDB to copy the data files.
-    * This leaves a copy of the data files that can be used for rollback.
+    * AutoUpgrade now unplugs the PDB from *CDB19*. 
+    * When plugging the PDB into *CDB26*, AutoUpgrade instructs the CDB to copy the data files.
+    * This preserves the original data files for rollback.
     * Finally, it upgrades the PDB. 
 
 3. Leave the upgrade running. Do not exit AutoUpgrade. 
 
-4. You return to this upgrade in a later lab.
+4. You will return to this upgrade in a later lab.
 
 You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-Upgrading a single PDB using unplug-plug upgrades is the fastest way to upgrade a database - compared to a full CDB upgrade. However, you can't use Flashback Database for rollbacks and it has implications on Data Guard. You can reuse the data files for faster upgrades or copy the data files for better rollback options. AutoUpgrade supports both methods.
+Upgrading a single PDB using an unplug-plug upgrade is faster than performing a full CDB upgrade. However, you cannot use Flashback Database for rollback, and this approach also has implications for Data Guard. You can reuse the data files for a faster upgrade or copy them to provide better rollback options. AutoUpgrade supports both methods.
 
 * Webinar, [Move to Oracle Database 23ai – Everything you need to know about Oracle Multitenant – Part 2](https://www.youtube.com/watch?v=Sm75OIWagkE&t=3185s)
 * Slides, [Move to Oracle Database 23ai – Everything you need to know about Oracle Multitenant – Part 2](https://dohdatabase.com/wp-content/uploads/2024/06/vc20_multitenant_part2-1.pdf)

@@ -2,16 +2,16 @@
 
 ## Introduction
 
-Some times you find a glitch in our code or a a bug. In this lab, you learn a few troubleshooting techniques.
+Sometimes you find a glitch in our code or a bug. In this lab, you will learn a few troubleshooting techniques.
 
-Estimated Time: 10 minutes
+Estimated Time: 5 minutes
 
 ### Objectives
 
 In this lab, you will:
 
 * Create an AutoUpgrade zip package
-* Replay upgrade details
+* Replay Upgrade details
 
 ### Prerequisites
 
@@ -21,9 +21,9 @@ You have completed:
 
 ## Task 1: AutoUpgrade Zip Package
 
-AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip package.
+AutoUpgrade logs extensively. If you need to work with Oracle Support, create a zip package.
 
-1. Use the *yellow* 🟨 terminal. Generate a zip package from the upgrade of the *ORANGE* PDB.
+1. Use the *yellow* 🟨 terminal. Generate a zip package from the *ORANGE* PDB upgrade.
 
     ``` bash
     <copy>
@@ -36,7 +36,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     ```
 
     * The `-zip` parameter instructs AutoUpgrade to create a zip package.
-    * The `-d` parameter tells where to create the package.
+    * The `-d` parameter specifies where to create the package.
     * There is no `-mode` parameter. 
 
     <details>
@@ -51,7 +51,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
 
     </details>
 
-2. Take a closer look at the zip package.
+2. Examine the zip package.
 
     ``` bash
     <copy>
@@ -64,7 +64,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     ```
 
     * It looks similar to the AutoUpgrade log directory.
-    * But notice the *trace* directory.
+    * Notice the *trace* directory.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -81,7 +81,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
 
     </details>
 
-3. Take a closer look at the *trace* directory.
+3. Examine the *trace* directory.
 
     ``` bash
     <copy>
@@ -93,8 +93,8 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
     ```
 
     * AutoUpgrade included the alert log of both source and target CDB.
-    * Also, it included the attention log.
-    * In a Data Guard configuration, AutoUpgrade include Data Guard broker log files as well.
+    * It also included the attention log.
+    * In a Data Guard configuration, AutoUpgrade also includes the Data Guard broker log files.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -108,7 +108,7 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
 
     </details>
 
-4. You can send the file to Oracle for further examination. Remove the package again.
+4. You can send the zip package to Oracle for further examination. Then remove the package again.
 
     ``` bash
     <copy>
@@ -121,9 +121,9 @@ AutoUpgrade logs extensively. If you need to engage with Oracle, create a zip pa
 
 ## Task 2: Replay Upgrade
 
-Replay upgrade have fewer log files than a classic upgrade, and you need to look in other locations.
+Replay Upgrade has fewer log files than a classic upgrade, so you need to look in other locations.
 
-1. Use the *yellow* 🟨 terminal. In a previous lab, you upgraded the *TERRACOTTA* PDB using replay upgrade.Examine the alert log of *CDB26*.
+1. Use the *yellow* 🟨 terminal. In a previous lab, you upgraded the *TERRACOTTA* PDB using Replay Upgrade. Examine the alert log of *CDB26*.
 
     ``` bash
     <copy>
@@ -136,7 +136,7 @@ Replay upgrade have fewer log files than a classic upgrade, and you need to look
 
     * Scroll through the output with *page up* and *page down*.
     * Press *q* to exit.
-    * After the `open` command, you can see that the database writes intensively into the alert log as the replay upgrade begins.
+    * After the `open` command, you can see the database writing extensively into the alert log as the Replay Upgrade begins.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -205,11 +205,11 @@ Replay upgrade have fewer log files than a classic upgrade, and you need to look
 
     </details>
 
-2. Replay upgrade also logs to background trace files. Examine the commands that were executed during the upgrade.
+2. Replay Upgrade also logs to background trace files. Examine the commands executed during the upgrade.
 
     ``` bash
     <copy>
-    grep -i "replay upgrade.*text:" *.trc | less
+    grep -i "Replay Upgrade.*text:" *.trc | less
     </copy>
     ```
 
@@ -220,6 +220,37 @@ Replay upgrade have fewer log files than a classic upgrade, and you need to look
     <summary>*click to see the output*</summary>
 
     ``` text
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 22, elapsed 00:00:00.001, text: alter session set "_load_without_compile"="none"
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 23, elapsed 00:00:00.000, text: alter session set "load_without_compile"="none"
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 24, elapsed 00:00:00.000, text: alter session set "nls_sort"="BINARY"
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 25, elapsed 00:00:00.000, text: ALTER SESSION SET "_oracle_script_counter"=3
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 26, elapsed 00:00:00.017, text: alter pluggable database application APP$CDB$CATALOG begin install '19.0.0.0.0' on error capture
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 27, elapsed 00:00:00.014, text: alter pluggable database application APP$CDB$CATALOG end install '19.0.0.0.0'
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 29, elapsed 00:00:00.002, text: alter session set "_load_without_compile"="none"
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 30, elapsed 00:00:00.000, text: alter session set "load_without_compile"="none"
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 31, elapsed 00:00:00.000, text: alter session set "nls_sort"="BINARY"
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 32, elapsed 00:00:00.000, text: ALTER SESSION SET "_oracle_script_counter"=3
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 33, elapsed 00:00:00.012, text: alter pluggable database application APP$CDB$CATALOG begin upgrade
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 35, elapsed 00:00:00.010, text: CREATE TABLE sys.enabled$indexes sharing=none ( schemaname, indexname, objnum )
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 36, elapsed 00:00:00.001, text: CREATE TABLE sys.registry$error(username   VARCHAR(256),
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 37, elapsed 00:00:00.002, text: DELETE FROM sys.registry$error
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 38, elapsed 00:00:00.000, text: commit
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 40, elapsed 00:00:00.000, text: ALTER SESSION SET NLS_LENGTH_SEMANTICS=BYTE
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 41, elapsed 00:00:00.000, text: ALTER SESSION SET NLS_SORT=BINARY
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 43, elapsed 00:00:00.001, text: ALTER SESSION SET EVENTS='10933 trace name context off'
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 44, elapsed 00:00:00.000, text: CREATE TABLE sys.registry$upg_summary
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 45, elapsed 00:00:00.002, text: DELETE FROM sys.registry$upg_summary
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 46, elapsed 00:00:00.001, text: INSERT INTO sys.registry$upg_summary (con_id,
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 47, elapsed 00:00:00.001, text: COMMIT
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 48, elapsed 00:00:00.016, text: DROP TABLE sys.registry$log
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 49, elapsed 00:00:00.003, text: CREATE TABLE registry$log (
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 50, elapsed 00:00:00.001, text: INSERT INTO registry$log (cid, namespace, operation, optime)
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 51, elapsed 00:00:00.000, text: COMMIT
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 52, elapsed 00:00:00.000, text: CREATE TABLE registry$upg_resume(
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 53, elapsed 00:00:00.001, text: DELETE FROM registry$upg_resume
+    CDB26_p000_15871.trc:Replay Upgrade, PDB 8: suc seq# 54, elapsed 00:00:00.000, text: alter session set ddl_lock_timeout=900
+    
+    (output truncated)
     ```
 
     </details>
@@ -233,7 +264,7 @@ Replay upgrade have fewer log files than a classic upgrade, and you need to look
 
     * Don't run the queries. It's beyond the scope of this exercise.
 
-4. You also disable replay upgrade complete.
+4. You can also disable Replay Upgrade completely.
 
     ``` bash
     ALTER DATABASE UPGRADE SYNC OFF;
@@ -241,13 +272,13 @@ Replay upgrade have fewer log files than a classic upgrade, and you need to look
 
     * Don't run the command. It's beyond the scope of this exercise.
 
-5. AutoUpgrade also have a config file parameter to control the use of replay upgrade.
+5. AutoUpgrade also has a config file parameter to control the use of Replay Upgrade.
 
     ``` bash
     upg1.replay=no
     ```
 
-    * By default, AutoUpgrade uses classic upgrade because it allows more customizations.
+    * By default, AutoUpgrade uses classic upgrade because it provides more customization options.
 
 You may now [*proceed to the next lab*](#next).
 

@@ -23,7 +23,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 1. Set the environment and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cobalt
     sql / as sysdba
@@ -34,7 +34,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 2. Start the database.
 
-    ``` sql
+    ``` bash
     <copy>
     startup
     </copy>
@@ -61,7 +61,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 3. Get a list of PDBs.
 
-    ``` sql
+    ``` bash
     <copy>
     show pdbs
     </copy>
@@ -83,7 +83,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -405,7 +405,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 9. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -485,7 +485,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
 4. Set the environment to the original Oracle home and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cobalt
     sql / as sysdba
@@ -494,7 +494,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
 5. Verify that the database is running on Oracle Database 19c.
 
-    ``` sql
+    ``` bash
     <copy>
     select instance_name, version from v$instance;
     </copy>
@@ -515,7 +515,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
 6. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

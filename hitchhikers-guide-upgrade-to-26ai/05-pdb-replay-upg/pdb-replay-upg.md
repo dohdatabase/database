@@ -2,9 +2,9 @@
 
 ## Introduction
 
-In this lab, you will upgrade a single PDB using *replay upgrade*. You unplug the PDB from the 19c CDB and plug into a 26ai CDB. When you open the PDB, the database automatically upgrades itself. This is a method originally developed for Oracle Autonomous AI Database and is now available in Oracle AI Database.
+In this lab, you will upgrade a single PDB using *Replay Upgrade*. You unplug the PDB from the 19c CDB and plug it into a 26ai CDB. When you open the PDB, the database automatically upgrades itself. This is a method originally developed for Oracle Autonomous AI Database and is now available in Oracle AI Database.
 
-You will unplug the *TERRACOTTA* PDB from *CDB19*, plug it into the *CDB26* database and upgrade.
+You will unplug the *TERRACOTTA* PDB from *CDB19*, plug it into the *CDB26* and upgrade.
 
 Estimated Time: 10 minutes
 
@@ -13,16 +13,16 @@ Estimated Time: 10 minutes
 In this lab, you will:
 
 * Upgrade a PDB
-* Plug in to an existing 26ai CDB
-* Upgrade using replay upgrade
+* Plug it into an existing 26ai CDB
+* Upgrade using Replay Upgrade
 
 ### Prerequisites
 
 None.
 
-## Task 1: Prepare for upgrade
+## Task 1: Prepare for Upgrade
 
-1. Use the *blue* 🟦 terminal. You start by assesing the upgrade readiness of the *TERRACOTTA* PDB. Examine the pre-created config file.
+1. Use the *blue* 🟦 terminal. You start by assessing the upgrade readiness of the *TERRACOTTA* PDB. Examine the pre-created config file.
 
     ``` bash
     <copy>
@@ -30,7 +30,7 @@ None.
     </copy>
     ```
 
-    * You only use AutoUpgrade for the pre-upgrade analysis and fixups. 
+    * You only use AutoUpgrade only for the pre-upgrade analysis and fixups. 
     * `sid` and `target_cdb` specify the SID of the source and target CDB.
     * `pdbs` is a comma-separated list of PDBs to upgrade.
     
@@ -48,7 +48,7 @@ None.
 
     </details>
 
-2. Start AutoUpgrade in *analyze* mode. The check usually completes very fast. Wait for it to complete.
+2. Start AutoUpgrade in *analyze* mode. The check usually completes very quickly. Wait for it to complete.
 
     ``` bash
     <copy>
@@ -58,7 +58,7 @@ None.
 
     * You can use the `lsj` command to get details.
 
-3. When AutoUpgrade completes, it prints the path to the summary report. Check the summary report.
+3. When AutoUpgrade completes, it displays the path to the summary report. Check the summary report.
 
     ``` bash
     <copy>
@@ -98,9 +98,9 @@ None.
 
 ## Task 2: Upgrade and Convert
 
-Inside your maintenance window, you perform the upgrade.
+During your maintenance window, you perform the upgrade.
 
-1. Still in the *blue* 🟦 terminal. Now, you start the pre-upgrade fixups. This prepares the database for upgrade. In the interest of time, you skip this part in the lab. The command is shown only for learning purposes.
+1. Still in the *blue* 🟦 terminal. Now, you start the pre-upgrade fixups. This prepares the database for the upgrade. In the interest of time, you skip this step in the lab. The command is shown only for learning purposes.
 
     ``` bash
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-replay-upg-terracotta.cfg -mode fixups
@@ -130,8 +130,8 @@ Inside your maintenance window, you perform the upgrade.
     ```
 
     * First, you close the PDB.
-    * Next, you unplug the PDB and generate a manifest file. The manifest file is an overview of the PDB, its data files and additional information.
-    * Finally, remove the PDB from source CDB.
+    * Next, you unplug the PDB and generate a manifest file. The manifest file is an overview of the PDB, its data files, and additional information.
+    * Finally, you remove the PDB from the source CDB.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -154,7 +154,7 @@ Inside your maintenance window, you perform the upgrade.
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -175,24 +175,24 @@ Inside your maintenance window, you perform the upgrade.
     </copy>
     ```
 
-    * The target CDB now reads the manifest file and plugs in the *TERRACOTTA* PDB.
-    * It reuses the data files in their current location because of the `NOCOPY` clause. 
-    * You can copy or move the data files by modifying the `CREATE PLUGGABLE DATABASE` statement.
+    * The target CDB now reads the manifest file and plugs the *TERRACOTTA* PDB into the CDB.
+    * It reuses the data files in their current location because the `NOCOPY` clause is specified. 
+    * You can copy or move the data files by modifying the `CREATE PLUGGABLE DATABASE` statement accordingly.
     
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> create pluggable database terracotta using '/home/oracle/scripts/terracotta.xml';
+    SQL> create pluggable database terracotta using '/home/oracle/scripts/terracotta.xml NOCOPY';
 
     Pluggable database TERRACOTTA created.
     ```
 
     </details>
 
-7. Ensure replay upgrade is enabled.
+7. Ensure Replay Upgrade is enabled.
 
-    ``` sql
+    ``` bash
     <copy>
     select property_name, property_value 
     from   database_properties 
@@ -200,7 +200,7 @@ Inside your maintenance window, you perform the upgrade.
     </copy>
     ```
 
-    * `UPGRADE_PDB_ON_OPEN` is true, so replay upgrade is turned on.
+    * `UPGRADE_PDB_ON_OPEN` is true, so Replay Upgrade is turned on.
     * There is also a property called `CONVERT_NONCDB_ON_OPEN`. This controls whether non-CDB databases are automatically converted instead of manually calling the `noncdb_to_pdb.sql` script. 
     
     <details>
@@ -223,27 +223,30 @@ Inside your maintenance window, you perform the upgrade.
     </copy>
     ```
 
-    * The `open` command triggers the replay upgrade.
-    * Although, it appears the command is hanging it is not the case.
-    * Behind the scenes the database is upgrading the PDB.
+    * The `open` command triggers the Replay Upgrade.
+    * Although it appears the command is hanging, it is not.
+    * Behind the scenes, the database is upgrading the PDB.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
+    SQL> alter pluggable database terracotta open;
+    
+    
     ```
 
     </details>
 
-3. Leave the upgrade running. Do not exit. 
+9. Leave the upgrade running. Do not exit. 
 
-4. You return to this upgrade in a later lab.
+10. You return to this upgrade in a later lab.
 
 You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-Upgrading a single PDB using replay upgrade is a convenient method. Originally developed for Oracle Autonomous AI Database it fits very well in uniform environments where PDBs are alike. However, there's no customization of the upgrade like you know from AutoUpgrade and the logging is not as extensive.
+Upgrading a single PDB using Replay Upgrade is a convenient method. Originally developed for Oracle Autonomous AI Database, it fits very well in uniform environments where PDBs are similar. However, the upgrade offers fewer customization options than AutoUpgrade and the logging is less extensive.
 
 * Webinar, [Move to Oracle Database 23ai – Everything you need to know about Oracle Multitenant – Part 2](https://www.youtube.com/watch?v=Sm75OIWagkE&t=4469s)
 * Slides, [Move to Oracle Database 23ai – Everything you need to know about Oracle Multitenant – Part 2](https://dohdatabase.com/wp-content/uploads/2024/06/vc20_multitenant_part2-1.pdf)

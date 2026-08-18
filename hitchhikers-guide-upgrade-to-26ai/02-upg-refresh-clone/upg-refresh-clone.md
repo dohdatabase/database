@@ -26,7 +26,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 1. Use the *yellow* 🟨 terminal. Set the environment to the source non-CDB database (*BEIGE*) and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . beige
     sql / as sysdba
@@ -35,7 +35,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 2. Create a user and grant the necessary privileges.
 
-    ``` sql
+    ``` bash
     <copy>
     create user dblinkuser identified by dblinkuser;
     grant create session to dblinkuser;
@@ -77,7 +77,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 3. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -85,7 +85,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 4. Set the environment to the target CDB (*CDB26*) and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -94,7 +94,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 5. Create a database link pointing to the *BEIGE* database.
 
-    ``` sql
+    ``` bash
     <copy>
     create database link clonepdb
     connect to dblinkuser
@@ -119,7 +119,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 6. Ensure that the database link works.
 
-    ``` sql
+    ``` bash
     <copy>
     select * from dual@clonepdb;
     </copy>
@@ -140,7 +140,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
 
 7. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -283,7 +283,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
 4. Do not exit AutoUpgrade. Switch to the blue 🟦 terminal. Set the environment to the *BEIGE* database.
 
-    ``` sql
+    ``` bash
     <copy>
     . beige
     sql / as sysdba
@@ -292,7 +292,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
 5. Create test data.
 
-    ``` sql
+    ``` bash
     <copy>
     create user sales identified by oracle default tablespace users;
     grant dba to sales;
@@ -323,7 +323,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
 6. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -358,7 +358,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 2. Monitor the progress.
 
-    ``` sql
+    ``` bash
     <copy>
     status -job 101 -a 10
     </copy>
@@ -996,7 +996,7 @@ While the upgrade runs, let's look at some of the details.
 
 2. Set the environment to the *CDB26* database and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -1005,7 +1005,7 @@ While the upgrade runs, let's look at some of the details.
 
 3. Switch to *TEAL* and ensure that the *SALES.ORDERS* table exists.
 
-    ``` sql
+    ``` bash
     <copy>
     alter session set container=TEAL;
 
@@ -1034,7 +1034,7 @@ While the upgrade runs, let's look at some of the details.
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>

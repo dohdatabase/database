@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will plug in to an existing CDB and reuse the data files. This approach completes the upgrade faster but you must consider your fallback options carefully.
+In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will plug it into an existing CDB and reuse the data files. This approach completes the upgrade faster, but you must consider your fallback options carefully.
 
 You will upgrade the *UPGR* database and plug it into the *CDB26* database.
 
@@ -12,19 +12,19 @@ Estimated Time: 35 minutes
 
 In this lab, you will:
 
-* Upgrade a non-CDB and convert to PDB
-* Plug in to existing CDB
+* Upgrade a non-CDB and convert it to a PDB
+* Plug it into an existing CDB
 * Reuse existing data files
 
 ### Prerequisites
 
 None.
 
-## Task 1: Prepare for upgrade
+## Task 1: Prepare for Upgrade
 
 You can plug in to an existing CDB on the same machine. AutoUpgrade handles the entire process. You start by checking the source database for upgrade readiness.
 
-1. Use the *yellow* 🟨 terminal. For this lab, you will use a pre-created config file. Examine the pre-created config file.
+1. Use the *yellow* 🟨 terminal. For this lab, you will use a precreated config file. Examine the precreated config file.
 
     ``` bash
     <copy>
@@ -33,8 +33,8 @@ You can plug in to an existing CDB on the same machine. AutoUpgrade handles the 
     ```
 
     * `sid` specifies the source non-CDB.
-    * `target_cdb` is the CDB where you want to plug in.
-    * `timezone_upg` instructs AutoUpgrade to skip the upgrade of the timezone file in the interest of time. You can upgrade it later.
+    * `target_cdb` is the CDB into which you want to plug in.
+    * `timezone_upg` instructs AutoUpgrade to skip the upgrade of the timezone file to save time. You can upgrade it later.
     * `run_dictionary_health` executes a dictionary check. This checks for corruptions in the data dictionary.
     
     <details>
@@ -52,7 +52,7 @@ You can plug in to an existing CDB on the same machine. AutoUpgrade handles the 
 
     </details>
 
-2. Start AutoUpgrade in *analyze* mode. The check usually completes very fast. Wait for it to complete.
+2. Start AutoUpgrade in *analyze* mode. The check usually completes very quickly. Wait for it to complete.
 
     ``` bash
     <copy>
@@ -71,7 +71,7 @@ You can plug in to an existing CDB on the same machine. AutoUpgrade handles the 
     ```
 
     * The report states *Check passed and no manual intervention needed*.
-    * In the *Details* there is a reference to a detailed report. You will check this later.
+    * The *Details* section contains a reference to a detailed report. You will check this later.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -144,15 +144,15 @@ Inside your maintenance window, you start AutoUpgrade to perform the upgrade and
 
 1. In this lab, you instruct AutoUpgrade to reuse the data files. 
     * After shutting down the non-CDB, AutoUpgrade creates the PDB and points to the existing data files. 
-    * This is faster but you must consider your rollback options. If something happens during the upgrade/conversion to PDB, you can't use Flashback Database. It can't undo the PDB conversion. 
-    * You must have other rollback options like RMAN backups or storage snapshots.
+    * This is faster but you must consider your rollback options. If something goes wrong during the upgrade or conversion to a PDB, you cannot use Flashback Database to reverse the PDB conversion. It can't undo the PDB conversion. 
+    * You must have other rollback options, such as RMAN backups or storage snapshots.
 
 2. An alternative approach is to copy the data files during the plug-in. 
     * This creates a copy of the data files and thus preserves the source non-CDB in case you must roll back. 
     * However, it takes time and requires additional disk space to copy the data files.
-    * If you want to copy the data files during plug-in you use the config file parameter `target_pdb_copy_option`. If you use OMF or ASM you set the following:
+    * f you want to copy the data files during the plug-in, use the config file parameter `target_pdb_copy_option`. If you use OMF or ASM, specify the following:
 
-    ``` sql
+    ``` bash
     upg1.target_pdb_copy_option=file_name_convert=none
     ```
 
@@ -162,16 +162,16 @@ While the upgrade continues, you install an Oracle home.
 
 1. Switch to the blue 🟦 terminal. Examine the following config file:
 
-    ``` sql
+    ``` bash
     <copy>
     cat /home/oracle/scripts/upg-plugin-install-home.cfg
     </copy>
     ```
 
     * AutoUpgrade creates a new Oracle home in the `target_home` location.
-    * It copies the settings (language, groups, options) from the `source_home`. 
-    * Also, AutoUpgrade installs the recommended patches specified by the `patch` parameter.
-    * And, it must be a 26ai Oracle home.
+    * It copies the settings (language, groups, options, etc.) from the `source_home`. 
+    * AutoUpgrade also installs the recommended patches specified by the `patch` parameter.
+    * The target must be a 26ai Oracle home.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -211,11 +211,11 @@ While the upgrade continues, you install an Oracle home.
 
     </details>
 
-3. The installation of Oracle home is much faster in Oracle AI Database 26ai. Oracle delivers fully updated gold images that you just extract and install. OPatch is already updated, plus the gold image comes with an updated OCW component and the latest JDK updates.
+3. The installation of an Oracle home is much faster with Oracle AI Database 26ai. Oracle provides fully updated gold images that you can extract and install directly. OPatch is already updated, and the gold image comes with an updated OCW component and the latest JDK updates.
 
-4. When you upgrade, you need an Oracle home on the new release. The new Oracle home should look exactly like the old Oracle home; just on the new release. AutoUpgrade makes this very easy. You just specify the source or old Oracle home, and it will copy all the settings, like language, OS groups and other options. 
+4. When you upgrade, you need an Oracle home on the new release. The new Oracle home should look exactly like the old Oracle home, but on the new release. AutoUpgrade makes this very easy. You just specify the source Oracle home, and it will copy all the settings, like language, OS groups and other options. 
 
-5. In this lab, the gold images and patches have already been downloaded. But did you know that you can also use AutoUpgrade for downloading patches from My Oracle Support. Instead of manually finding and downloading the patches, you just create a simple config file and AutoUpgrade downloads the patches for you. 
+5. In this lab, the gold images and patches have already been downloaded. You can also use AutoUpgrade to download patches from My Oracle Support. Instead of manually finding and downloading the patches, you just create a simple config file and AutoUpgrade downloads the patches for you. 
 
 6. Wait for AutoUpgrade to complete the installation. It should only take a few minutes.
 
@@ -239,7 +239,7 @@ While the upgrade continues, you install an Oracle home.
 
     </details>
 
-7. AutoUpgrade informs you that you must run the root script. In this lab, you don't have root access, so you skip this step.
+7. AutoUpgrade informs you that you must run the root script. In this lab, you do not have root access, so you skip this step.
     * If the *oracle* user has sudo privileges, AutoUpgrade automatically executes the script for you.
 
 8. Check the new Oracle home.
@@ -251,8 +251,8 @@ While the upgrade continues, you install an Oracle home.
     ```
 
     * This is a 26.3 Oracle home installed via a gold image.
-    * It includes the OCW Release Update which is mandatory for Oracle Restart and Oracle RAC.
-    * Also, it includes the Data Pump bundle patch.
+    * It includes the OCW Release Update, which is mandatory for Oracle Restart and Oracle RAC.
+    * it also includes the Data Pump bundle patch.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -273,7 +273,7 @@ While the upgrade continues, you install an Oracle home.
 
 While the upgrade continues (check on it if you want), you take a closer look at the preupgrade report.
 
-1. Stay in the blue 🟦 terminal. Ealier in the lab you examined the preupgrade summary report. It references a more detailed preupgrade report. Examine the preupgrade report:
+1. Stay in the blue 🟦 terminal. Ealier in the lab, you examined the preupgrade summary report. It references a more detailed preupgrade report. Examine the preupgrade report:
     
     ``` bash
     <copy>
@@ -281,10 +281,10 @@ While the upgrade continues (check on it if you want), you take a closer look at
     </copy>
     ```
 
-    * Scroll through the report using the *SPACE BAR*. 
-    * First, you see details on the database.
-    * Next, the preupgrade findings are group in *before upgrade* and *after upgrade*.
-    * Within the groups the individual findings are group by severity. 
+    * Scroll through the report using the *SPACEBAR*. 
+    * First, you see details about the database.
+    * Next, the preupgrade findings are grouped into *before upgrade* and *after upgrade*.
+    * Within the groups the individual findings are grouped by severity. 
     * Notice how many findings have *FixUp Available Yes*. AutoUpgrade clears these findings for you automatically. 
 
     <details>
@@ -745,7 +745,7 @@ While the upgrade continues (check on it if you want), you take a closer look at
 
 2. Set the environment to the *CDB26* database and connect.
 
-    ``` sql
+    ``` bash
     <copy>
     . cdb26
     sql / as sysdba
@@ -798,7 +798,7 @@ While the upgrade continues (check on it if you want), you take a closer look at
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` bash
     <copy>
     exit
     </copy>
@@ -808,7 +808,7 @@ While the upgrade continues (check on it if you want), you take a closer look at
 
 * Upgraded the *UPGR* database
 * Converted it to a PDB
-* Reused the data files for faster upgrade
+* Reused the data files for a faster upgrade
 
 You may now [*proceed to the next lab*](#next).
 
