@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will explore AI Vector Search using a small example. You will create vector embeddings, store them in Oracle AI Database, and use vector similarity search to find related data based on meaning rather than exact matches.
+In this lab, you will explore AI Vector Search using a simple example. You will create vector embeddings, store them in Oracle AI Database, and use vector similarity search to find related data based on semantic meaning rather than exact text matches.
 
 Estimated Time: 5 minutes
 
@@ -10,18 +10,19 @@ Estimated Time: 5 minutes
 
 In this lab, you will:
 
-* Create vectors from existing text.
-* Using semantic search.
+* Load an ONNX embedding model into Oracle AI Database.
+* Create vector embeddings from existing text.
+* Use vector similarity search to find semantically related data.
 
 ### Prerequisites
 
 None.
 
-## Task X: Test new 26ai AI capabilities
+## Task 1: Explore AI Vector Search
 
-Now that we have successfully migrated our container to Oracle AI Database 26ai, let's explore the vector search features.
+Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you can explore AI Vector Search.
 
-1. Connect to the *RED* PDB to create the DEMO schema.
+1. Connect to the *RED* PDB to create the *DEMO* schema.
 
     ``` sql
     <copy>
@@ -31,7 +32,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     </copy>
     ```
 
-2. Create the DEMO schema.
+2. Create the *DEMO* schema.
 
     ``` sql
     <copy>
@@ -55,7 +56,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-3. Create a directory pointing to */home/oracle/models* where the ONNX model is located and grant read permissions to DEMO.
+3. Create a directory object that points to `/home/oracle/models`, where the ONNX model is located, and grant *DEMO* read access to the directory.
 
     ``` sql
     <copy>
@@ -80,7 +81,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     </details>
 
 
-4. Now connect as the DEMO user and create the TRIVIA table.
+4. Connect as the *DEMO* user and create the *TRIVIA* table.
 
     ``` sql
     <copy>
@@ -129,7 +130,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-5. Check a few rows in the TRIVIA table.
+5. Examine a few rows in the *TRIVIA* table.
 
     ``` sql
     <copy>
@@ -143,7 +144,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     </copy>
     ```
 
-    * As shown in the output, this table contains information about cities, cars, fruits, drinks, and more.
+    * The table contains trivia about cities, cars, fruits, drinks, and other topics.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -178,7 +179,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     15 rows selected.
     ```
 
-    A text search shows that the word *cocktail* does not appear in any row. The following similarity search demonstrates how vector search can still find relevant results.
+    * A text search shows that the word *cocktail* does not appear in any row. Later, you will use vector similarity search to find semantically related results even though the search term does not occur in the text.
 
     ``` sql
     <copy>
@@ -199,7 +200,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-6. Let's now load the *all_MiniLM_L12_v2.onnx* model into the database. This is a SentenceTransformers model suitable for semantic similarity search and clustering use cases.
+6. Load the *all_MiniLM_L12_v2.onnx* model into the database. This *SentenceTransformers* model is suitable for semantic similarity search and clustering.
 
     ``` sql
     <copy>
@@ -236,7 +237,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-7. Verify that the model was loaded by querying the dictionary table.
+7. Verify that the model was loaded by querying the data dictionary.
 
     ``` sql
     <copy>
@@ -275,7 +276,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     </copy>
     ```
 
-10. Create a table converting the trivia entries into vectors.
+10. Create a table that stores each trivia entry together with its vector embedding.
 
     ``` sql
     <copy>
@@ -300,7 +301,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-11. Check the generated vectors.
+11. Examine the generated vectors.
 
     ``` sql
     <copy>
@@ -375,7 +376,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-12. Compare the size of the original table with the one including the vectors.
+12. Compare the size of the original table with the table that includes the vectors.
 
     ``` sql
     <copy>
@@ -386,8 +387,8 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     </copy>
     ```
 
-    * By adding the vector the table grows almost 10x.
-    * Vectors are large data structures.
+    * Adding the vector embeddings increases the table size significantly. In this example, *TRIVIA_VEC* is approximately 12 times the size of *TRIVIA*.
+    * Vector embeddings require additional storage, so consider their storage requirements when designing applications that use AI Vector Search.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -401,7 +402,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-12. Create a vector for the word *cocktail*.
+12. Create a vector embedding for the word *cocktail*.
 
     ``` sql
     <copy>
@@ -422,7 +423,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-13. Now the semantic search magic happens: find the trivia entries that are closest to the word *cocktail*.
+13. Now, use semantic search to find the trivia entries that are semantically closest to the word *cocktail*.
 
     ``` sql
     <copy>
@@ -433,7 +434,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     </copy>
     ```
 
-    * The output shows that although none of the trivia sentences contain the word *cocktail*, the search returns related entries.
+    * The output shows the key benefit of semantic search: none of these trivia entries contains the word *cocktail*, yet the vector similarity search correctly identifies several cocktails based on their meaning.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -468,8 +469,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-14. Now repeat the search to find the entries closest to *suzuki*.
-
+14. Repeat the search to find the entries semantically closest to *suzuki*.
     ``` sql
     <copy>
     select pk, facts
@@ -478,6 +478,8 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
     fetch first 4 rows only;
     </copy>
     ```
+
+    * The results are related to cars and automobile manufacturers even though none of the entries contains *suzuki*. This demonstrates that vector similarity search finds semantic relationships rather than exact text matches. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -512,7 +514,7 @@ Now that we have successfully migrated our container to Oracle AI Database 26ai,
 
     </details>
 
-15. Finally, repeat the exercise using *fastest running dog*.
+15. Finally, repeat the search using the phrase *fastest running dog*.
 
     ``` sql
     <copy>
