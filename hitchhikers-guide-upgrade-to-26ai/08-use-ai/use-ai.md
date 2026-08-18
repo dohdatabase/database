@@ -4,7 +4,7 @@
 
 In this lab, you will explore AI Vector Search using a simple example. You will create vector embeddings, store them in Oracle AI Database, and use vector similarity search to find related data based on semantic meaning rather than exact text matches.
 
-Estimated Time: 5 minutes
+Estimated Time: 15 minutes
 
 ### Objectives
 

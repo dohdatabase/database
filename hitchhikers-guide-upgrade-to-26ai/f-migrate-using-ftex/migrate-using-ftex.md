@@ -8,7 +8,7 @@ Transportable tablespaces are suitable for larger databases, which is not always
 
 You will use the easiest method for transportable tablespaces, Full Transportable Export/Import (FTEX), to move data from the *FTEX* database and into a new PDB in *CDB26*.
 
-Estimated Time: 15 minutes
+Estimated Time: 20 minutes
 
 ### Objectives
 

@@ -4,7 +4,7 @@
 
 This lab reviews the key upgrade concepts from the workshop. Complete the scored questions to test your understanding of upgrade methods, supported source versions, architecture changes, and pre-upgrade checks.
 
-Estimated Time: 10 minutes
+Estimated Time: 5 minutes
 
 ### Objectives
 

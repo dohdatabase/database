@@ -6,7 +6,7 @@ In this lab, you will perform a database downgrade. After an upgrade, if a serio
 
 The PDB, *YELLOW*, has already been upgraded to the new release of Oracle AI Database. It is currently plugged into *CDB26COM*. You will downgrade *YELLOW* and plug it into *CDB19*, which runs Oracle Database 19c.
 
-Estimated Time: 20 minutes
+Estimated Time: 30 minutes
 
 ### Objectives
 

@@ -4,7 +4,7 @@
 
 Sometimes you find a glitch in our code or a bug. In this lab, you will learn a few troubleshooting techniques.
 
-Estimated Time: 5 minutes
+Estimated Time: 10 minutes
 
 ### Objectives
 

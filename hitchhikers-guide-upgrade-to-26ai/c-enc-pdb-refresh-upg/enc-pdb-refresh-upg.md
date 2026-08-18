@@ -4,7 +4,7 @@
 
 This lab focuses on databases that use Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. The upgrade requires access to the database keystore passwords. For this purpose, AutoUpgrade has its own keystore, which you will use to securely store the required password. You will use a refreshable clone PDB to copy the PDB over a database link. You will then keep the clone synchronized by applying redo until the final refresh and upgrade. This technique preserves the source PDB for rollback.
 
-Estimated Time: 25 minutes
+Estimated Time: 35 minutes
 
 ### Objectives
 

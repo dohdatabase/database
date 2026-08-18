@@ -5,7 +5,7 @@
 In previous labs, you started two PDB upgrades: one unplug-plug upgrade using AutoUpgrade and another using Replay Upgrade. In this lab, you check the outcome of the upgrades.
 
 
-Estimated Time: 10 minutes
+Estimated Time: 15 minutes
 
 ### Objectives
 

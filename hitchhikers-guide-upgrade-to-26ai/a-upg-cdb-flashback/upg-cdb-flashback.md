@@ -4,7 +4,7 @@
 
 In this lab, you will upgrade an entire CDB to Oracle AI Database 26ai. Then, you will practice a rollback using the restoration option in AutoUpgrade. AutoUpgrade uses Flashback Database to return the database to its starting point.
 
-Estimated Time: 60 minutes
+Estimated Time: 55 minutes
 
 ### Objectives
 
