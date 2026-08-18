@@ -44,6 +44,16 @@ You need to prepare a few things before you can start a Data Pump export.
     </copy>
     ```
 
+3. Start the database.
+
+    ``` bash
+    <copy>
+    startup
+    </copy>
+    ```
+
+    * If the database is already running, you get `ORA-01081: cannot start already-running ORACLE - shut it down first`. Ignore it and continue.        
+
 3. Gather dictionary statistics before starting Data Pump. Oracle recommends gathering dictionary stats before starting a Data Pump export job.
 
     **(In the interest of time, you skip it in this lab.)**

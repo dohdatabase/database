@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you upgrade an entire CDB to Oracle AI Database 26ai. Then, you will practice a rollback and the restoration option in AutoUpgrade. This uses Flashback Database to get the database back to the starting point.
+In this lab, you will upgrade an entire CDB to Oracle AI Database 26ai. Then, you will practice a rollback using the restoration option in AutoUpgrade. AutoUpgrade uses Flashback Database to return the database to its starting point.
 
 Estimated Time: 60 minutes
 
@@ -11,7 +11,7 @@ Estimated Time: 60 minutes
 In this lab, you will:
 
 * Upgrade the *COBALT* CDB
-* Use AutoUpgrade restoration to flash back the database
+* Use AutoUpgrade restoration to restore the database using Flashback Database
 
 ### Prerequisites
 
@@ -19,14 +19,14 @@ None.
 
 ## Task 1: Prepare for Upgrade
 
-You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. It's currently running Oracle Database 19c.
+You will upgrade the *COBALT* database. It's a CDB with one PDB, *MOCHA*. It's currently running Oracle Database 19c.
 
 1. Set the environment and connect.
 
     ``` bash
     <copy>
     . cobalt
-    sql / as sysdba
+    sqlplus / as sysdba
     </copy>
 
     # Be sure to press RETURN
@@ -59,7 +59,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
     </details>
 
-3. Get a list of PDBs.
+3. List all the PDBs.
 
     ``` bash
     <copy>
@@ -67,7 +67,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     </copy>
     ```
 
-    * There is one user-created PDB in the CDB, *MOCHA*.
+    * There is one user-created PDB in the CDB: *MOCHA*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -81,7 +81,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
     </details>
 
-4. Exit SQLcl.
+4. Exit.
 
     ``` bash
     <copy>
@@ -98,10 +98,10 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     ```
 
     * `sid` is the database to upgrade.
-    * It currently runs in `source_home`.
-    * But you want to upgrade to `target_home`.
-    * To ensure a rollback option you set `restoration=YES`. This creates a guaranteed restore point before the upgrade.
-    * In the interest of time, you'll skip the timezone file upgrade using the `timezone_upg` parameter.
+    * It currently runs from the Oracle home specified by `source_home`.
+    * The target Oracle home is specified by `target_home`.
+    * To ensure a rollback option, you set `restoration=YES`. This creates a guaranteed restore point before the upgrade.
+    * In the interest of time, you will skip the timezone file upgrade using the `timezone_upg` parameter.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -126,7 +126,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     ```
 
     * The preupgrade analysis usually completes quickly. Wait for it to complete.
-    * Notice how AutoUpgrade informs you that it analyzes 1 CDB plus 2 PDBs. 
+    * Notice that AutoUpgrade informs you that it will analyze one CDB plus two PDBs. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -160,7 +160,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     </copy>
     ```
 
-    * It reports *Check passed and no manual intervention needed*. 
+    * It reports: *Check passed and no manual intervention needed*. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -190,7 +190,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
     </details>
 
-9. Take a look at the preupgrade report.
+9. Examine the preupgrade report.
 
     ``` bash
     <copy>
@@ -198,11 +198,11 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     </copy>
     ```
 
-    * It contains three sections. One for each container: *CDB$ROOT*, *PDB$SEED* and *MOCHA*.
-    * Notice how the report starts with *Container Name: CDB$ROOT* in one of the first lines.
+    * It contains three sections, one for each container: *CDB$ROOT*, *PDB$SEED* and *MOCHA*.
+    * Notice that *Container Name: CDB$ROOT* appears near the beginning of the report.
     * Use *PAGE UP* and *PAGE DOWN* to scroll through the report.
     * Find the sections for the other containers: *PDB$SEED* and *MOCHA*.
-    * Take a look at some of the findings.
+    * Examine some of the findings.
     * Press *q* to exit the report.
 
     <details>
@@ -287,7 +287,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     * AutoUpgrade now re-analyzes the database and executes any pre-upgrade actions.
     * It creates a guaranteed restore point before restarting the database in the target Oracle home.
     * Next, the upgrade starts with CDB$ROOT. Then it moves on with PDB$SEED and MOCHA in parallel.
-    * Finally, it'll run the post-upgrade actions. 
+    * Finally, AutoUpgrade runs the post-upgrade actions. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -314,13 +314,13 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 4. Wait for the upgrade to complete. Do not exit AutoUpgrade.
     * It takes around 30-40 minutes. 
-    * You can open a new terminal and do other labs.
+    * You can open a new terminal and work on other labs while the upgrade runs.
 
 5. When the upgrade completes, AutoUpgrade writes information to the console.
 
-    * There is a guaranteed restore point (GRP) that you should drop when no longer needed.
+    * There is a guaranteed restore point (GRP) which you should drop when no longer needed.
     * Links to the upgrade summary report.
-    * You use the GRP later on to restore the database back to the pre-upgrade state.
+    * You use the GRP later to restore the database to the pre-upgrade state.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -389,7 +389,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
     ```
 
     * The *MOCHA* PDB is open *READ WRITE* and unrestricted.
-    * All looks fine.
+    * Everything looks fine.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -413,7 +413,7 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB named *MOCHA*. I
 
 ## Task 3: Undo the Upgrade
 
-Suppose your tests find a critical error and you would like to go back to Oracle Database 19c. AutoUpgrade automatically created a guaranteed restore point, and you can use Flashback Database to go back to the starting point.
+Suppose your tests identify a critical error and you need to return to Oracle Database 19c. AutoUpgrade automatically created a guaranteed restore point that you can use with Flashback Database to return to the pre-upgrade state.
 
 1. Check the oratab registration.
 
@@ -423,8 +423,8 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     </copy>
     ```
 
-    * Notice how the Oracle home is set to the new Oracle home. This was done by AutoUpgrade.
-    * If Grid Infrastructure would manage the database, AutoUpgrade would modify the clusterware registration as well.
+    * Notice that the database is registered with the new Oracle home. This was done by AutoUpgrade.
+    * If Grid Infrastructure managed the database, AutoUpgrade would modify the clusterware registration as well.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -435,7 +435,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
     </details>
 
-2. Undo the upgrade and get the database back to the starting point; the guaranteed restore point that AutoUpgrade automatically created before the upgrade.
+2. Undo the upgrade and return the database to the starting point using the guaranteed restore point that AutoUpgrade created before the upgrade.
 
     ``` bash
     <copy>
@@ -443,8 +443,8 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     </copy>
     ```
 
-    * You start the restoration based on the job ID.
-    * Job 101 was the job that upgraded the database.
+    * You start the restoration using on the job ID.
+    * Job 101 performed the database upgrade.
     * If you had multiple jobs to restore, you can supply a comma-separated list.
 
     <details>
@@ -460,7 +460,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
 
     </details>
 
-3. After a short while the restoration completes. It usually takes only a few minutes. AutoUpgrade uses Flashback Database which is a very effective mean of restoring the database. Then, it needs to open the database with `RESETLOGS` which can take a short while if the redo log members are big.
+3. The restoration usually completes within a few minutes. AutoUpgrade uses Flashback Database, which is a very effective means of restoring the database. Then, it needs to open the database with `RESETLOGS`, which can take a short while if the redo log members are big.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -529,7 +529,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     </copy>
     ```
 
-    * Notice how the Oracle home is set to the original, 19c Oracle home.
+    * Notice that the database is registered with the original 19c Oracle home.
     * If Grid Infrastructure would manage the database, AutoUpgrade would modify the clusterware registration as well.
 
     <details>
@@ -549,7 +549,7 @@ Suppose your tests find a critical error and you would like to go back to Oracle
     </copy>
     ```
 
-    * AutoUpgrade also moves other configuration files like network files (`sqlnet.ora`, `tnsnames.ora`).
+    * AutoUpgrade also moves other configuration files, such as network files (`sqlnet.ora`, `tnsnames.ora`).
 
     <details>
     <summary>*click to see the output*</summary>
@@ -570,7 +570,7 @@ You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-AutoUpgrade completely automates restoration of a database. By default, AutoUpgrade creates a guaranteed restore point before making any changes to the database. If a critical error occurs during upgrade or if your post-upgrade test reveals an issue preventing go-live, you can use AutoUpgrade to bring the database back into the *before-upgrade* state.
+AutoUpgrade completely automates database restoration. By default, AutoUpgrade creates a guaranteed restore point before making any changes to the database. If a critical error occurs during the upgrade or if your post-upgrade tests reveal an issue preventing go-live, you can use AutoUpgrade to bring the database back to its *pre-upgrade* state.
 
 * My Oracle Support, [AutoUpgrade Tool (Doc ID 2485457.1)](https://support.oracle.com/epmos/faces/DocumentDisplay?id=2485457.1)
 * Documentation, [AutoUpgrade Command-Line Syntax](https://docs.oracle.com/en/database/oracle/oracle-database/26/upgrd/autoupgrade-command-line-parameters.html#GUID-E532008C-77BD-4BC0-9EBC-DAD84C2C2805)

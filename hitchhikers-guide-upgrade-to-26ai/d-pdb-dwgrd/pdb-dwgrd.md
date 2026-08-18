@@ -2,9 +2,9 @@
 
 ## Introduction
 
-In this lab, you will try a database downgrade. After an upgrade, if a serious problem arises in the new release, you can bring the database back to the previous release. This is called a database downgrade.
+In this lab, you will perform a database downgrade. After an upgrade, if a serious problem arises in the new release, you can downgrade the database to the previous release.
 
-The PDB, *YELLOW*, has already been upgraded from to the new release of Oracle AI Database. It's currently placed in *CDB26COM*. You will downgrade *YELLOW* and plug it into the *CDB19* running on Oracle Database 19c.
+The PDB, *YELLOW*, has already been upgraded to the new release of Oracle AI Database. It is currently plugged into *CDB26COM*. You will downgrade *YELLOW* and plug it into *CDB19*, which runs Oracle Database 19c.
 
 Estimated Time: 20 minutes
 
@@ -13,17 +13,17 @@ Estimated Time: 20 minutes
 In this lab, you will:
 
 * Downgrade a PDB
-* Unplug from Oracle AI Database back to 19c
+* Unplug from Oracle AI Database 26ai and plug it into Oracle Database 19c
 
 ### Prerequisites
 
 None.
 
-## Task 1: Prepare for downgrade
+## Task 1: Prepare for Downgrade
 
-You start the downgrade process while the PDB is still on the new release of Oracle AI Database.
+You start the downgrade process while the PDB is still running the new release of Oracle AI Database.
 
-1. Connect to *CDB26COM*. This CDB currently holds the upgraded PDB.
+1. Connect to *CDB26COM*. This CDB currently contains the upgraded PDB.
 
     ``` bash
     <copy>
@@ -77,7 +77,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
     </details>
 
-4. Verify that the PDB is still on the new release.
+4. Verify that the PDB is still running the new release.
 
     ``` bash
     <copy>
@@ -98,7 +98,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
     </details>
 
-5. Ensure that the `COMPATIBLE` parameter is still set at the old release setting, *19.0.0*.
+5. Ensure that the `COMPATIBLE` parameter is still set to the previous release value, *19.0.0*.
 
     ``` bash
     <copy>
@@ -106,7 +106,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
     </copy>
     ```
 
-    * It is a requirement for a downgrade, that you haven't changed the `COMPATIBLE` parameter after the upgrade. The `COMPATIBLE` parameter must remain at the same setting as before the upgrade.
+    * It is a requirement for a downgrade that you do not change the `COMPATIBLE` parameter after the upgrade. The `COMPATIBLE` parameter must remain at the value used before the upgrade.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -121,7 +121,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
 
     </details>
 
-6. Switch back to the root container and open the *YELLOW* in *downgrade* mode.
+6. Switch back to the root container and open *YELLOW* in *downgrade* mode.
 
     ``` bash
     <copy>
@@ -131,7 +131,7 @@ You start the downgrade process while the PDB is still on the new release of Ora
     </copy>
     ```
 
-    * *Downgrade* mode is a special mode - similar to *upgrade* mode. It enables exclusive access to the database and disables a lot of features.
+    * *Downgrade* mode is a special mode, similar to *upgrade* mode. It enables exclusive access to the database and disables many features.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -160,11 +160,11 @@ You start the downgrade process while the PDB is still on the new release of Ora
     </copy>
     ```
 
-## Task 2: Downgrade the PDB from the new release of Oracle AI Database
+## Task 2: Downgrade the PDB
 
 Now that the PDB is open in downgrade mode, you can start the process.
 
-1. Use the `dbdowngrade` script to start the downgrade process. It will complete in only a few minutes.
+1. Use the `dbdowngrade` cript to start the downgrade process. The script completes in only a few minutes.
 
     ``` bash
     <copy>
@@ -175,8 +175,8 @@ Now that the PDB is open in downgrade mode, you can start the process.
     # Be sure to press RETURN
     ```
 
-    * Use `-c` to downgrade just that one PDB, not the entire CDB.
-    * Since you didn't specify a logging directory, it will use a default.
+    * Use `-c` to downgrade only that PDB, not the entire CDB.
+    * Since you didn't specify a logging directory, `dbupgrade` uses de default logging directory.
     * If you want to monitor the downgrade, you can open a second terminal, go to the logging directory (`/u01/app/oracle/product/26/cfgtoollogs/downgrade`) and tail the log files.
 
     <details>
@@ -203,7 +203,7 @@ Now that the PDB is open in downgrade mode, you can start the process.
     </copy>
     ```
 
-3. Shut down the PDB and unplug it from the *CDB26COM*.
+3. Shut down the PDB and unplug it from *CDB26COM*.
 
     ``` bash
     <copy>
@@ -237,11 +237,11 @@ Now that the PDB is open in downgrade mode, you can start the process.
     </copy>
     ```
 
-## Task 3: Open PDB in Oracle Database 19c
+## Task 3: Open the PDB in Oracle Database 19c
 
-You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgrade process.
+You need to plug the PDB into a CDB running Oracle Database 19c and complete the downgrade.
 
-1. Set the environment to the *CDB19* and connect.
+1. Set the environment to *CDB19* and connect.
 
     ``` bash
     <copy>
@@ -252,7 +252,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     * Use SQL\*Plus when running downgrade scripts.
 
-3. Plug in *YELLOW* and open it in *upgrade* mode.
+2. Plug in *YELLOW* and open it in *upgrade* mode.
 
     ``` bash
     <copy>
@@ -260,6 +260,8 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
     alter pluggable database YELLOW open upgrade;
     </copy>
     ```
+
+    * After plugging the PDB into the Oracle Database 19c CDB, open it in *upgrade* mode so you can run the scripts required to complete the downgrade.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -276,7 +278,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-4. Switch to *YELLOW* and complete the downgrade. The *catrelod.sql* script reloads the appropriate version for each of the database components in the downgraded database.
+3. Switch to *YELLOW* and complete the downgrade. The *catrelod.sql* script reloads the appropriate version of each database component in the downgraded database.
 
     ``` bash
     <copy>
@@ -288,7 +290,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
     ```
 
     * The script takes 10-15 minutes to complete.
-    * In the end, you will see a message saying *END catrelod.sql*.
+    * When the script completes, you will see the message *END catrelod.sql*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -321,7 +323,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-5. Recompile all invalid objects. The *utlrp.sql* script recompiles all existing PL/SQL modules that were previously in an *INVALID* state, such as packages, procedures, types, and so on.
+4. Recompile all invalid objects. The *utlrp.sql* script recompiles existing PL/SQL modules in an *INVALID* state, such as packages, procedures, types, and so on.
 
     ``` bash
     <copy>
@@ -330,7 +332,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
     ```
 
     * It takes a few minutes for the recompilation to complete.
-    * In the end, you will see a message saying *END utlrp.sql*.
+    * When the script completes, you will see the message *END utlrp.sql*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -360,7 +362,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-6. Restart the PDB.
+5. Restart the PDB.
 
     ``` bash
     <copy>
@@ -389,7 +391,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-7. Ensure that the PDB is open in *READ WRITE* mode and unrestricted.
+6. Ensure that the PDB is open in *READ WRITE* mode and unrestricted.
 
     ``` bash
     <copy>
@@ -417,7 +419,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-8. Check the version of the PDB.
+7. Check the version of the PDB.
 
     ``` bash
     <copy>
@@ -440,7 +442,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-9. Ensure all components have been downgraded and are *VALID* or *OPTION OFF*.
+8. Ensure that all components have been downgraded and have a status of *VALID* or *OPTION OFF*.
 
     ``` bash
     <copy>
@@ -468,16 +470,16 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-10. Gather dictionary and fixed objects statistics.
+9. Gather dictionary and fixed objects statistics.
 
-    **(In the interest of time, you skip it in this lab.)**
+    **(In the interest of time, skip this step in this lab.)**
 
     ``` bash
     exec dbms_stats.gather_dictionary_stats;
     exec dbms_stats.gather_fixed_objects_stats;
     ```
 
-    * You gather fixed objects statistics immediately after the downgrade. In a realistic scenario, you would wait some time until the database is warmed up and in use.
+    * You gather fixed objects statistics immediately after the downgrade. In a production environment, you would wait until the database has been running under a representative workload.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -494,7 +496,7 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
     </details>
 
-11. Exit SQL\*Plus.
+10. Exit SQL\*Plus.
 
     ``` bash
     <copy>
@@ -506,9 +508,9 @@ You need to plug the PDB into a CDB on Oracle Database 19c and finish the downgr
 
 ## Learn More
 
-A downgrade is a very useful fallback option. You can use it even after go-live and move back to the previous release without data loss. However, you can only downgrade to the release from which you originally upgraded.
-A downgrade doesn't bring back the old data dictionary, but rather brings the data dictionary into a compatible state that can be used with the old release.
-In order to downgrade, it is a requirement that you haven't changed the `COMPATIBLE` parameter since the upgrade. The parameter must have the same value as on the previous release.
+A downgrade is a useful fallback option. You can use it even after go-live to return to the previous release without losing data. However, you can only downgrade to the release from which you originally upgraded.
+A downgrade does not bring back the old data dictionary, but rather brings the data dictionary into a compatible state that can be used with the old release.
+To downgrade, it is a requirement that you haven't changed the `COMPATIBLE` parameter since the upgrade. The parameter must have the same value as on the previous release.
 
 * Documentation, [Downgrading a Single Pluggable Oracle Database (PDB)](https://docs.oracle.com/en/database/oracle/oracle-database/26/upgrd/downgrading-single-pluggable-pdb-oracle-database.html)
 * Webinar, [Secure Your Job – Fallback Is Your Insurance](https://www.youtube.com/watch?v=P12UqVRzarw)

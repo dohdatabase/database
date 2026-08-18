@@ -1,8 +1,8 @@
-# Upgrade Encrypted PDB Using Unplug-plug
+# Upgrade Encrypted PDB Using Unplug-Plug
 
 ## Introduction
 
-This lab focuses on databases encrypted using Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. This requires the database keystore passwords. For this purpose, AutoUpgrade has its own keystore which you will use.
+This lab focuses on databases that use Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. The upgrade requires access to the database keystore passwords. For this purpose, AutoUpgrade has its own keystore, which you will use to securely store the required passwords.
 
 Estimated Time: 25 minutes
 
@@ -10,9 +10,9 @@ Estimated Time: 25 minutes
 
 In this lab, you will:
 
-* Upgrade an encrypted PDB, *PLUM*.
-* Unplug from 19c CDB, *CDB19ENC*, and plug in to 26ai CDB, *CDB26ENC*.
-* Use the AutoUpgrade keystore
+* Upgrade an encrypted PDB *PLUM*.
+* Unplug *PLUM* from 19c CDB, *CDB19ENC*, and plug in to 26ai CDB, *CDB26ENC*.
+* Use the AutoUpgrade keystore.
 
 ### Prerequisites
 
@@ -20,7 +20,7 @@ None.
 
 ## Task 1: Start Databases
 
-1. Set the environment to the 26ai source CDB, *CDB26ENC*, and connect.
+1. Set the environment to the 26ai target CDB, *CDB26ENC*, and connect.
 
     ``` bash
     <copy>
@@ -75,7 +75,7 @@ None.
 
 The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
-1. Connect to the *PLUM* PDB, create an encryption key and an encrypted tablespace.
+1. Connect to the *PLUM* PDB, create an encryption key, and an encrypted tablespace.
 
     ``` bash
     <copy>
@@ -89,8 +89,8 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
     * The PDB is configured to use a unified keystore. This is the default configuration.
     * You must use the CDB keystore password (`oracle_4U`) to create a new encryption key in the PDB.
-    * You create the tablespace with the AES256 algorithm. This is a stronger algorithm than the default, AES128. 
-    * In Oracle AI Database 26ai, the default is changed to AES256 to meet the modern-day security requirements.
+    * The tablespace uses the AES256 encryption algorithm. This is a stronger algorithm than AES128, the default in Oracle Database 19c. 
+    * In Oracle AI Database 26ai, the default changes to AES256 to meet modern security requirements.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -126,9 +126,9 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     # Be sure to press RETURN
     ```
 
-    * Notice the *no authencation* clause on the `CREATE USER` statement.
-    * No one can connect as this user. But you connect to the schema through another user, so called proxy authentication.
-    * This is useful for application schema that should only hold data; not be used for connections.
+    * Notice the *NO AUTHENTICATION* clause on the `CREATE USER` statement.
+    * No one can connect as this user. However, you can connect to the schema through another user using so-called proxy authentication.
+    * This is useful for application schemas that should only hold data and not be used for connections.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -155,7 +155,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
     </details>
 
-3. Verify the sample data is stored in the encrypted tablespace, *USERS*.
+3. Verify that the sample data is stored in the encrypted tablespace, *USERS*.
 
     ``` bash
     <copy>
@@ -187,11 +187,11 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     exit
     </copy>
     ```    
-## Task 2: Analyze the database
+## Task 3: Analyze the database
 
-Analyze the *PLUM* database for upgrade readiness.
+Analyze the *PLUM* PDB for upgrade readiness.
 
-1. In this lab, you will use a pre-created AutoUpgrade config file. Examine the config file.
+1. In this lab, you will use a precreated AutoUpgrade config file. Examine the config file.
 
     ``` bash
     <copy>
@@ -199,12 +199,12 @@ Analyze the *PLUM* database for upgrade readiness.
     </copy>
     ```
 
-    * AutoUpgrade has its own keystore where it can store sensitive information, like database keystore passwords.
+    * AutoUpgrade has its own keystore where it can store sensitive information, such as database keystore passwords.
     * The location for the AutoUpgrade keystore is defined by `global.keystore`. 
-    * The AutoUpgrade keystore is not to be confused with the database keystore (which holds the tablespace encryption keys).
-    * `sid` and `target_cdb` are the source and target CDBs.
+    * Do not confuse the AutoUpgrade keystore with the database keystore, which holds the tablespace encryption keys.
+    * `sid` and `target_cdb` identify the source and target CDBs, respectively.
     * `pdbs` is a comma-separated list of PDBs to upgrade.
-    * You want to plug in and reuse the datafiles, so you omit `target_pdb_copy_option`. 
+    * You want to plug in the PDB and reuse its data files, so you omit `target_pdb_copy_option`. 
 
     <details>
     <summary>*click to see the output*</summary>
@@ -261,7 +261,7 @@ Analyze the *PLUM* database for upgrade readiness.
     </copy>
     ```
 
-    * *PRECHECKS* has status *FAILURE*. The database is **not** ready for upgrade.
+    * *PRECHECKS* has the status *FAILURE*. The database is **not** ready for upgrade.
     * The check *TDE_PASSWORDS_REQUIRED* failed.
 
     <details>
@@ -306,8 +306,8 @@ Analyze the *PLUM* database for upgrade readiness.
 
 4. You find additional details in the preupgrade log file. There is a *required action* that you must do before the upgrade.
 
-    * You must load the database keystore password into the AutoUpgrade keystore for the databases *CDB19ENC* and *CDB26ENC*.
-    * AutoUpgrade must have access to keystore password to complete the process.
+    * You must load the database keystore password for the databases *CDB19ENC* and *CDB26ENC* into the AutoUpgrade keystore.
+    * AutoUpgrade must have access to the keystore passwords to complete the process.
     * Optionally, you can check the entire preupgrade log file. It is in `/home/oracle/logs/upg-plum/CDB19ENC/100/prechecks/cdb19enc_preupgrade.log`.
 
     ``` text
@@ -356,8 +356,6 @@ Analyze the *PLUM* database for upgrade readiness.
           auto-login keystore. This requirement also applies to a non-CDB to PDB
           operation, but only if the target CDB is at an Oracle Database Release
           earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
-          operation, but only if the target CDB is at an Oracle Database Release
-          earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
           upgrade of the non-CDB to the target version prior to creating the PDB in
           the target CDB.
 
@@ -393,7 +391,7 @@ Analyze the *PLUM* database for upgrade readiness.
     Enter password:
     ```
 
-7. Since it is the first time you start the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password:
+7. Because this is the first time you are starting the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password:
 
     ``` bash
     <copy>
@@ -477,8 +475,8 @@ Analyze the *PLUM* database for upgrade readiness.
     ```
 
     * Enter *YES* when prompted to convert to an auto-login keystore.
-    * An auto-login keystore works only on the system it was created.
-    * You could also enter *SHARED*. A shared auto-login keystore works in any system.
+    * An auto-login keystore works only on the system where it was created.
+    * You could also enter *SHARED*. A shared auto-login keystore works on any system.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -509,7 +507,7 @@ Analyze the *PLUM* database for upgrade readiness.
 
     </details>
 
-12. Re-analyze the database for upgrade readiness. Now that you added the database keystore passwords to AutoUpgrade, you can re-analyze to see if that meets the requirements. It takes a short while. Wait for it to complete.
+12. Re-analyze the database for upgrade readiness. Now that you have added the database keystore passwords to the AutoUpgrade keystore, you can re-analyze the PDB to verify that it meets the requirements. The analysis takes a short while. Wait for it to complete.
 
     ``` bash
     <copy>
@@ -546,7 +544,7 @@ Analyze the *PLUM* database for upgrade readiness.
 
     </details>
 
-13. Check the result in the summary report.
+13. Check the results in the summary report.
 
     ``` bash
     <copy>
@@ -554,8 +552,8 @@ Analyze the *PLUM* database for upgrade readiness.
     </copy>
     ```
 
-    * The *PRECHECKS* is now in status *SUCCESS*. The details states *Check passed and no manual intervention needed*.
-    * You may now proceed with upgrading and converting the encrypted database.
+    * *PRECHECKS* now has the status *SUCCESS*. The details state: *Check passed and no manual intervention needed*.
+    * You may now proceed with upgrading the encrypted PDB.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -587,9 +585,9 @@ Analyze the *PLUM* database for upgrade readiness.
 
 ## Task 4: Upgrade 
 
-All prerequisites have been meet. You can now start the upgrade.
+All prerequisites have been met. You can now start the upgrade.
 
-1. Start the upgrade using AutoUpgrade in deploy. 
+1. Start the upgrade using AutoUpgrade in deploy mode. 
 
     ``` bash
     <copy>
@@ -628,7 +626,7 @@ All prerequisites have been meet. You can now start the upgrade.
     +----+-------+----------+---------+-------+----------+-------+-------+
     |Job#|DB_NAME|     STAGE|OPERATION| STATUS|START_TIME|UPDATED|MESSAGE|
     +----+-------+----------+---------+-------+----------+-------+-------+
-    | 102|   FTEX|POSTFIXUPS|EXECUTING|RUNNING|  05:22:43| 9s ago|       |
+    | 102|   PLUM|POSTFIXUPS|EXECUTING|RUNNING|  05:22:43| 9s ago|       |
     +----+-------+----------+---------+-------+----------+-------+-------+
     Total jobs 1
 
@@ -637,7 +635,7 @@ All prerequisites have been meet. You can now start the upgrade.
 
     </details>
 
-3. The upgrade takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade prints *Job 102 completed* and exits.
+3. The upgrade takes 10-15 minutes. Leave the process running. When the upgrade completes, AutoUpgrade displays *Job 102 completed* and exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -669,7 +667,7 @@ All prerequisites have been meet. You can now start the upgrade.
     </copy>
     ```
 
-5. Ensure that the *PLUM* database has been plugged in and is open *READ WRITE* and unrestricted.
+5. Ensure that the *PLUM* PDB has been plugged in and is open in *READ WRITE* mode and unrestricted.
 
     ``` bash
     <copy>
@@ -751,15 +749,15 @@ All prerequisites have been meet. You can now start the upgrade.
     </copy>
     ```
 
-**Congratulations!** You have now upgraded your encrypted database to a new release of Oracle AI Database.
+**Congratulations!** You have now upgraded your encrypted PDB to a new release of Oracle AI Database.
 
 You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-Since encrypted databases are becoming more popular, it's important to know how to deal with them. AutoUpgrade fully supports any scenario when the database is encrypted, and you can safely store database keystore passwords in AutoUpgrade's keystore.
+As the use of database encryption increases, it is important to understand how to upgrade them. AutoUpgrade fully supports any scenario when the database is encrypted, and you can safely store database keystore passwords in AutoUpgrade's keystore.
 
-For fully automated solutions, you should explore Secure External Password Stores which enables upgrades and migration of encrypted databases even without loading the password into AutoUpgrade's keystore.
+For fully automated solutions, you should explore Secure External Password Stores, which enables upgrades and migration of encrypted databases even without loading the password into AutoUpgrade's keystore.
 
 * Documentation, [The keystore parameter](https://docs.oracle.com/en/database/oracle/oracle-database/26/upgrd/common-parameters-autoupgrade-config-file.html#GUID-B0D91A5E-F2A1-4714-8908-3C7F4C557EDD)
 * Documentation, [Secure External Password Store](https://docs.oracle.com/en/database/oracle/oracle-database/26/refrn/EXTERNAL_KEYSTORE_CREDENTIAL_LOCATION.html#GUID-FD2C1839-E3CC-47E2-99B4-ECE29EB923B6)

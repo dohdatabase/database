@@ -1,8 +1,8 @@
-# Upgrade encrypted PDB Using Refreshable Clone
+# Upgrade Encrypted PDB Using Refreshable Clone
 
 ## Introduction
 
-This lab focuses on databases encrypted using Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. This requires the database keystore passwords. For this purpose, AutoUpgrade has its own keystore which you will use. You will use refreshable clone PDB to copy the PDB over a database link. Then, you keep it current with redo until you do a final refresh and upgrade. This technique preserves the source PDB for rollback.
+This lab focuses on databases that use Transparent Data Encryption (TDE). You will upgrade an encrypted PDB. The upgrade requires access to the database keystore passwords. For this purpose, AutoUpgrade has its own keystore, which you will use to securely store the required password. You will use a refreshable clone PDB to copy the PDB over a database link. You will then keep the clone synchronized by applying redo until the final refresh and upgrade. This technique preserves the source PDB for rollback.
 
 Estimated Time: 25 minutes
 
@@ -10,10 +10,10 @@ Estimated Time: 25 minutes
 
 In this lab, you will:
 
-* Upgrade an encrypted PDB, *CORAL*, and rename it to *CHERRY*. 
-* Create a refreshable clone PDB in 26ai CDB, *CDB26ENC*.
+* Upgrade an encrypted PDB *CORAL* and rename it *CHERRY*. 
+* Create a refreshable clone PDB in the 26ai CDB, *CDB26ENC*.
 * Refresh and upgrade.
-* Use the AutoUpgrade keystore
+* Use the AutoUpgrade keystore.
 
 ### Prerequisites
 
@@ -58,8 +58,8 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
     * The PDB is configured to use a unified keystore. This is the default configuration.
     * You must use the CDB keystore password (`oracle_4U`) to create a new encryption key in the PDB.
-    * You create the tablespace with the AES256 algorithm. This is a stronger algorithm than the default, AES128. 
-    * In Oracle AI Database 26ai, the default is changed to AES256 to meet the modern-day security requirements.
+    * The tablespace uses the AES256 encryption algorithm. This is a stronger algorithm than the default, AES128. 
+    * In Oracle AI Database 26ai, the default changes to AES256 to meet modern security requirements.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -95,9 +95,9 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     # Be sure to press RETURN
     ```
 
-    * Notice the *no authencation* clause on the `CREATE USER` statement.
-    * No one can connect as this user. But you connect to the schema through another user, so called proxy authentication.
-    * This is useful for application schema that should only hold data; not be used for connections.
+    * Notice the *NO AUTHENCATION* clause on the `CREATE USER` statement.
+    * No one can connect as this user. However, you can connect to the schema through another user using so-called proxy authentication.
+    * This is useful for application schemas that should only hold data and not be used for connections.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -124,7 +124,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
     </details>
 
-3. Verify the sample data is stored in the encrypted tablespace, *USERS*.
+3. Verify that the sample data is stored in the encrypted tablespace, *USERS*.
 
     ``` bash
     <copy>
@@ -180,7 +180,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
     Grant succeeded.
 
-    SQL> grant create pluggable database dblinkuser;
+    SQL> grant create pluggable database to dblinkuser;
 
     Grant succeeded.
 
@@ -201,7 +201,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
 ## Task 2: Prepare Target CDB
 
-1. Set the environment to the 26ai source CDB, *CDB26ENC*, and connect.
+1. Set the environment to the 26ai target CDB, *CDB26ENC*, and connect.
 
     ``` bash
     <copy>
@@ -242,7 +242,7 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     SQL> create database link clonepdb
       2  connect to dblinkuser
       3  identified by dblinkuser
-      4  using 'localhost/beige';
+      4  using 'localhost/coral';
 
     Database link created.
     ```
@@ -278,11 +278,11 @@ The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
     </copy>
     ```        
 
-## Task 3: Analyze the database
+## Task 3: Analyze the Database
 
-Analyze the *CORAL* database for upgrade readiness.
+Analyze the *CORAL* PDB for upgrade readiness.
 
-1. In this lab, you will use a pre-created AutoUpgrade config file. Examine the config file.
+1. In this lab, you will use a precreated AutoUpgrade config file. Examine the config file.
 
     ``` bash
     <copy>
@@ -290,16 +290,16 @@ Analyze the *CORAL* database for upgrade readiness.
     </copy>
     ```
 
-    * AutoUpgrade has its own keystore where it can store sensitive information, like database keystore passwords.
+    * AutoUpgrade has its own keystore where it can store sensitive information, such as database keystore passwords.
     * The location for the AutoUpgrade keystore is defined by `global.keystore`. 
     * The AutoUpgrade keystore is not to be confused with the database keystore (which holds the tablespace encryption keys).
-    * `sid` and `target_cdb` are the source and target CDBs.
+    * `sid` and `target_cdb` specifies the source and target CDBs, respectively.
     * `pdbs` is a comma-separated list of PDBs to upgrade.
-    * `source_dblink` is the name of the database link and the refresh rate in seconds. 60 is unrealistically low and used only for purpose of the exercise.
+    * `source_dblink` specifies the database link and the refresh interval in seconds. 60 is unrealistically low and used only for the purpose of this exercise.
     * `target_pdb_name` allows you to rename the PDB to *CHERRY*. 
-    * `target_pdb_copy_option` tells where to create the data files. You use OMF and set it to `file_name_convert=none`. 
+    * `target_pdb_copy_option` pecifies where to create the data files. You use OMF and set it to `file_name_convert=none`. 
     * `parallel_pdb_creation_clause` is used to avoid overloading the source CDB. Only two channels are used for the initial copy of the database.
-    * `start_time` is set to 100 hours from starting AutoUpgrade. We set the process start time far ahead so we can later control the execution using the *proceed* command.
+    * `start_time` is set to 100 hours from starting AutoUpgrade. We set the process start time far in the future so we can later control the execution using the *proceed* command.
     * `timezone_upg` is used to disable the upgrade of the timezone file. You do this to save time.
 
     <details>
@@ -406,10 +406,10 @@ Analyze the *CORAL* database for upgrade readiness.
 
     </details>
 
-4. You find additional details in the preupgrade log file. There is a *required action* that you must do before the upgrade.
+4. You find additional details in the preupgrade log file. There is a *required action* that you must perform before the upgrade.
 
     * You must load the database keystore password into the AutoUpgrade keystore for the database *CDB26ENC*.
-    * AutoUpgrade must have access to keystore password of the target CDB to complete the process.
+    * AutoUpgrade must have access to the keystore password of the target CDB to complete the process.
     * Optionally, you can check the entire preupgrade log file. It is in `/home/oracle/logs/upg-coral/CDB19ENC/100/prechecks/cdb19enc_preupgrade.log`.
 
     ``` text
@@ -458,8 +458,6 @@ Analyze the *CORAL* database for upgrade readiness.
           auto-login keystore. This requirement also applies to a non-CDB to PDB
           operation, but only if the target CDB is at an Oracle Database Release
           earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
-          operation, but only if the target CDB is at an Oracle Database Release
-          earlier than 21c. If earlier than 21c, AutoUpgrade performs a standard
           upgrade of the non-CDB to the target version prior to creating the PDB in
           the target CDB.
 
@@ -494,7 +492,7 @@ Analyze the *CORAL* database for upgrade readiness.
     Enter password:
     ```
 
-7. Since it is the first time you start the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password:
+7. Because this is the first time you are starting the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password:
 
     ``` bash
     <copy>
@@ -523,7 +521,7 @@ Analyze the *CORAL* database for upgrade readiness.
     </copy>
     ```
 
-    Enter the *CDB26ENC* database keystore password twice:
+    Enter the database keystore password for *CDB26ENC* twice:
 
     ``` bash
     <copy>
@@ -551,8 +549,8 @@ Analyze the *CORAL* database for upgrade readiness.
     ```
 
     * Enter *YES* when prompted to convert to an auto-login keystore.
-    * An auto-login keystore works only on the system it was created.
-    * You could also enter *SHARED*. A shared auto-login keystore works in any system.
+    * An auto-login keystore works only on the system where it was created.
+    * You could also enter *SHARED*. A shared auto-login keystore works on any system.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -583,7 +581,7 @@ Analyze the *CORAL* database for upgrade readiness.
 
     </details>
 
-12. Re-analyze the database for upgrade readiness. Now that you added the database keystore passwords to AutoUpgrade, you can re-analyze to see if that meets the requirements. It takes a short while. Wait for it to complete.
+12. Re-analyze the database for upgrade readiness. Now that you have added the database keystore password to the AutoUpgrade keystore, you can re-analyze the PDB to verify that it meets the requirements. It takes a short while. Wait for it to complete.
 
     ``` bash
     <copy>
@@ -591,7 +589,7 @@ Analyze the *CORAL* database for upgrade readiness.
     </copy>
     ```
 
-    * The analysis must run on the source system. Since source and target is the same in this lab, you don't need to worry about it.
+    * The analysis must run on the source system. Since the source and target are the same in this lab, you don't need to worry about it.
     * If the target is on a remote host, you can use the parameter `target_is_remote`. 
     * Notice the console messages about the AutoUpgrade keystore.
     * Since you've created an AutoUpgrade keystore, AutoUpgrade now reads it on startup. 
@@ -622,7 +620,7 @@ Analyze the *CORAL* database for upgrade readiness.
 
     </details>
 
-13. Check the result in the summary report.
+13. Check the results in the summary report.
 
     ``` bash
     <copy>
@@ -630,7 +628,7 @@ Analyze the *CORAL* database for upgrade readiness.
     </copy>
     ```
 
-    * The *PRECHECKS* is now in status *SUCCESS*. The details states *Check passed and no manual intervention needed*.
+    * *PRECHECKS* now has the status *SUCCESS*. The details state: *Check passed and no manual intervention needed*.
     * You may now proceed with upgrading and converting the encrypted database.
 
     <details>
@@ -663,7 +661,7 @@ Analyze the *CORAL* database for upgrade readiness.
 
 ## Task 4: Build Refreshable Clone
 
-All prerequisites have been meet. You can now start the initial clone of the PDB.
+All prerequisites have been met. You can now start the initial clone of the PDB.
 
 1. Start AutoUpgrade in deploy mode. 
 
@@ -672,7 +670,7 @@ All prerequisites have been meet. You can now start the initial clone of the PDB
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode deploy
     </copy>
     ```
-    * The deploy must run on the target system. Since source and target is the same in this lab, you don't need to worry about it.
+    * AutoUpgrade in deploy mode must run on the target system. Since source and target are on the same system in this lab, you don't need to worry about it.
     * AutoUpgrade creates the clone by copying the data files over the database link.
 
     <details>
@@ -692,13 +690,13 @@ All prerequisites have been meet. You can now start the initial clone of the PDB
 
     </details>
 
-2. After a short while, AutoUpgrade reports that the initial copy was made.
+2. After a short while, AutoUpgrade reports that the initial copy is complete.
 
     ``` text
     Remote database 'CORAL' created as PDB 'CHERRY' for job 102
     ```
 
-3. Hit *ENTER* to bring up the console. Monitor the progress.
+3. Press *ENTER* to bring up the console. Monitor the progress.
 
     ``` bash
     <copy>
@@ -706,7 +704,7 @@ All prerequisites have been meet. You can now start the initial clone of the PDB
     </copy>
     ```
 
-    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *CORAL* database. This allows you to verify that changes made after the initial copy of data files still exist in the PDB after the migration.
+    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *CORAL* database. This allows you to verify that changes made after the initial data file copy are propagated to the PDB.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -728,7 +726,7 @@ All prerequisites have been meet. You can now start the initial clone of the PDB
 
 ## Task 5: Refresh
 
-So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Every 60 seconds, *CDB26ENC* fetches redo over the database link and keep *CORAL* current.
+So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Every 60 seconds, *CDB26ENC* fetches redo over the database link and keeps *CHERRY* current.
 
 1. Start a new terminal. Do not use the original terminal. 
 
@@ -784,9 +782,9 @@ So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Eve
 
 Now the maintenance window has started. You're ready to perform the final refresh and upgrade.
 
-The *REFRESHPDB* phase would stay technically for the next 100 hours. Reason we defined that long time is to have a full control when to start the process. Imagine, for example, we are waiting for a *go* or approval from another team to shut the application down so we can start our migration.
+The *REFRESHPDB* phase would normally remain active for the next 100 hours. We specified such a long interval so that we have full control over when to start the upgrade. For example, you might need to wait for approval from another team before shutting down the application and starting the migration.
 
-When the upgrade starts, AutoUpgrade executes a final refresh to bring over the latest changes. So no more changes will be captured from the source database. Then, it disconnects the PDB and starts the upgrade.
+When the upgrade starts, AutoUpgrade performs a final refresh to apply the latest changes from the source PDB. After the final refresh, no further changes from the source are applied to the clone. AutoUpgrade then stops refreshing the PDB and starts the upgrade.
 
 1. Start the pre-upgrade fixups.
 
@@ -799,7 +797,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
 2. **Switch back to the original terminal**.
 
-3. Press ENTER just to stop *lsj* from spooling the job status. Next, run the `proceed` command to force the start of upgrade process **now**.
+3. Press ENTER to stop *lsj* from displaying the job status. Next, run the `proceed` command to force the start of the upgrade process **now**.
 
     ``` bash
     <copy>
@@ -828,10 +826,10 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     </copy>
     ```
 
-    * AutoUpgrade was holding in *REFRESHPDB*; applying redo at the specified interval.
+    * AutoUpgrade was waiting in the *REFRESHPDB*; applying redo at the specified interval.
     * When you issued the `proceed` command, AutoUpgrade made a final refresh before moving on to the next phase.
-    * Any changes made in the source database at this point in time, would not come over to the target PDB.
-    * In the *DBUPGRADE* stage, AutoUpgrade is upgrading the PDB to the new release. The CDB is already on the new release, so only the PDB is upgraded which is much faster than a complete database upgrade.
+    * Any changes made in the source database at this point would not be transferred to the target PDB.
+    * In the *DBUPGRADE* stage, AutoUpgrade is upgrading the PDB to the new release. The CDB is already on the new release, so only the PDB is upgraded, which is much faster than a complete database upgrade.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -881,7 +879,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
     </details>
 
-5. The upgrade takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade prints *Job 102 completed* and exits.
+5. The upgrade takes 10-15 minutes. Leave the process running. In the end, AutoUpgrade displays *Job 102 completed* and exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -913,7 +911,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     </copy>
     ```
 
-7. Ensure that the *CHERRY* database has been plugged in and is open *READ WRITE* and unrestricted.
+7. Ensure that the *CHERRY* PDB has been plugged in and is open *READ WRITE* and unrestricted.
 
     ``` bash
     <copy>
@@ -969,7 +967,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> alter session set container=CORAL;
+    SQL> alter session set container=CHERRY;
 
     Session altered.
 
@@ -1017,7 +1015,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     ```
 
     * Both records are present. 
-    * The *Hello* initially created, and *World* created right before the final refresh.
+    * The *Hello* record was created initially, and the *World* record was created shortly before the final refresh.
     * This proves that changes made after the initial copy of data files are still in the PDB after the upgrade.
 
     <details>
@@ -1041,19 +1039,19 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
     ```
 
 13. AutoUpgrade stops the source PDB immediately after the final refresh when the source CDB and target CDB are on the same system. 
-    * This ensures no one enters data into the wrong database during the migration, or add new data to it. 
+    * This ensures no one enters data into the wrong database during the migration, or adds new data to it. 
     * You can control this behavior with the `close_source` config file parameter. 
     * If the databases are on different systems, you must manually shut down the source PDB after the migration.    
 
-**Congratulations!** You have now upgraded your encrypted database to a new release of Oracle AI Database.
+**Congratulations!** You have now upgraded your encrypted PDB to a new release of Oracle AI Database.
 
 You may now [*proceed to the next lab*](#next).
 
 ## Learn More
 
-Since encrypted databases are becoming more popular, it's important to know how to deal with them. AutoUpgrade fully supports any scenario when the database is encrypted, and you can safely store database keystore passwords in AutoUpgrade's keystore.
+As the use of database encryption increases, it is important to understand how to upgrade them. AutoUpgrade fully supports any scenario when the database is encrypted, and you can safely store database keystore passwords in AutoUpgrade's keystore.
 
-For fully automated solutions, you should explore Secure External Password Stores which enables upgrades and migration of encrypted databases even without loading the password into AutoUpgrade's keystore.
+For fully automated solutions, consider using a Secure External Password Store, which enables upgrades and migrations of encrypted databases without loading the passwords into the AutoUpgrade keystore.
 
 * Documentation, [The keystore parameter](https://docs.oracle.com/en/database/oracle/oracle-database/26/upgrd/common-parameters-autoupgrade-config-file.html#GUID-B0D91A5E-F2A1-4714-8908-3C7F4C557EDD)
 * Documentation, [Secure External Password Store](https://docs.oracle.com/en/database/oracle/oracle-database/26/refrn/EXTERNAL_KEYSTORE_CREDENTIAL_LOCATION.html#GUID-FD2C1839-E3CC-47E2-99B4-ECE29EB923B6)
