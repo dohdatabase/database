@@ -171,6 +171,7 @@ While the upgrade continues, you install an Oracle home.
     * AutoUpgrade creates a new Oracle home in the `target_home` location.
     * It copies the settings (language, groups, options, etc.) from the `source_home`. 
     * AutoUpgrade also installs the recommended patches specified by the `patch` parameter.
+    * The `RECOMMENDED` keyword gives you the latest Release Update, latest OPatch, latest MRP and Data Pump bundle patch. 
     * The target must be a 26ai Oracle home.
 
     <details>
@@ -211,11 +212,18 @@ While the upgrade continues, you install an Oracle home.
 
     </details>
 
-3. The installation of an Oracle home is much faster with Oracle AI Database 26ai. Oracle provides fully updated gold images that you can extract and install directly. OPatch is already updated, and the gold image comes with an updated OCW component and the latest JDK updates.
+3. The installation of an Oracle home is much faster with Oracle AI Database 26ai. 
+    * Oracle provides fully updated gold images that you can extract and install directly. 
+    * OPatch is already updated, and the gold image comes with an updated OCW component and the latest JDK updates.
 
-4. When you upgrade, you need an Oracle home on the new release. The new Oracle home should look exactly like the old Oracle home, but on the new release. AutoUpgrade makes this very easy. You just specify the source Oracle home, and it will copy all the settings, like language, OS groups and other options. 
+4. When you upgrade, you need an Oracle home on the new release. 
+    * Most likely, you want the new Oracle home to look exactly like the old Oracle home, but on the new release. 
+    * AutoUpgrade makes this very easy. You just specify the source Oracle home, and it will copy all the settings, like language, OS groups and other options. 
 
-5. In this lab, the gold images and patches have already been downloaded. You can also use AutoUpgrade to download patches from My Oracle Support. Instead of manually finding and downloading the patches, you just create a simple config file and AutoUpgrade downloads the patches for you. 
+5. In this lab, the gold images and patches have already been downloaded. 
+    * You can also use AutoUpgrade to download patches from My Oracle Support. 
+    * Instead of manually finding and downloading the patches, you just create a simple config file and AutoUpgrade downloads the patches for you.
+    * Due to security reasons, downloading of patches is not possible in this workshop.
 
 6. Wait for AutoUpgrade to complete the installation. It should only take a few minutes.
 
@@ -252,12 +260,19 @@ While the upgrade continues, you install an Oracle home.
 
     * This is a 26.3 Oracle home installed via a gold image.
     * It includes the OCW Release Update, which is mandatory for Oracle Restart and Oracle RAC.
-    * it also includes the Data Pump bundle patch.
+    * It also includes the Data Pump bundle patch.
+    * AutoUpgrade also installed the *Monthly Recommended Patches* (MRP). The MRP doesn't show up as one patch in the inventory. Rather you see all the individual patches.
+    * If a patch description starts with *Fix for Bug*, it is most likely a security bug fix.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
+    39788260;Fix for Bug 39788260
+    39779540;39779540:Fix for Bug 39779540
+    39779336;Fix for Bug 39779336
+    39739695;Fix for Bug 39739695
+    39661089;Fix for Bug 39661089
     39593097;DATAPUMP BUNDLE PATCH 23.26.3.0.0
     39578859;OCW RELEASE UPDATE 23.26.3.0.0 (39578859) Gold Image
     39578879;Database Release Update : 23.26.3.0.0 (39578879) Gold Image

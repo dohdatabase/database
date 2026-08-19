@@ -135,12 +135,12 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     ``` sql
     <copy>
     select pk, facts
-    from trivia
-    where pk between 1 and 3
-    or pk between 121 and 123
-    or pk between 171 and 173
-    or pk between 221 and 223
-    or pk between 311 and 313;
+    from   trivia
+    where  pk between 1 and 3
+           or pk between 121 and 123
+           or pk between 171 and 173
+           or pk between 221 and 223
+           or pk between 311 and 313;
     </copy>
     ```
 
@@ -151,12 +151,12 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 
     ``` text
     SQL> select pk, facts
-      2  from trivia
-      3  where pk between 1 and 3
-      4  or pk between 121 and 123
-      5  or pk between 171 and 173
-      6  or pk between 221 and 223
-      7* or pk between 311 and 313;
+      2  from   trivia
+      3  where  pk between 1 and 3
+      4         or pk between 121 and 123
+      5         or pk between 171 and 173
+      6         or pk between 221 and 223
+      7*        or pk between 311 and 313;
 
         PK FACTS
     ______ __________________________________________________________________
@@ -183,8 +183,9 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 
     ``` sql
     <copy>
-    select * from trivia
-    where lower(facts) like '%cocktail%';
+    select * 
+    from   trivia
+    where  lower(facts) like '%cocktail%';
     </copy>
     ```
 
@@ -192,8 +193,9 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select * from trivia
-    2* where lower(facts) like '%cocktail%';
+    SQL> select * 
+    2    from   trivia
+    3*   where  lower(facts) like '%cocktail%';
 
     no rows selected
     ```
@@ -242,7 +244,7 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     ``` sql
     <copy>
     select model_name, algorithm, mining_function
-    from user_mining_models;
+    from   user_mining_models;
     </copy>
     ```
 
@@ -251,7 +253,7 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 
     ``` text
     SQL> select model_name, algorithm, mining_function
-    2* from user_mining_models;
+    2*   from   user_mining_models;
 
     MODEL_NAME    ALGORITHM    MINING_FUNCTION
     _____________ ____________ __________________
@@ -281,20 +283,21 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     ``` sql
     <copy>
     create table trivia_vec as
-    select pk, facts, 
-        vector_embedding(doc_model using t.facts as data) as vec
-    from trivia t;
+    select pk, facts, vector_embedding(doc_model using t.facts as data) as vec
+    from   trivia t;
     </copy>
     ```
+
+    * You copy all data into a new table with similar structure.
+    * You add a new column, *VEC*, which contains the vector embedding for that specific row.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
     SQL> create table trivia_vec as
-    2  select pk, facts,
-    3      vector_embedding(doc_model using t.facts as data) as vec
-    4* from trivia t;
+    2  select pk, facts, vector_embedding(doc_model using t.facts as data) as vec
+    3* from   trivia t;
 
     Table TRIVIA_VEC created.
     ```
@@ -307,8 +310,8 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <copy>
     col vec format a40 trunc
     select facts, vec
-    from trivia_vec
-    where rownum <= 10;
+    from   trivia_vec
+    where  rownum <= 10;
     </copy>
     ```
 
@@ -318,8 +321,8 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     ``` text
     SQL> col vec format a40 trunc
     SQL> select facts, vec
-    2  from trivia_vec
-    3  where rownum <= 10;
+    2    from   trivia_vec
+    3   where   rownum <= 10;
 
     FACTS
     --------------------------------------------------------------------------------
@@ -382,7 +385,7 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <copy>
     col segment_name format a20
     select segment_name, bytes/1024 as kbytes
-    from   dba_segments 
+    from   user_segments 
     where  segment_name like 'TRIVIA%';
     </copy>
     ```
@@ -394,10 +397,10 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SEGMENT_NAME		 KBYTES
+    SEGMENT_NAME		     KBYTES
     -------------------- ----------
-    TRIVIA               64
-    TRIVIA_VEC           768
+    TRIVIA                       64
+    TRIVIA_VEC                  768
     ```
 
     </details>
@@ -427,8 +430,8 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 
     ``` sql
     <copy>
-    select pk, facts
-    from trivia_vec
+    select   pk, facts
+    from     trivia_vec
     order by vector_distance(vec , vector_embedding(doc_model using 'cocktail' as data), cosine)
     fetch first 4 rows only;
     </copy>
@@ -440,10 +443,10 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select pk, facts
-    2  from trivia_vec
-    3  order by vector_distance(vec , vector_embedding(doc_model using 'cocktail' as data), cosine)
-    4  fetch first 4 rows only;
+    SQL> select   pk, facts
+    2    from     trivia_vec
+    3    order by vector_distance(vec , vector_embedding(doc_model using 'cocktail' as data), cosine)
+    4    fetch first 4 rows only;
 
         PK
     ----------
@@ -472,8 +475,8 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 14. Repeat the search to find the entries semantically closest to *suzuki*.
     ``` sql
     <copy>
-    select pk, facts
-    from trivia_vec
+    select   pk, facts
+    from     trivia_vec
     order by vector_distance(vec , vector_embedding(doc_model using 'suzuki' as data), cosine)
     fetch first 4 rows only;
     </copy>
@@ -485,10 +488,10 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select pk, facts
-    2  from trivia_vec
-    3  order by vector_distance(vec , vector_embedding(doc_model using 'suzuki' as data), cosine)
-    4  fetch first 4 rows only;
+    SQL> select   pk, facts
+    2    from     trivia_vec
+    3    order by vector_distance(vec , vector_embedding(doc_model using 'suzuki' as data), cosine)
+    4    fetch first 4 rows only;
 
         PK
     ----------
@@ -518,8 +521,8 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 
     ``` sql
     <copy>
-    select pk, facts
-    from trivia_vec
+    select   pk, facts
+    from     trivia_vec
     order by vector_distance(vec , vector_embedding(doc_model using 'fastest running dog' as data), cosine)
     fetch first 4 rows only;
     </copy>
@@ -529,10 +532,10 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select pk, facts
-    2  from trivia_vec
-    3  order by vector_distance(vec , vector_embedding(doc_model using 'fastest running dog' as data), cosine)
-    4  fetch first 4 rows only;
+    SQL> select   pk, facts
+    2    from     trivia_vec
+    3    order by vector_distance(vec , vector_embedding(doc_model using 'fastest running dog' as data), cosine)
+    4    fetch first 4 rows only;
 
         PK
     ----------
