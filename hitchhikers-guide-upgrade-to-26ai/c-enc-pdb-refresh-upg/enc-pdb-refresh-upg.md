@@ -492,7 +492,7 @@ Analyze the *CORAL* PDB for upgrade readiness.
     Enter password:
     ```
 
-7. Because this is the first time you are starting the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password:
+7. Because this is the first time you are starting the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password twice:
 
     ``` bash
     <copy>
@@ -728,7 +728,7 @@ All prerequisites have been met. You can now start the initial clone of the PDB.
 
 So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Every 60 seconds, *CDB26ENC* fetches redo over the database link and keeps *CHERRY* current.
 
-1. Start a new terminal. Do not use the original terminal. 
+1. **Start a new terminal.** Do not use the original terminal. 
 
 2. Set the environment to the *CDB19ENC* database and connect.
 
@@ -786,7 +786,9 @@ The *REFRESHPDB* phase would normally remain active for the next 100 hours. We s
 
 When the upgrade starts, AutoUpgrade performs a final refresh to apply the latest changes from the source PDB. After the final refresh, no further changes from the source are applied to the clone. AutoUpgrade then stops refreshing the PDB and starts the upgrade.
 
-1. Start the pre-upgrade fixups.
+1. **Remain in the new terminal.** 
+
+2. Start the pre-upgrade fixups.
 
     * The fixups must run on the source system.
     * In the interest of time, you skip the fixups in this exercise.
@@ -795,7 +797,7 @@ When the upgrade starts, AutoUpgrade performs a final refresh to apply the lates
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode fixups
     ```
 
-2. **Switch back to the original terminal**.
+3. **Switch back to the original terminal**.
 
 3. Press ENTER to stop *lsj* from displaying the job status. Next, run the `proceed` command to force the start of the upgrade process **now**.
 

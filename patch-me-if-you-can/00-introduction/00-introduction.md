@@ -16,17 +16,22 @@ In this workshop, you will:
 
 ## About the workshop contents
 
+
 This workshop comes with pre-installed Oracle homes and pre-created databases.
-You can switch between environments with the shortcuts shown in the last column of the below diagram.
+You can switch between environments with the shortcuts shown in the last column of the diagram below.
 
 ![Overview of the Oracle Homes and databases in the lab](./images/introduction-overview.png " ")
 
-The lab contains a number of labs that you should perform in the specified order.
+The lab contains:
+* 15 labs total
+* 9 labs on the main track
+* 6 optional labs
 
-* You start by exploring patching concepts
-* Then you use simple methods to patch databases
-* Before moving to advanced topics
-* And patching internals
+Guidance:
+* Start by completing labs 1 through 9 in the specified order.
+* Then, you may complete the optional labs in any order.
+* You may also start an optional lab when time allows. For instance, if you're waiting for an upgrade to complete.
+* All the optional labs are self-contained and can be run simultaneously with other labs.
 
 ## Patching methods and processes
 
@@ -52,5 +57,6 @@ You may now [*proceed to the next lab*](#next).
 ## Acknowledgments
 
 * **Author** - Daniel Overby Hansen
-* **Contributors** - Rodrigo Jorge, Mike Dietrich
-* **Last Updated By/Date** - Daniel Overby Hansen, August 2025
+* **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
+* **Last Updated By/Date** - Daniel Overby Hansen, August 2026
+

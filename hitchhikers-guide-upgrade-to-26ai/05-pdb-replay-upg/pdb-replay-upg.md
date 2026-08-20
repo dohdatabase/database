@@ -98,7 +98,10 @@ None.
 
 During your maintenance window, you perform the upgrade.
 
-1. Still in the *blue* 🟦 terminal. Now, you start the pre-upgrade fixups. This prepares the database for the upgrade. In the interest of time, you skip this step in the lab. The command is shown only for learning purposes.
+1. Still in the *blue* 🟦 terminal. Now, you start the pre-upgrade fixups. This prepares the database for the upgrade. 
+
+    * **In the interest of time, you skip this step in the lab.**
+    * The command is shown only for learning purposes.
 
     ``` bash
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-replay-upg-terracotta.cfg -mode fixups
@@ -217,6 +220,7 @@ During your maintenance window, you perform the upgrade.
 
     ``` bash
     <copy>
+    set timing on
     alter pluggable database terracotta open;
     </copy>
     ```

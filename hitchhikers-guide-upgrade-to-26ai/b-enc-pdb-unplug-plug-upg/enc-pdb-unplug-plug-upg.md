@@ -391,7 +391,7 @@ Analyze the *PLUM* PDB for upgrade readiness.
     Enter password:
     ```
 
-7. Because this is the first time you are starting the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password:
+7. Because this is the first time you are starting the password loader, AutoUpgrade asks for a password to protect the AutoUpgrade keystore. This is not the database keystore password. Use the following AutoUpgrade keystore password twice:
 
     ``` bash
     <copy>

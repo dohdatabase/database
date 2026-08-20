@@ -137,6 +137,7 @@ You have completed:
 
     * This is expected. 
     * The `open` command runs most of the upgrade, but you must still run Datapatch to complete it.
+    * In the next lab, you learn how to diagnose Replay Upgrade.
 
 2. Exit SQLcl.
 
@@ -277,6 +278,8 @@ You have completed:
     alter session set container=TERRACOTTA;
     select name from v$datafile;
     </copy>
+
+    # Be sure to press RETURN
     ```
 
     * You instructed the target CDB, *CDB26*, to reuse the data files on plug-in.
@@ -342,7 +345,15 @@ You have completed:
 
     </details>
 
-You've now upgraded both PDBs. 
+## Task 3: Compare Methods
+
+You've now upgraded both PDBs. Compare the methods.
+
+* Before moving on spend a few minutes to reflect on the differences between AutoUpgrade and Replay Upgrade.
+
+* AutoUpgrade completely automates the process. You can monitor the progress and customize the upgrade.
+
+* Replay Upgrade allows you to run the commands separately. Some prefer this method for automation, although AutoUpgrade integrates easily with automation as well. 
 
 You may now [*proceed to the next lab*](#next).
 

@@ -150,14 +150,6 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select pk, facts
-      2  from   trivia
-      3  where  pk between 1 and 3
-      4         or pk between 121 and 123
-      5         or pk between 171 and 173
-      6         or pk between 221 and 223
-      7*        or pk between 311 and 313;
-
         PK FACTS
     ______ __________________________________________________________________
          1 Atlanta is located in Georgia.
@@ -252,9 +244,6 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select model_name, algorithm, mining_function
-    2*   from   user_mining_models;
-
     MODEL_NAME    ALGORITHM    MINING_FUNCTION
     _____________ ____________ __________________
     DOC_MODEL     ONNX         EMBEDDING
@@ -308,6 +297,9 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
 
     ``` sql
     <copy>
+    set pagesize 10000
+    set linesize 130
+    col facts format a80
     col vec format a40 trunc
     select facts, vec
     from   trivia_vec
@@ -319,60 +311,18 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> col vec format a40 trunc
-    SQL> select facts, vec
-    2    from   trivia_vec
-    3   where   rownum <= 10;
-
-    FACTS
-    --------------------------------------------------------------------------------
-    VEC
-    ----------------------------------------
-    Atlanta is located in Georgia.
-    [3.0079985E-002,-5.27411886E-003,-3.8773
-
-    Boston is located in Massachusetts.
-    [9.21797678E-002,-1.03325688E-003,8.2331
-
-    Chicago is located in Illinois.
-    [4.39825356E-002,-1.2022635E-002,1.72175
-
-
-    FACTS
-    --------------------------------------------------------------------------------
-    VEC
-    ----------------------------------------
-    Denver is located in Colorado.
-    [1.2066979E-001,-4.58574202E-003,1.11382
-
-    Houston is located in Texas.
-    [1.45818507E-002,-3.98688689E-002,3.8565
-
-    Miami is located in Florida.
-    [1.86449513E-002,-1.30586907E-001,-1.443
-
-
-    FACTS
-    --------------------------------------------------------------------------------
-    VEC
-    ----------------------------------------
-    Nashville is located in Tennessee.
-    [-6.88686385E-004,8.72113407E-002,8.0254
-
-    Phoenix is located in Arizona.
-    [1.34541601E-001,-3.95113677E-002,-8.865
-
-    Seattle is located in Washington.
-    [1.05677709E-001,7.45320544E-002,7.75661
-
-
-    FACTS
-    --------------------------------------------------------------------------------
-    VEC
-    ----------------------------------------
-    Philadelphia is located in Pennsylvania
-    [1.3837832E-002,-5.05678244E-002,7.70600
-
+    FACTS										 VEC
+    -------------------------------------------------------------------------------- ----------------------------------------
+    Atlanta is located in Georgia.							 [3.0079985E-002,-5.27411886E-003,-3.8773
+    Boston is located in Massachusetts.						 [9.21797678E-002,-1.03325688E-003,8.2331
+    Chicago is located in Illinois. 						 [4.39825356E-002,-1.2022635E-002,1.72175
+    Denver is located in Colorado.							 [1.2066979E-001,-4.58574202E-003,1.11382
+    Houston is located in Texas.							 [1.45818507E-002,-3.98688689E-002,3.8565
+    Miami is located in Florida.							 [1.86449513E-002,-1.30586907E-001,-1.443
+    Nashville is located in Tennessee.						 [-6.88686385E-004,8.72113407E-002,8.0254
+    Phoenix is located in Arizona.							 [1.34541601E-001,-3.95113677E-002,-8.865
+    Seattle is located in Washington.						 [1.05677709E-001,7.45320544E-002,7.75661
+    Philadelphia is located in Pennsylvania 					 [1.3837832E-002,-5.05678244E-002,7.70600
 
     10 rows selected.
     ```
@@ -417,8 +367,6 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select vector_embedding(doc_model using 'cocktail' as data);
-
     VECTOR_EMBEDDING(DOC_MODELUSING'COCKTAIL'ASDATA)
     --------------------------------------------------------------------------------
     [-2.84580588E-002,6.74280385E-003,-2.74021868E-002,8.71311314E-003,
@@ -443,31 +391,12 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select   pk, facts
-    2    from     trivia_vec
-    3    order by vector_distance(vec , vector_embedding(doc_model using 'cocktail' as data), cosine)
-    4    fetch first 4 rows only;
-
-        PK
-    ----------
-    FACTS
-    --------------------------------------------------------------------------------
-        291
-    A Margarita contains Tequila, lime juice, triple sec.
-
-        318
-    A Vesper contains Gin, vodka, Lillet Blanc.
-
-        293
-    A Martini contains Gin, dry vermouth.
-
-
-        PK
-    ----------
-    FACTS
-    --------------------------------------------------------------------------------
-        304
-    A Gin and Tonic contains Gin, tonic water.
+    	PK FACTS
+    ---------- --------------------------------------------------------------------------------
+           291 A Margarita contains Tequila, lime juice, triple sec.
+           318 A Vesper contains Gin, vodka, Lillet Blanc.
+           293 A Martini contains Gin, dry vermouth.
+           304 A Gin and Tonic contains Gin, tonic water.
     ```
 
     </details>
@@ -488,36 +417,17 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select   pk, facts
-    2    from     trivia_vec
-    3    order by vector_distance(vec , vector_embedding(doc_model using 'suzuki' as data), cosine)
-    4    fetch first 4 rows only;
-
-        PK
-    ----------
-    FACTS
-    --------------------------------------------------------------------------------
-        139
-    CR-V is made by Honda.
-
-        112
-    Accord is made by Honda.
-
-        155
-    Sorento is made by Kia.
-
-
-        PK
-    ----------
-    FACTS
-    --------------------------------------------------------------------------------
-        126
-    Elantra is made by Hyundai.
+    	PK FACTS
+    ---------- --------------------------------------------------------------------------------
+           139 CR-V is made by Honda.
+           112 Accord is made by Honda.
+           155 Sorento is made by Kia.
+           126 Elantra is made by Hyundai.
     ```
 
     </details>
 
-15. Finally, repeat the search using the phrase *fastest running dog*.
+15. Repeat the search using the phrase *fastest running dog*.
 
     ``` sql
     <copy>
@@ -532,31 +442,12 @@ Now that you have successfully migrated the PDB to Oracle AI Database 26ai, you 
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select   pk, facts
-    2    from     trivia_vec
-    3    order by vector_distance(vec , vector_embedding(doc_model using 'fastest running dog' as data), cosine)
-    4    fetch first 4 rows only;
-
-        PK
-    ----------
-    FACTS
-    --------------------------------------------------------------------------------
-        231
-    Greyhounds can run up to 45 mph.
-
-        238
-    Dogs have an excellent sense of time.
-
-        211
-    Domestic cats can run up to 30 mph.
-
-
-        PK
-    ----------
-    FACTS
-    --------------------------------------------------------------------------------
-        234
-    Labradors are the most popular breed.
+    	PK FACTS
+    ---------- --------------------------------------------------------------------------------
+           231 Greyhounds can run up to 45 mph.
+           238 Dogs have an excellent sense of time.
+           211 Domestic cats can run up to 30 mph.
+           234 Labradors are the most popular breed.
     ```
 
     </details>

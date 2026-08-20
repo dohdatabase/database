@@ -274,6 +274,16 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB, *MOCHA*. It's c
 
     </details>
 
+10. Examine the preupgrade HTML report.
+
+    ``` bash
+    <copy>
+    firefox /home/oracle/logs/upg-cdb-restore/COBALT/100/prechecks/cobalt_preupgrade.html &
+    </copy>
+    ```
+
+11. Exit Firefox.
+
 ## Task 2: Start the Upgrade
 
 1. Upgrade the database by starting AutoUpgrade in deploy mode.
@@ -288,6 +298,8 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB, *MOCHA*. It's c
     * It creates a guaranteed restore point before restarting the database in the target Oracle home.
     * Next, the upgrade starts with CDB$ROOT. Then it moves on with PDB$SEED and MOCHA in parallel.
     * Finally, AutoUpgrade runs the post-upgrade actions. 
+    * It takes around 30-40 minutes. 
+
 
     <details>
     <summary>*click to see the output*</summary>
@@ -313,7 +325,6 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB, *MOCHA*. It's c
     ```
 
 4. Wait for the upgrade to complete. Do not exit AutoUpgrade.
-    * It takes around 30-40 minutes. 
     * You can open a new terminal and work on other labs while the upgrade runs.
 
 5. When the upgrade completes, AutoUpgrade writes information to the console.
