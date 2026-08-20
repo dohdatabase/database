@@ -6,8 +6,6 @@ Instead of upgrading and migrating an entire database, you will use a different 
 
 Transportable tablespaces are suitable for larger databases, which is not always the case with a Data Pump export/import. However, transportable tablespaces provide fewer customization options.
 
-You will use the easiest method for transportable tablespaces, Full Transportable Export/Import (FTEX), to move data from the *FTEX* database and into a new PDB in *CDB26*.
-
 Estimated Time: 20 minutes
 
 ### Objectives
@@ -15,7 +13,7 @@ Estimated Time: 20 minutes
 In this lab, you will:
 
 * Prepare a new PDB
-* Move your data using FTEX
+* Move your data using Full Transportable Export/Import (FTEX)
 
 ### Prerequisites
 

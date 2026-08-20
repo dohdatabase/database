@@ -4,8 +4,6 @@
 
 In this lab, you will upgrade a single PDB using an unplug-plug upgrade. You unplug the PDB from the 19c CDB, plug it into a 26ai CDB, and perform the upgrade. Unplug-plug upgrades are faster than full CDB upgrades because you only need to upgrade the PDB, not the full CDB. You will copy the data files during plug-in. This takes longer but provides a better rollback option. 
 
-You will unplug the *ORANGE* PDB from *CDB19*, plug it into the *CDB26* and upgrade.
-
 Estimated Time: 10 minutes
 
 ### Objectives
@@ -60,7 +58,15 @@ You can plug it into an existing 26ai CDB on the same machine. AutoUpgrade handl
 
     </details>
 
-3. For this lab, you use a precreated config file. Examine the precreated config file.
+3. Exit SQLcl.
+
+    ``` bash
+    <copy>
+    exit
+    </copy>
+    ```    
+
+4. For this lab, you use a precreated config file. Examine the precreated config file.
 
     ``` bash
     <copy>
@@ -86,14 +92,6 @@ You can plug it into an existing 26ai CDB on the same machine. AutoUpgrade handl
     ```
 
     </details>
-
-4. Exit SQLcl.
-
-    ``` bash
-    <copy>
-    exit
-    </copy>
-    ```    
 
 5. Start AutoUpgrade in *analyze* mode. The check usually completes very quickly. Wait for it to complete.
 

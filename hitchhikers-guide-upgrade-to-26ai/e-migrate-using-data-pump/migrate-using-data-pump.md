@@ -6,8 +6,6 @@ Instead of upgrading and migrating an entire database, you will use a different 
 
 A Data Pump migration is most suitable for smaller databases or when you need to make other changes, such as converting LOBs to SecureFile, migrating character sets, or making other schema changes.
 
-You will perform a full export from the *FTEX* database and import into a new PDB in the *CDB26* database.
-
 Estimated Time: 15 minutes
 
 ### Objectives

@@ -4,8 +4,6 @@
 
 In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will use a refreshable clone PDB. This feature creates a copy of the database and keeps it synchronized by periodically applying redo from the source database. This minimizes the required downtime while keeping the source database untouched for rollback.
 
-You will upgrade the *BEIGE* database and plug it into the *CDB26* database.
-
 Estimated Time: 35 minutes
 
 ### Objectives
@@ -112,7 +110,7 @@ A refreshable clone PDB uses a database link. You must create a user and grant t
       3  identified by dblinkuser
       4  using 'localhost/beige';
 
-    Database link created.
+    Database link CLONEPDB created.
     ```
 
     </details>
@@ -331,11 +329,13 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
 ## Task 4: Upgrade and convert to PDB
 
-The *REFRESHPDB* phase would normally remain active for the next 100 hours. We specified such a long interval so that we have full control over when to start the process. For example, you might be waiting for approval from another team to shut the application down so we can start our migration.
+1. Switch back to the *yellow* 🟨 terminal.
 
-When the upgrade starts, AutoUpgrade executes a final refresh to bring over the latest changes. So no more changes will be captured from the source database. Then, it stops refreshing the PDB from the non-CDB and starts the upgrade and conversion to PDB.
+2. Examine the output. AutoUpgrade is still in the *REFRESHPDB* phase.
 
-1. Use the *yellow* 🟨 terminal. Press *ENTER* to stop *lsj* from spooling the job status. Next, run the `proceed` command to force the start of the upgrade process **now**.
+3. Press *ENTER* to stop *lsj* from spooling the job status and bring back the console.
+
+4. Next, run the `proceed` command to force the start of the upgrade process **now**.
 
     ``` bash
     <copy>
@@ -345,6 +345,8 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
     * AutoUpgrade will start shortly.
     * You can also specify a new start time using *proceed -job <#> -newStartTime [dd/mm/yyyy hh:mm:ss, +<#>h<#>m]*.
+    * AutoUpgrade executes a final refresh to bring over the latest changes. So no more changes will be captured from the source database. 
+    * Then, it starts the upgrade and conversion to PDB.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -356,7 +358,7 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
     </details>
 
-2. Monitor the progress.
+5. Monitor the progress.
 
     ``` bash
     <copy>
@@ -417,7 +419,9 @@ When the upgrade starts, AutoUpgrade executes a final refresh to bring over the 
 
     </details>
 
-3. Leave the upgrade running. Do not exit AutoUpgrade
+6. Leave the upgrade running. Do not exit AutoUpgrade.
+
+7. Move on with the next task.
 
 ## Task 5: Look Behind the Scenes
 
@@ -970,7 +974,9 @@ While the upgrade runs, let's look at some of the details.
 
 ## Task 6: Check Upgrade
 
-1. Use the *yellow* 🟨 terminal. Wait for AutoUpgrade to complete the migration. When the job completes, AutoUpgrade prints *Job 101 completed*. 
+1. Use the *yellow* 🟨 terminal. Wait for AutoUpgrade to complete the migration. 
+
+2. When the job completes, AutoUpgrade prints *Job 101 completed*. 
 
     <details>
     <summary>*click to see the output*</summary>

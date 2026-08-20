@@ -4,8 +4,6 @@
 
 In this lab, you will upgrade a non-CDB and convert it to a pluggable database (PDB). You will plug it into an existing CDB and reuse the data files. This approach completes the upgrade faster, but you must consider your fallback options carefully.
 
-You will upgrade the *UPGR* database and plug it into the *CDB26* database.
-
 Estimated Time: 35 minutes
 
 ### Objectives
@@ -15,6 +13,7 @@ In this lab, you will:
 * Upgrade a non-CDB and convert it to a PDB
 * Plug it into an existing CDB
 * Reuse existing data files
+* Install an Oracle home
 
 ### Prerequisites
 
@@ -158,9 +157,9 @@ Inside your maintenance window, you start AutoUpgrade to perform the upgrade and
 
 ## Task 4: Install Oracle Home
 
-While the upgrade continues, you install an Oracle home.
+While the upgrade continues, you use AutoUpgrade to install an Oracle home. The Oracle home is not used in this lab, but the task is for educational purposes while the upgrade completes. 
 
-1. Switch to the blue 🟦 terminal. Examine the following config file:
+1. Switch to the *blue* 🟦 terminal. Examine the following config file:
 
     ``` bash
     <copy>
@@ -202,7 +201,6 @@ While the upgrade continues, you install an Oracle home.
     ``` text
     Processing config file ...
 
-    An MRP patch file is not found in /home/oracle/patch-repo for 23.26.3 RU for the job with prefix upg1
     +-----------------------------------------+
     | Starting AutoUpgrade Patching execution |
     +-----------------------------------------+
@@ -254,8 +252,11 @@ While the upgrade continues, you install an Oracle home.
 
     ``` bash
     <copy>
+    export ORACLE_HOME=/u01/app/oracle/product/dbhome_263
     /u01/app/oracle/product/dbhome_263/OPatch/opatch lspatches
     </copy>
+
+    # Be sure to press RETURN
     ```
 
     * This is a 26.3 Oracle home installed via a gold image.
@@ -732,6 +733,19 @@ While the upgrade continues (check on it if you want), you take a closer look at
           There are 0 invalid objects in Oracle-maintained schemas and 0 invalid
           objects in application schemas after upgrade.
     ```
+
+2. Examine the same preupgrade report in HTML format:
+    
+    ``` bash
+    <copy>
+    firefox /home/oracle/logs/upg-plugin-upgr/UPGR/100/prechecks/upgr_preupgrade.html &
+    </copy>
+    ```
+
+    * The HTML report is easier to read, but it requires a desktop environment to start a browser.
+    * Your database servers probably don't have a desktop environment, so you might have to move the HTML report to a different server to view it.
+
+3. Close Firefox.    
 
 ## Task 6: Complete Upgrade
 

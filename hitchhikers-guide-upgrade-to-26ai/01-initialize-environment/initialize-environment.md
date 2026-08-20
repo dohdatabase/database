@@ -65,7 +65,7 @@ In this lab, you will:
 
     </details>
 
-3. Ensure that the databases (*FTEX*, *UPGR* and *CDB26*) are running.
+3. Ensure that the databases (*BEIGE*, *UPGR*, *CDB19* and *CDB26*) are running.
 
     ``` bash
     <copy>

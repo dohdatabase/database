@@ -4,8 +4,6 @@
 
 In this lab, you will upgrade a single PDB using *Replay Upgrade*. You unplug the PDB from the 19c CDB and plug it into a 26ai CDB. When you open the PDB, the database automatically upgrades itself. This is a method originally developed for Oracle Autonomous AI Database and is now available in Oracle AI Database.
 
-You will unplug the *TERRACOTTA* PDB from *CDB19*, plug it into the *CDB26* and upgrade.
-
 Estimated Time: 10 minutes
 
 ### Objectives
