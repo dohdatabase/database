@@ -21,6 +21,8 @@ None.
 
 You will upgrade the *COBALT* database. It's a CDB with one PDB, *MOCHA*. It's currently running Oracle Database 19c.
 
+1. Start a new terminal or use an existing one. You can use any terminal for this lab.
+
 1. Set the environment and connect.
 
     ``` bash

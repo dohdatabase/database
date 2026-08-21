@@ -16,9 +16,11 @@ In this lab, you will:
 
 ### Prerequisites
 
-None.
+None. 
 
 ## Task 1: Start Databases
+
+1. Start a new terminal or use an existing one. You can use any terminal for this lab.
 
 1. Set the environment to the 26ai target CDB, *CDB26ENC*, and connect.
 

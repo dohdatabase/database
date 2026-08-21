@@ -23,6 +23,8 @@ None.
 
 You need to prepare a few things before you can start FTEX.
 
+1. Start a new terminal or use an existing one. You can use any terminal for this lab.
+
 1. Data Pump needs access to a directory where it can put dump and log files. Create a directory in the file system.
 
     ``` bash

@@ -23,6 +23,8 @@ None.
 
 You start the downgrade process while the PDB is still running the new release of Oracle AI Database.
 
+1. Start a new terminal or use an existing one. You can use any terminal for this lab.
+
 1. Connect to *CDB26COM*. This CDB currently contains the upgraded PDB.
 
     ``` bash

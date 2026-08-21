@@ -23,6 +23,8 @@ None.
 
 The two CDBs, *CDB19ENC* and *CDB26ENC*, have already been configured for TDE.
 
+1. Start a new terminal or use an existing one. This terminal is called *terminal A*. 
+
 1. Set the environment to the 19c source CDB, *CDB19ENC*, and connect.
 
     ``` bash
@@ -704,7 +706,7 @@ All prerequisites have been met. You can now start the initial clone of the PDB.
     </copy>
     ```
 
-    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *CORAL* database. This allows you to verify that changes made after the initial data file copy are propagated to the PDB.
+    * AutoUpgrade is now refreshing the PDB periodically. In a new terminal, you will enter some data to the *CORAL* database. This allows you to verify that changes made after the initial data file copy are propagated to the PDB.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -728,7 +730,7 @@ All prerequisites have been met. You can now start the initial clone of the PDB.
 
 So far, you've created a copy of the *CORAL* PDB in the *CDB26ENC* database. Every 60 seconds, *CDB26ENC* fetches redo over the database link and keeps *CHERRY* current.
 
-1. **Start a new terminal.** Do not use the original terminal. 
+1. **Start a new terminal, *B*.** 
 
 2. Set the environment to the *CDB19ENC* database and connect.
 
@@ -786,7 +788,7 @@ The *REFRESHPDB* phase would normally remain active for the next 100 hours. We s
 
 When the upgrade starts, AutoUpgrade performs a final refresh to apply the latest changes from the source PDB. After the final refresh, no further changes from the source are applied to the clone. AutoUpgrade then stops refreshing the PDB and starts the upgrade.
 
-1. **Remain in the new terminal.** 
+1. **Remain in the terminal *B*.** 
 
 2. Start the pre-upgrade fixups.
 
@@ -797,7 +799,7 @@ When the upgrade starts, AutoUpgrade performs a final refresh to apply the lates
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode fixups
     ```
 
-3. **Switch back to the original terminal**.
+3. **Switch back to the terminal *A*.**
 
 3. Press ENTER to stop *lsj* from displaying the job status. Next, run the `proceed` command to force the start of the upgrade process **now**.
 
