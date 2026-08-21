@@ -112,6 +112,7 @@ You can plug it into an existing 26ai CDB on the same machine. AutoUpgrade handl
     ```
 
     * The report states *Check passed and no manual intervention needed*.
+    * Oracle recommends that you examine the detailed preupgrade report, but to save time in this lab, you skip it.
 
     <details>
     <summary>*click to see the output*</summary>

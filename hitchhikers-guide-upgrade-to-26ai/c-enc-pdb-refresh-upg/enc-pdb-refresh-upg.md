@@ -631,6 +631,7 @@ Analyze the *CORAL* PDB for upgrade readiness.
     ```
 
     * *PRECHECKS* now has the status *SUCCESS*. The details state: *Check passed and no manual intervention needed*.
+    * Oracle recommends that you examine the detailed preupgrade report, but to save time in this lab, you skip it.
     * You may now proceed with upgrading and converting the encrypted database.
 
     <details>
@@ -792,8 +793,8 @@ When the upgrade starts, AutoUpgrade performs a final refresh to apply the lates
 
 2. Start the pre-upgrade fixups.
 
+    * **Do not run the command below**. To save time in this lab, you skip the fixups in this exercise.
     * The fixups must run on the source system.
-    * In the interest of time, you skip the fixups in this exercise.
 
     ``` bash
     java -jar autoupgrade.jar -config /home/oracle/scripts/upg-coral.cfg -mode fixups

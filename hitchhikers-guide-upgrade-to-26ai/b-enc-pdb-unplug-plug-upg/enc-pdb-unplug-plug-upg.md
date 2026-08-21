@@ -205,7 +205,7 @@ Analyze the *PLUM* PDB for upgrade readiness.
     * The location for the AutoUpgrade keystore is defined by `global.keystore`. 
     * Do not confuse the AutoUpgrade keystore with the database keystore, which holds the tablespace encryption keys.
     * `sid` and `target_cdb` identify the source and target CDBs, respectively.
-    * `pdbs` is a comma-separated list of PDBs to upgrade.
+    * `pdbs` is the PDB to upgrade, or a comma-separated list of PDBs.
     * You want to plug in the PDB and reuse its data files, so you omit `target_pdb_copy_option`. 
 
     <details>
@@ -555,6 +555,7 @@ Analyze the *PLUM* PDB for upgrade readiness.
     ```
 
     * *PRECHECKS* now has the status *SUCCESS*. The details state: *Check passed and no manual intervention needed*.
+    * Oracle recommends that you examine the detailed preupgrade report, but to save time in this lab, you skip it.
     * You may now proceed with upgrading the encrypted PDB.
 
     <details>

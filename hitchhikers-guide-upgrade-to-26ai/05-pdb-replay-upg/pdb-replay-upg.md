@@ -30,7 +30,7 @@ None.
 
     * You only use AutoUpgrade only for the pre-upgrade analysis and fixups. 
     * `sid` and `target_cdb` specify the SID of the source and target CDB.
-    * `pdbs` is a comma-separated list of PDBs to upgrade.
+    * `pdbs` is the PDB to upgrade, or a comma-separated list of PDBs.
     
     <details>
     <summary>*click to see the output*</summary>
@@ -65,6 +65,8 @@ None.
     ```
 
     * The report states *Check passed and no manual intervention needed*.
+    * Oracle recommends that you examine the detailed preupgrade report, but to save time in this lab, you skip it.
+
 
     <details>
     <summary>*click to see the output*</summary>

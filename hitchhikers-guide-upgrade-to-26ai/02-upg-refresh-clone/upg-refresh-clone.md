@@ -232,7 +232,24 @@ You check the source database for upgrade readiness.
 
     </details>
 
-4. Proceed with the pre-upgrade fixups.
+4. Although the summary report states "Check passed..." it is still recommended to examine the detailed preupgrade report.
+
+    * The preupgrade report comes in a number of formats.
+    * The HTML report is easier to read and provides a good overview of the findings. However, it requires a desktop environment which is not always present on database servers.
+    * The text format is a regular file that you can read in a terminal.
+    * The XML and JSON formats are useful for scripting and automation. 
+
+5. Examine the detailed preupgrade HTML report. 
+
+    ``` bash
+    <copy>
+    firefox /home/oracle/logs/beige-refresh/BEIGE/100/prechecks/beige_preupgrade.html &
+    </copy>
+    ```
+
+6. Close Firefox.  
+
+7. Proceed with the pre-upgrade fixups.
 
     * Normally, you would do this shortly before the final refresh (as dictated by `start_time` config file parameter or when you plan to run the *proceed* command). But in this lab we do it now.
     * The fixups must run on the source system.
@@ -267,9 +284,9 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
     </details>
 
-2. Monitor the creation. AutoUpgrade creates the PDB and copies the data files in the phase *CLONEPDB*. The database is small so it completes fairly quickly. Press *RETURN* to bring the console forward.
+2. Press *RETURN* to bring the console forward.
 
-3. Use the `lsj` command.
+3. Monitor the creation. Use the `lsj` command.
 
     ``` bash
     <copy>
@@ -277,9 +294,13 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     </copy>
     ```
 
-    * AutoUpgrade is now refreshing the PDB periodically. In a second terminal, you will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial data file copy are propagated to the PDB in the PDB after the migration.
+    * AutoUpgrade creates the PDB and copies the data files in the phase *CLONEPDB*. The database is small so it completes fairly quickly. 
+    * Then it refreshes the PDB periodically in the *REFRESHPDB* phase.
+    * Notice the *Starts in 5,996 minutes* message. In the config file, you set `start_time` to *plus 10 hours*. This means that AutoUpgrade will refresh the PDB for 10 hours before moving on with the upgrade. Of course, you don't want to wait 10 hours for the upgrade, so later you will use the `PROCEED` command in AutoUpgrade. The command moves `start_now` to `now` and this allows you control the exact time of the final refresh and the start of the upgrade.  
 
-4. Do not exit AutoUpgrade. Switch to the blue 🟦 terminal. Set the environment to the *BEIGE* database.
+4. Do not exit AutoUpgrade. Leave it running.
+
+5. Switch to the blue 🟦 terminal. Set the environment to the *BEIGE* database.
 
     ``` bash
     <copy>
@@ -297,7 +318,8 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
     create table sales.orders as select * from all_objects;
     </copy>
     ```
-
+    
+    * You will enter some data to the *BEIGE* database. This allows you to verify that changes made after the initial data file copy are propagated to the PDB in the PDB after the migration.
     * Later, you will use the test data to ensure that no data is lost.
 
     <details>

@@ -200,7 +200,8 @@ You will upgrade the *COBALT* database. It's a CDB with one PDB, *MOCHA*. It's c
     </copy>
     ```
 
-    * It contains three sections, one for each container: *CDB$ROOT*, *PDB$SEED* and *MOCHA*.
+    * The report is different since you upgrade an entire CDB. 
+    * Now, it contains three sections, one for each container: *CDB$ROOT*, *PDB$SEED* and *MOCHA*.
     * Notice that *Container Name: CDB$ROOT* appears near the beginning of the report.
     * Use *PAGE UP* and *PAGE DOWN* to scroll through the report.
     * Find the sections for the other containers: *PDB$SEED* and *MOCHA*.

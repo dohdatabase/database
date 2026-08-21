@@ -297,6 +297,7 @@ While the upgrade continues (check on it if you want), you take a closer look at
     </copy>
     ```
 
+    * In the previous lab, you saw an HTML version of a preupgrade report. Now, you look at the text version.
     * Scroll through the report using the *SPACEBAR*. 
     * First, you see details about the database.
     * Next, the preupgrade findings are grouped into *before upgrade* and *after upgrade*.
@@ -733,19 +734,6 @@ While the upgrade continues (check on it if you want), you take a closer look at
           There are 0 invalid objects in Oracle-maintained schemas and 0 invalid
           objects in application schemas after upgrade.
     ```
-
-2. Examine the same preupgrade report in HTML format:
-    
-    ``` bash
-    <copy>
-    firefox /home/oracle/logs/upg-plugin-upgr/UPGR/100/prechecks/upgr_preupgrade.html &
-    </copy>
-    ```
-
-    * The HTML report is easier to read, but it requires a desktop environment to start a browser.
-    * Your database servers probably don't have a desktop environment, so you might have to move the HTML report to a different server to view it.
-
-3. Close Firefox.    
 
 ## Task 6: Complete Upgrade
 
