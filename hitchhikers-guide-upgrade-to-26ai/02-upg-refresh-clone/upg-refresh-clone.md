@@ -232,7 +232,7 @@ You check the source database for upgrade readiness.
 
     </details>
 
-4. Although the summary report states "Check passed..." it is still recommended to examine the detailed preupgrade report.
+4. Although the summary report states *Check passed...* it is still recommended to examine the detailed preupgrade report.
 
     * The preupgrade report comes in a number of formats.
     * The HTML report is easier to read and provides a good overview of the findings. However, it requires a desktop environment which is not always present on database servers.
@@ -284,7 +284,7 @@ You build the refreshable clone with AutoUpgrade. It creates the PDB and starts 
 
     </details>
 
-2. Press *RETURN* to bring the console forward.
+2. When AutoUpgrade displays *Copying remote database ...*, press *RETURN* to bring the console forward.
 
 3. Monitor the creation. Use the `lsj` command.
 
