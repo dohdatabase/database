@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will patch an Oracle Database in the most simple way using AutoUpgrade. AutoUpgrade not only patches the database but also downloads the right patches and builds a new Oracle home. This allows you to apply patches using the *out-of-place* method according to our best practices.
+In this lab, you will patch an Oracle AI Database in the most simple way using AutoUpgrade. AutoUpgrade not only patches the database but also downloads the right patches and builds a new Oracle home. This allows you to apply patches using the *out-of-place* method according to our best practices.
 
 In the lab environment there is no connection to download patches from My Oracle Support, so all patches are already downloaded.
 
@@ -23,7 +23,7 @@ This lab assumes:
 
 ## Task 1: Analyze database
 
-Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode is a lightweight and non-intrusive check of an Oracle Database.
+Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode is a lightweight and non-intrusive check of an Oracle AI Database.
 
 1. Use the *yellow* terminal 🟨. AutoUpgrade requires a *config* file with information about the database that you want to patch. In this lab, you use a pre-created config file. Examine the config file.
 
@@ -38,7 +38,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     * `source_home` and `sid` describe the current database.
     * `target_home` is the location of the new Oracle home. It doesn't exist yet. AutoUpgrade creates it for you. AutoUpgrade uses the settings from the source Oracle home to create the new one.
-    * `folder` is the location where AutoUpgrade can find and store patch files. Ideally, this location is a network share accessible to all your database hosts.
+    * `download_folder` is the location where AutoUpgrade can find and store patch files. Ideally, this location is a network share accessible to all your database hosts.
     * `patch` informs AutoUpgrade which patches you want to apply. `RECOMMENDED` means the recent-most OPatch and Release Update plus matching OJVM and Data Pump bundle patches. In addition, you're adding a one-off patch.
     * `download` tells whether AutoUpgrade should attempt to download the patches from My Oracle Support using your My Oracle Support credentials. This is not possible inside this lab environment, so all patches have been pre-downloaded.
 
@@ -51,7 +51,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     patch1.source_home=/u01/app/oracle/product/19
     patch1.target_home=/u01/app/oracle/product/19_28
     patch1.sid=FTEX
-    patch1.folder=/home/oracle/patch-repo
+    patch1.download_folder=/home/oracle/patch-repo
     patch1.patch=RECOMMENDED,37738908
     patch1.download=no
     ```
@@ -71,7 +71,6 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     ``` text
     $ java -jar autoupgrade.jar -config scripts/pt-02-simple-patching.cfg -patch -mode analyze
-    AutoUpgrade Patching 25.4.250730 launched with default internal options
     Processing config file ...
     +-----------------------------------------+
     | Starting AutoUpgrade Patching execution |
@@ -165,7 +164,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
 ## Task 2: Patch database
 
-Patching a single instance Oracle Database require downtime.
+Patching a single instance Oracle AI Database require downtime.
 
 **Downtime starts now.**
 
@@ -186,7 +185,6 @@ Patching a single instance Oracle Database require downtime.
 
     ``` text
     $ java -jar autoupgrade.jar -config scripts/pt-02-simple-patching.cfg -patch -mode deploy
-    AutoUpgrade Patching 25.4.250730 launched with default internal options
     Processing config file ...
     +-----------------------------------------+
     | Starting AutoUpgrade Patching execution |
@@ -417,7 +415,7 @@ Patching a single instance Oracle Database require downtime.
     </copy>
     ```
 
-3. That's it. You just patched your Oracle Database including:
+3. That's it. You just patched your Oracle AI Database including:
 
     * Building a brand-new Oracle home enabling out-of-place patching
     * Updating OPatch
@@ -439,5 +437,5 @@ AutoUpgrade can also connect to My Oracle Support and find and download the nece
 
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Daniel Overby Hansen, August 2026
+* **Last Updated By/Date** - Daniel Overby Hansen, September 2026
 

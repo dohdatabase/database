@@ -5,7 +5,7 @@
   "tutorials": [
     {
       "title": "Introduction",
-      "description": "The Introduction to Oracle Database Patching",
+      "description": "The Introduction to Oracle AI Database Patching",
       "filename": "../../00-introduction/00-introduction.md"
     },
     {

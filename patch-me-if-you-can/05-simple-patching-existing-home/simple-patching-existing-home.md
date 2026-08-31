@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will patch another Oracle Database using AutoUpgrade. Since you have already created a new Oracle home, you will use that. There is no need to create a separate Oracle home each database.
+In this lab, you will patch another Oracle AI Database using AutoUpgrade. Since you have already created a new Oracle home, you will use that. There is no need to create a separate Oracle home each database.
 
 Estimated Time: 10 Minutes
 
@@ -42,7 +42,7 @@ You will use AutoUpgrade just like in lab 2.
 
     ``` text
     $ cat scripts/pt-04-simple-patching-existing-home.cfg
-    global.autoupg_log_dir=/home/oracle/autoupgrade-patching/simple-patching-existing-home/log
+    global.global_log_dir=/home/oracle/autoupgrade-patching/simple-patching-existing-home/log
     patch1.source_home=/u01/app/oracle/product/19
     patch1.target_home=/u01/app/oracle/product/19_28
     patch1.sid=UPGR
@@ -51,7 +51,7 @@ You will use AutoUpgrade just like in lab 2.
 
     </details>
 
-2. Patching a single instance Oracle Database require downtime. Downtime starts now.
+2. Patching a single instance Oracle AI Database require downtime. Downtime starts now.
 
 3. Start patching the database.
 
@@ -151,7 +151,7 @@ You will use AutoUpgrade just like in lab 2.
     </copy>
     ```
 
-8. That's it. You just patched your Oracle Database including:
+8. That's it. You just patched your Oracle AI Database including:
     * Using an existing Oracle home
     * Required and recommended pre- and post-tasks
     * Copying database configuration files from old to new Oracle home
@@ -164,5 +164,5 @@ You may now [*proceed to the next lab*](#next).
 
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Daniel Overby Hansen, August 2026
+* **Last Updated By/Date** - Daniel Overby Hansen, September 2026
 

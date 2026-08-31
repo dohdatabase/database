@@ -764,5 +764,5 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
 
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Daniel Overby Hansen, August 2026
+* **Last Updated By/Date** - Daniel Overby Hansen, September 2026
 

@@ -842,5 +842,5 @@ You may now [*proceed to the next lab*](#next).
 
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
-* **Last Updated By/Date** - Daniel Overby Hansen, August 2026
+* **Last Updated By/Date** - Daniel Overby Hansen, September 2026
 
