@@ -2,13 +2,13 @@
 
 ## Introduction
 
-After risk is identified, Seer Bank needs to know whether case-processing capacity is close enough to respond. This lab uses **Oracle Spatial** to answer a practical operations question: where is demand, where are the service centers, and can the bank meet its service-level agreement (SLA) commitments?
+After risk is identified, **Seer Bank** needs to know whether case-processing capacity is close enough to respond. This lab uses **Oracle Spatial** to measure where demand is, where service centers are, and whether SLA commitments can be supported.
 
 You will help a service operations leader turn location data into coverage evidence for case routing, fraud follow-up, anti-money laundering (AML) review, and SLA planning.
 
-Risk and fraud decisions often create service work: client outreach, case routing, AML or fraud review, product review, dispute follow-up, onboarding checks, and document handling. Spatial analysis helps operations leaders avoid guessing from a map and instead measure whether case-processing capacity is near the demand region that needs support.
+Risk and fraud decisions often create service work: client outreach, case routing, AML or fraud review, product review, dispute follow-up, onboarding checks, and document handling. Spatial analysis turns visual guesswork into measurable distance, demand, and SLA information for operations leaders.
 
-Every risk decision can create operational work. The bank needs to know not only what is risky, but whether the service network can respond where demand is highest.
+Every risk decision can create operational work. The bank needs to know what is risky and whether the service network can respond where demand is highest.
 
 <details>
 <summary><strong>Key terms: spatial data, point, boundary, distance, GeoJSON, SLA, and case-processing capacity</strong></summary>
@@ -29,21 +29,21 @@ Every risk decision can create operational work. The bank needs to know not only
 
 </details>
 
-The first image below explains the spatial coverage pattern. Service centers are stored as points, demand regions are stored as boundaries, and Oracle Spatial can calculate distance and coverage so service decisions are based on measurable geography instead of visual guesswork.
+The first image below explains the spatial coverage pattern. Service centers are stored as points, demand regions are stored as boundaries, and Oracle Spatial calculates distance and coverage so service decisions are based on measurable geography.
 
 ![Spatial service coverage flow](images/spatial-service-coverage-flow.svg " ")
 
-The second image is the Client Service and SLA Coverage page. It combines a map, service-center table, regional demand indicators, and case-processing capacity alerts so an operations leader can see where demand is building and whether nearby case-processing capacity is enough to respond. The SQL in this lab queries the same location and SLA data behind that screen.
+The second image is the **Client Service and SLA Coverage** page. It combines a map, service-center table, regional demand indicators, and case-processing capacity alerts so an operations leader can see where demand is building and whether nearby case-processing capacity is enough to respond. The SQL in this lab queries the location and SLA data behind that screen.
 
 ![Client Service and SLA Coverage map](images/service-sla-spatial.png " ")
 
 ### Objectives
 
-- Run Oracle Spatial SQL for service coverage analysis.
-- Interpret distance and SLA coverage results.
+- Run spatial SQL that measures service-center distance to the New York Metro demand region.
+- Summarize SLA response-zone commitments.
 - Open Spatial Studio from Database Actions.
-- Create map layers for service centers, demand regions, and SLA zones.
-- Compare SQL results with Spatial Studio map analysis.
+- Create database-backed datasets for service centers and demand regions.
+- Build and save a New York Metro service coverage project.
 
 Estimated Time: **25 minutes**
 
@@ -54,17 +54,15 @@ Estimated Time: **25 minutes**
 | Business Problem | Service leaders need to know whether case-processing capacity is close enough to high-demand regions. |
 | Technical Challenge | Operations teams need location-aware decisions without moving geography, service centers, and SLA zones into separate mapping systems. |
 | Persona Focus | Service operations leaders evaluate coverage; database developers show distance and SLA evidence with spatial SQL. |
-| What You Will See | Spatial SQL quantifies distance and regional service pressure, while Spatial Studio maps the finance layers. |
+| What You Will See | Spatial Studio maps the finance layers, while spatial SQL quantifies distance and regional service pressure. |
 | Database Capability | Oracle Spatial geometry objects (`SDO_GEOMETRY`), distance calculations (`SDO_GEOM.SDO_DISTANCE`), regions, and SLA zones support coverage analysis. |
 | Outcome | Operations teams can visualize coverage and prioritize case-processing capacity based on geography and demand. |
 
-Persona focus: You are helping a service operations leader map the coverage layers and then verify the map with measurable spatial SQL.
+**Persona focus:** You are helping a service operations leader measure nearby case-processing capacity, then use Spatial Studio to see the same New York Metro coverage story on a map.
 
-## Task 1: Calculate service center distance to New York Metro in SQL Worksheet
+## Task 1: Calculate service center distance to New York Metro
 
-In this lab, you will analyze service coverage in two views. First, you will run Oracle Spatial SQL in SQL Worksheet so you can see exactly how the database calculates distance, regions, and SLA coverage. Then you will open Spatial Studio and turn the same location evidence into a map, where service centers, demand regions, and response zones become easier to compare. Think of the SQL as the measurement layer and Spatial Studio as the operations map.
-
-Start by comparing service-center locations to the New York Metro demand region.
+Start by comparing service-center locations to the New York Metro demand region so operations can identify which centers are closest to the work that may need support:
 
 1. Run this spatial distance query:
 
@@ -131,8 +129,8 @@ Start by comparing service-center locations to the New York Metro demand region.
     | Joliet Midwest Risk Desk | Joliet | Illinois | 41.525 | -88.0817 | { "type": "Point", "coordinates": [-88.0817, 41.525] } | 1152.2 | New York Metro | 91 |
 
 
-2. Review the nearest service centers.
-    Start with the first row. It shows the nearest service center to the New York Metro boundary: Edison Wealth Service Center in Edison, New Jersey.
+2. Review the nearest service centers as a routing starting point.
+    Edison is the closest center to a high-demand region, so it is the first place an operations leader would check for available case-processing capacity. If Edison is already overloaded, the next closest centers show where work may need to be routed next.
 
     Read the result in three parts.
 
@@ -142,11 +140,11 @@ Start by comparing service-center locations to the New York Metro demand region.
 
     3. `Location Geojson` shows the same service-center point in a map-friendly format. For WGS84 map data, Oracle stores coordinates as longitude first, then latitude. That is why the GeoJSON point for Edison starts with `-74.4121` before `40.5187`.
 
-    The so what: Edison is the closest center to a high-demand region, so it is the first place an operations leader would check for available case-processing capacity. If Edison is already overloaded, the next closest centers help show where work may need to be routed next.
+    The business takeaway is that distance turns a map into an operations decision. If the closest center is overloaded, the next closest centers help show where work may need to be routed next.
 
-## Task 2: Summarize SLA zone coverage in SQL Worksheet
+## Task 2: Summarize SLA zone coverage
 
-After locating nearby service centers, summarize the response commitments attached to SLA zones.
+After locating nearby service centers, summarize the response commitments attached to SLA zones so case urgency can be compared with service capacity:
 
 1. Run this SLA zone summary:
 
@@ -183,110 +181,157 @@ After locating nearby service centers, summarize the response commitments attach
     | economy | 30 | 72 | 72 | 72 |
 
 
-2. Compare the service levels.
-    This query summarizes all SLA zones into service promises that operations leaders can compare with case urgency. It connects spatial coverage to the practical question of how quickly the bank can respond.
+2. Compare the service levels as response commitments, not just zone counts.
+    Express and overnight zones represent faster service promises, while standard and economy zones represent longer service windows that may be less appropriate for high-priority case work.
 
     The result shows how zone type maps to response-hour commitments. Express and overnight zones represent faster response promises, while standard and economy zones represent longer service windows.
 
     This matters because risk operations are not finished when a signal is detected. If a case requires outreach, document review, or service follow-up, the bank also needs to know whether the service network can meet the response time implied by the case priority.
 
-## Task 3: Open Spatial Studio
+## Task 3: Open Spatial Studio from Database Actions
 
-Start from the Database Actions Launchpad. You will use the `LLUSER` database user and password supplied for the workshop.
+Move from SQL evidence to the visual map so service leaders can see the same location data that the distance query measured.
 
-1. If the dark-theme message appears, click **Done**.
+1. Return to the **Database Actions Launchpad**.
 
-2. Confirm that the upper-right corner shows `LLUSER`.
+2. If the dark-theme message appears, click **Done**.
+
+3. Confirm that the upper-right corner shows `LLUSER`.
 
     ![Database Actions Launchpad for the LLUSER workshop account](images/database-actions-launchpad.png " ")
 
-3. Click **Related Services**.
-
-4. Select **Spatial Studio** and click **Open**.
+4. On the **Development** tab, select **Spatial Studio** from the left-side tool list and click **Open**.
 
 5. If prompted, sign in with `LLUSER` and the workshop password.
 
+6. Confirm that Spatial Studio opens on the **Projects** page.
+
     ![Spatial Studio Projects page](images/spatial-projects-home.png " ")
 
-## Task 4: Create finance datasets and a coverage project
+## Task 4: Create the New York Metro Service Coverage Project
 
-You already measured distance and SLA coverage in SQL Worksheet. Now build the Spatial Studio project to see those location relationships on a map.
+Create two database-backed datasets, add them to a map, filter the demand layer to New York Metro, and run a distance analysis to identify nearby fulfillment centers:
 
-1. In Spatial Studio, open **Datasets** from the left navigation and click **Create Dataset**.
+1. In Spatial Studio, click the **Datasets** icon in the left navigation, then click **Create dataset**.
 
-2. Select **Database table/view**, choose the workshop database connection, and click **Create**.
+    ![Open the Spatial Studio Datasets page and click Create dataset](images/spatial-create-dataset.png " ")
 
-3. Search for and create datasets for these three tables:
+2. Select **Database table/view**. Keep `DEFAULT_CONNECTION` selected, then click **Create**.
 
-    | Database table | Geometry column | Key column | Finance meaning |
-    | --- | --- | --- | --- |
-    | `FULFILLMENT_CENTERS` | `LOCATION` | `CENTER_ID` | Service-center point locations and case-processing capacity. |
-    | `DEMAND_REGIONS` | `BOUNDARY` | `REGION_ID` | Regional demand boundaries, including New York Metro. |
-    | `FULFILLMENT_ZONES` | `ZONE_BOUNDARY` | `ZONE_ID` | SLA response zones and service commitments. |
+    ![Create a Spatial Studio dataset from a database table or view](images/spatial-create-database.png " ")
 
-    If the connection contains many objects, use the search field rather than scrolling through the full list.
+3. Expand `DEFAULT_CONNECTION`, then expand **Tables**.
 
-4. Confirm that the three datasets appear on the **Datasets** page. If Spatial Studio asks for a key, open the dataset columns and use the key column shown in the table above.
+    ![Expand DEFAULT_CONNECTION and Tables in Spatial Studio](images/spatial-tables.png " ")
 
-    > `SERVICE_CENTERS_V` provides business labels for SQL results, but it does not contain an `SDO_GEOMETRY` column. Use `FULFILLMENT_CENTERS.LOCATION` as the service-center map layer.
+4. Hold **Ctrl / Cmd** pressed, and select these tables, then click **OK**:
 
-    ![Spatial Studio datasets for demand regions, fulfillment centers, fulfillment zones, and service centers](images/spatial-video-datasets-page.png " ")
+    - `DEMAND_REGIONS`
+    - `FULFILLMENT_CENTERS`
 
-5. Open **Projects** and click **Create Project**.
+    ![Select DEMAND_REGIONS and FULFILLMENT_CENTERS to create Spatial Studio datasets](images/spatial-select-tables.png " ")
 
-    ![Create a project from the Spatial Studio Projects page](images/spatial-create-project.png " ")
+5. **Important:** If Spatial Studio shows an issues page for `DEMAND_REGIONS`, click **Create Spatial Metadata and Index**, complete the prompt, then return to the dataset list. If you do not see this page, continue to the next step.
 
-6. Name the project `Seer Bank Service and SLA Coverage`.
+    ![Resolve Spatial Studio dataset metadata and index issues if prompted](images/spatial-dataset-issues.png " ")
 
-7. Click **Add Dataset**, select the three finance datasets, and click **OK**. Drag them onto the map in this order:
+6. From the dataset list, open the actions menu (the three dot menu) for `DEMAND_REGIONS`, then click **Create project**.
 
-    1. `DEMAND_REGIONS` as the regional boundary layer.
-    2. `FULFILLMENT_ZONES` as the SLA-zone layer.
-    3. `FULFILLMENT_CENTERS` as the point layer on top.
+    ![Create a Spatial Studio project from the DEMAND_REGIONS dataset](images/spatial-create-project-menu.png " ")
 
-8. Use each layer's action menu to open **Settings**. Make the boundary layers partially transparent and keep the service-center points visible. If a boundary hides another layer, drag the layers in the Layers list so `FULFILLMENT_CENTERS` stays on top.
+7. In the project, click **Add dataset**.
 
-    ![Spatial Studio project with demand region polygons and fulfillment center points](images/spatial-video-project-layers.png " ")
+    ![Add another dataset to the Spatial Studio project](images/spatial-add-dataset-project.png " ")
 
-9. In the layer settings, adjust **Fill**, **Stroke**, and **Opacity** so the demand region is visible but does not hide the service-center points.
+8. Select `FULFILLMENT_CENTERS`, then click **OK**.
 
-    ![Style a Spatial Studio layer so the service-center points remain visible](images/spatial-video-layer-style.png " ")
+    ![Add FULFILLMENT_CENTERS to the Spatial Studio project](images/spatial-add-fulfillment-center.png " ")
 
-10. Turn layers on and off to compare the demand region, SLA zone, and available service locations.
+9. Drag `DEMAND_REGIONS` and `FULFILLMENT_CENTERS` onto the map.
 
-## Task 5: Run the Within distance analysis in Spatial Studio
+    **Note:** Spatial Studio adds `DEMAND_REGIONS` as boundary shapes and `FULFILLMENT_CENTERS` as point locations.
 
-This visual analysis corresponds to the service-center distance query you ran in Task 1.
+    ![Drag DEMAND_REGIONS and FULFILLMENT_CENTERS onto the Spatial Studio map](images/spatial-drag-drop-into-map.png " ")
 
-1. To reproduce the visual analysis from the Spatial Studio walkthrough, select the New York Metro demand region on the map, click **Create analysis**, and choose **Within distance**.
+10. In the left panel, open the actions menu (three dot menu) for `DEMAND_REGIONS`, then select **Settings**.
 
-2. Configure the analysis:
+11. From the **Configure** dropdown menu, select **Filter**.
 
-    | Field | Value |
-    | --- | --- |
-    | Analysis name | `FULFILLMENT_CENTERS WITHIN DISTANCE` |
-    | Layer to be filtered | `FULFILLMENT_CENTERS.LOCATION` |
-    | Layer to be used as the filter | `DEMAND_REGIONS.BOUNDARY` |
-    | Include only selected items in the filter layer | On |
-    | Distance | `250,000` |
-    | Unit | `Meter` |
+    ![Open the DEMAND_REGIONS filter configuration](images/spatial-demand-regions-filter.png " ")
 
-    This analysis asks Spatial Studio to return the service-center points within 250 kilometers of the selected demand-region boundary.
+12. Create a filter for New York Metro by setting the following values:
 
-    ![Configure a Within distance analysis in Spatial Studio](images/spatial-video-within-distance-setup.png " ")
+    - For the **Column** dropdown, select `REGION_NAME`
+    - For the **Value** field, fill in with "New York Metro"
 
-3. Click **Run**. Spatial Studio adds the analysis result as a new layer. Review the nearby centers and compare them with the demand region on the map.
+13. Select **Apply**.
 
-    ![Within distance analysis result showing service centers near the selected demand region](images/spatial-video-within-distance-result.png " ")
+    ![Apply the New York Metro filter to DEMAND_REGIONS](images/spatial-demand-region-apply.png " ")
 
-4. Click **Save** and keep the project name `Seer Bank Service and SLA Coverage`. The map is the visual version of the SQL evidence you ran earlier.
+14. Navigate on the map to the New York Metro region and select it.
+
+15. In the left panel, open the actions menu (three dot menu) for `DEMAND_REGIONS`, then select **Spatial analysis**
+
+    ![Configure the Spatial Studio distance analysis](images/spatial-analysis-setup.png " ")
+
+16. From the **Filter** tab, select **Return shapes within a specified distance of another**.
+
+    ![Select the New York Metro demand region on the map](images/spatial-select-new-york-region.png " ")
+
+17. Within the newly opened menu, configure the analysis as follows:
+
+    - Fill in the **Analysis name** field with **Centers within 250000 meters of New York**
+    - From the **Layer to be filtered** dropdown, select `FULFILLMENT_CENTERS.LOCATION`
+    - From the **Layer to be used as filter** dropdown, select `DEMAND_REGIONS.BOUNDARY`
+    - Fill in the **Distance** field with **250000**
+    - From the **Unit** dropdown, select **Meter**
+
+    **Note:** You set the distance to `250,000` meters so the analysis returns centers within a practical regional response radius for the New York Metro demand area.
+
+18. Run the analysis.
+
+    ![Set the distance analysis to 250000 meters](images/spatial-analysis-distance.png " ")
+
+19. Press the eye icon next to the `FULFILLMENT_CENTERS` layer to hide it so the analysis results are easier to see.
+
+    ![Spatial Studio results for centers within 250000 meters of New York Metro](images/spatial-analysis-results.png " ")
+
+    **Note:** Map results, point placement, and visible labels can vary by Spatial Studio session and zoom level. Focus on the filtered New York Metro layer, the returned service-center points, and the routing takeaway.
+
+    ![Configure the Spatial Studio information window](images/analysis-settings.png " ")
+
+20. Drag and drop the **Centers within 250000 meters of New York** analysis you created earlier on the map.
+
+21. In the left panel, open the actions menu (three dot menu) for **Centers within 250000 meters of New York** analysis, select **Settings**.
+
+22. From the **Configure** dropdown menu, select **Interaction**.
+
+23. Check the **Show info window** checkbox.
+
+24. Select the following items, and click the upward-facing arrow:
+
+    - `CENTER_NAME`
+    - `CITY`
+    - `STATE_PROVINCE`
+
+    ![Configure the Spatial Studio information window](images/hover-details.png " ")
+
+25. Right-click a result point to view the center details.
+
+    ![View details for a selected service center result](images/spatial-view-center-details.png " ")
+
+26. Click **Save**, then save the project as `New York Metro Service Coverage`.
+
+    ![Save the Spatial Studio project as New York Metro Service Coverage](images/spatial-save-project.png " ")
 
 ## Next Steps
 
-Congratulations on completing the spatial lab. You used spatial queries to connect demand regions, service centers, and response-time zones, then compared the same service coverage evidence in Spatial Studio. For a deeper hands-on workshop focused on Oracle Spatial, open the [Oracle Spatial LiveLabs workshop](https://livelabs.oracle.com/ords/r/dbpm/livelabs/view-workshop?clear=RR,180&wid=800).
+**Congratulations!** You created a Spatial Studio coverage project and used spatial queries to connect demand regions, service centers, and response-time zones. The result helps operations teams see where case-processing capacity matters most.
+
+For a deeper hands-on workshop focused on Oracle Spatial, open the [Oracle Spatial LiveLabs workshop](https://livelabs.oracle.com/ords/r/dbpm/livelabs/view-workshop?clear=RR,180&wid=800).
 
 ## Acknowledgements
 
-* **Authors** - Pat Shepherd, Linda Foinding
-* **Contributors** - Ramu Murakami Gutierrez
+* **Authors** - Linda Foinding, Principal Database Product Manager
+* **Contributors** - Ramu Murakami Gutierrez, Pat Shepherd.
 * **Last Updated By/Date** - Oracle Database Product Management, August 2026
