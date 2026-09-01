@@ -17,17 +17,17 @@ In this lab, you will:
 
 This lab assumes:
 
-* You have completed Lab 7: Advanced Patching
+* You have completed Lab 1: Initialize Environment
 
 ## Task 1: Examine Datapatch tables
 
 Datapatch stores patching information inside the database. Understanding these tables helps you understand how Datapatch works.
 
-1. Use the *yellow* terminal 🟨. Set the environment to the *FTEX* database and connect.
+1. Use the *yellow* terminal 🟨. Set the environment to the *UPGR* database and connect.
 
     ``` sql
     <copy>
-    . ftex
+    . upgr
     sql / as sysdba
     </copy>
 
@@ -102,35 +102,33 @@ Datapatch stores patching information inside the database. Understanding these t
     -- Be sure to hit RETURN
     ```
 
-    * This database was first patched from the base release, 19.3, to 19.27, including the OJVM and Data Pump bundle patches.
-    * Then, in a previous lab you patched the database to 19.28.
+    * This database was first patched from the base release, 19.3, to 19.29, including the OJVM and Data Pump bundle patches.
+    * Then, in a previous lab you patched the database to 19.30.
     * Finally, you manually rolled back to 19.27.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> select   patch_id, action, status, action_time, description
-      2  from     dba_registry_sqlpatch
-      3* order by action_time;
-
        PATCH_ID      ACTION     STATUS                        ACTION_TIME                                              DESCRIPTION
     ___________ ___________ __________ __________________________________ ________________________________________________________
-       37499406 APPLY       SUCCESS    28-JUL-25 06.47.19.709775000 AM    OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)
-       37642901 APPLY       SUCCESS    28-JUL-25 06.49.05.749475000 AM    Database Release Update : 19.27.0.0.250415 (37642901)
-       37777295 APPLY       SUCCESS    28-JUL-25 06.49.21.076437000 AM    DATAPUMP BUNDLE PATCH 19.27.0.0.0
-       37499406 ROLLBACK    SUCCESS    06-AUG-25 02.51.46.116801000 PM    OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)
-       37847857 APPLY       SUCCESS    06-AUG-25 02.51.46.197901000 PM    OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)
-       37777295 ROLLBACK    SUCCESS    06-AUG-25 02.51.46.726059000 PM    DATAPUMP BUNDLE PATCH 19.27.0.0.0
-       37960098 APPLY       SUCCESS    06-AUG-25 02.52.15.642992000 PM    Database Release Update : 19.28.0.0.250715 (37960098)
-       38170982 APPLY       SUCCESS    06-AUG-25 02.53.07.995809000 PM    DATAPUMP BUNDLE PATCH 19.28.0.0.0
-       37847857 ROLLBACK    SUCCESS    06-AUG-25 04.27.00.257227000 PM    OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)
-       37499406 APPLY       SUCCESS    06-AUG-25 04.27.00.306292000 PM    OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)
-       38170982 ROLLBACK    SUCCESS    06-AUG-25 04.27.03.284323000 PM    DATAPUMP BUNDLE PATCH 19.28.0.0.0
-       37960098 ROLLBACK    SUCCESS    06-AUG-25 04.27.25.907309000 PM    Database Release Update : 19.28.0.0.250715 (37960098)
-       37777295 APPLY       SUCCESS    06-AUG-25 04.27.57.047666000 PM    DATAPUMP BUNDLE PATCH 19.27.0.0.0
+       38194382 APPLY       SUCCESS    23-JUL-26 09.49.51.242060000 PM    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
+       38291812 APPLY       SUCCESS    23-JUL-26 09.51.30.567356000 PM    Database Release Update : 19.29.0.0.251021 (38291812)
+       38535360 APPLY       SUCCESS    23-JUL-26 09.51.42.729845000 PM    DATAPUMP BUNDLE PATCH 19.29.0.0.0
+       38194382 ROLLBACK    SUCCESS    21-AUG-26 06.34.56.337255000 AM    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
+       38523609 APPLY       SUCCESS    21-AUG-26 06.34.56.391827000 AM    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
+       38535360 ROLLBACK    SUCCESS    21-AUG-26 06.34.56.799087000 AM    DATAPUMP BUNDLE PATCH 19.29.0.0.0
+       38632161 APPLY       SUCCESS    21-AUG-26 06.35.26.358145000 AM    Database Release Update : 19.30.0.0.260120(REL-JAN260130) (38632161)
+       38844367 APPLY       SUCCESS    21-AUG-26 06.35.32.997456000 AM    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
+       38844733 APPLY       SUCCESS    21-AUG-26 06.35.59.618434000 AM    DATAPUMP BUNDLE PATCH 19.30.0.0.0
+       38523609 ROLLBACK    SUCCESS    21-AUG-26 06.47.31.865857000 AM    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
+       38906621 APPLY       SUCCESS    21-AUG-26 06.47.31.916632000 AM    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
+       38844367 ROLLBACK    SUCCESS    21-AUG-26 06.47.31.929220000 AM    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
+       38844733 ROLLBACK    SUCCESS    21-AUG-26 06.47.32.415083000 AM    DATAPUMP BUNDLE PATCH 19.30.0.0.0
+       39034528 APPLY       SUCCESS    21-AUG-26 06.47.42.474544000 AM    Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
+       39196236 APPLY       SUCCESS    21-AUG-26 06.48.04.650842000 AM    DATAPUMP BUNDLE PATCH 19.31.0.0.0
 
-    13 rows selected.
+    15 rows selected.
     ```
 
     </details>

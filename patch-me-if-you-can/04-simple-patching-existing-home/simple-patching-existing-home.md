@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will patch another Oracle AI Database using AutoUpgrade. Since you have already created a new Oracle home, you will use that. There is no need to create a separate Oracle home each database.
+In this lab, you will patch an Oracle AI Database using AutoUpgrade. You patch out-of-place and use an already created Oracle home.
 
 Estimated Time: 10 Minutes
 
@@ -16,13 +16,11 @@ In this lab, you will:
 
 This lab assumes:
 
-* You have completed Lab 2: Simple Patching With AutoUpgrade
+* You have completed Lab 1: Initialize Environment
 
 ## Task 1: Patch database
 
-You will use AutoUpgrade just like in lab 2.
-
-1. Use the *yellow* terminal 🟨. In this lab, you use a pre-created config file. Examine the config file.
+1. Use the *blue* terminal 🟦. In this lab, you use a pre-created config file. Examine the config file.
 
     ``` bash
     <copy>
@@ -33,8 +31,8 @@ You will use AutoUpgrade just like in lab 2.
     # Be sure to hit RETURN
     ```
 
-    * This config file contains fewer parameters than the previous one from lab 2.
-    * Since the Oracle home exists, the patch process becomes easier.
+    * You specify the source and target Oracle homes using `source_home` and `target_home` respectively.
+    * Also, you specify which database to patch using `sid`.
     * The *UPGR* database is not running ARCHIVELOG mode, so you must disable restoration.
 
     <details>
@@ -44,7 +42,7 @@ You will use AutoUpgrade just like in lab 2.
     $ cat scripts/pt-04-simple-patching-existing-home.cfg
     global.global_log_dir=/home/oracle/autoupgrade-patching/simple-patching-existing-home/log
     patch1.source_home=/u01/app/oracle/product/19
-    patch1.target_home=/u01/app/oracle/product/19_28
+    patch1.target_home=/u01/app/oracle/product/dbhome_19_32
     patch1.sid=UPGR
     patch1.restoration=no
     ```
@@ -69,7 +67,6 @@ You will use AutoUpgrade just like in lab 2.
 
     ``` text
     $ java -jar autoupgrade.jar -config scripts/pt-04-simple-patching-existing-home.cfg -mode deploy
-    AutoUpgrade 25.4.250730 launched with default internal options
     Processing config file ...
     +--------------------------------+
     | Starting AutoUpgrade execution |

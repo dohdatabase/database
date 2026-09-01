@@ -29,14 +29,14 @@
       "filename": "../../03-familiarize-with-patching/familiarize-with-patching.md"
     },
     {
-      "title": "Lab 4: Install Oracle Home - continued",
-      "description": "Check installation of Oracle home",
-      "filename": "../../02-install-oracle-home/install-oracle-home.md"
+      "title": "Lab 4: Simple patching to existing Oracle home",
+      "description": "Simple patching to existing Oracle home",
+      "filename": "../../04-simple-patching-existing-home/simple-patching-existing-home.md"
     },
     {
-      "title": "Lab 5: Simple patching to existing Oracle home",
-      "description": "Simple patching to existing Oracle home",
-      "filename": "../../05-simple-patching-existing-home/simple-patching-existing-home.md"
+      "title": "Lab 5: Install Oracle home - continued",
+      "description": "Check installation of Oracle home",
+      "filename": "../../05-install-oracle-home-cont/install-oracle-home-cont.md"
     },
     {
       "title": "Lab 6: Manual patching of a container database",

@@ -4,7 +4,7 @@
 
 In this lab, you will familiarize with some of the tools used to patch Oracle AI Database.
 
-Estimated Time: 10 Minutes
+Estimated Time: 15 Minutes
 
 ### Objectives
 
@@ -233,7 +233,7 @@ This lab assumes:
 
 You use *OPatch* to perform the first part of patching an Oracle AI Database; patching the Oracle home. OPatch replaces some files in the Oracle home and might also add new files. If the Oracle home is in use, for instance by a database instance or listener, you must stop those processes.
 
-1. Use the *blue* terminal 🟦. Set the environment to *UPGR* and change to the Oracle home.
+1. Still in the *blue* terminal 🟦. Set the environment to *UPGR* and change to the Oracle home.
 
     ``` bash
     <copy>
@@ -495,11 +495,11 @@ You can use the *queryable inventory* inside the database to get information fro
 
     ``` sql
     <copy>
-    select xmltransform(dbms_qopatch.is_patch_installed('39034528'), dbms_qopatch.get_opatch_xslt) "Patch installed?" from dual;
+    select xmltransform(dbms_qopatch.is_patch_installed('39196236'), dbms_qopatch.get_opatch_xslt) "Patch installed?" from dual;
     </copy>
     ```
 
-    * Patch 39034528 is the Data Pump bundle patch for Release Update 19.31.
+    * Patch 39196236 is the Data Pump bundle patch for Release Update 19.31.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -509,7 +509,7 @@ You can use the *queryable inventory* inside the database to get information fro
     _____________________________________________________
 
     Patch Information:
-             39034528:   applied on 2026-08-21T06:39:41Z
+             39196236:   applied on 2026-08-21T06:39:41Z
     ```
 
     </details>
