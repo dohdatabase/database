@@ -182,7 +182,7 @@ Datapatch also stores log files in the file system.
     ll
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * `sqlpatch_history.txt` contains an overview of all Datapatch invocations.
@@ -247,7 +247,7 @@ Datapatch also stores log files in the file system.
     head -n20 37960098/27635722/37960098_apply_FTEX_*.log
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The apply starts by recording the action to the Datapatch tables through `DBMS_SQLPATCH`.
@@ -293,7 +293,7 @@ Datapatch also stores log files in the file system.
     grep -r -i "Invalid ORACLE_MAINTAINED" *
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The results might vary in your environment.
@@ -324,7 +324,7 @@ Datapatch also stores log files in the file system.
     cat datapatch
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * *SQLPatch* is found in `$ORACLE_HOME/sqlpatch`.
@@ -377,7 +377,7 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     ./opatch util ListOrderedInactivePatches
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The output shows that the patching chain in this Oracle home is from 19.3 (base release) to 19.25 to 19.26 and then 19.27.
@@ -537,7 +537,7 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     ll
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * You should never delete files from this directory manually.

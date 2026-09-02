@@ -31,7 +31,7 @@ This lab assumes:
     unzip p39472050_190000_Linux-x86-64_dbru1932.zip -d ./39472050
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * Patch files comes from My Oracle Support as zip files.
@@ -46,7 +46,7 @@ This lab assumes:
     ll
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -99,7 +99,7 @@ This lab assumes:
     ll
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -241,7 +241,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     cd $ORACLE_HOME
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 2. You find OPatch in a subdirectory. Check the version of OPatch.
@@ -252,7 +252,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     ./opatch version
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -295,7 +295,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     unzip /home/oracle/patch-repo/p6880880_190000_Linux-x86-64.zip
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * You should always use the latest version of OPatch.
@@ -378,7 +378,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     OPatch/opatch lsinventory > opatch_lsinventory.txt
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * You spool the contents to a file.
@@ -565,7 +565,7 @@ Datapatch applies or rolls back SQL changes to the database.
     ls -l datapatch
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -912,7 +912,7 @@ Oracle recommends that you always use the latest version of AutoUpgrade.
     java -jar autoupgrade.jar -version
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * *MOS_LINK* contains the URL to the My Oracle Support document where you can download the latest version of AutoUpgrade.

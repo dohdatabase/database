@@ -90,7 +90,7 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     $ORACLE_HOME/OPatch/opatch lspatches
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * AutoUpgrade installed the Release Update you specified including the other patches. 
@@ -127,7 +127,7 @@ Gold images are a convenient way of installing Oracle homes on many different se
     export PATH=$ORACLE_HOME/bin:$PATH
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * This is the Oracle home you created using AutoUpgrade.

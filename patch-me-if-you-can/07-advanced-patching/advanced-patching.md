@@ -61,7 +61,7 @@ If you find an issue after patching, you can safely roll back to the previous pa
     mv $NEW_ORACLE_HOME/dbs/orapwFTEX $OLD_ORACLE_HOME/dbs
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * In this lab, there is no PFile, so you don't need to move that one.
@@ -77,7 +77,7 @@ If you find an issue after patching, you can safely roll back to the previous pa
     env | grep ORA
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -103,7 +103,7 @@ If you find an issue after patching, you can safely roll back to the previous pa
     grep "FTEX" /etc/oratab
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -157,7 +157,7 @@ In the Oracle home you find other software components, that is patched together 
     $NEW_ORACLE_HOME/jdk/bin/java -version
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The *old* Oracle home is on 19.27 and the *new* is on 19.28.
@@ -191,7 +191,7 @@ In the Oracle home you find other software components, that is patched together 
     $NEW_ORACLE_HOME/perl/bin/perl -version | grep version
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -213,7 +213,7 @@ In the Oracle home you find other software components, that is patched together 
     ls timezone*.dat
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The latest version is *44*.
@@ -241,7 +241,7 @@ In the Oracle home you find other software components, that is patched together 
     ls timezone*.dat
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The latest version is also *44*.

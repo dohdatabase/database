@@ -28,7 +28,7 @@ This lab assumes:
     cat scripts/pt-02-install-oracle-home.cfg
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * `source_home` is an existing Oracle home that you will use as a template to install the new Oracle home. AutoUpgrade installs the new Oracle home using the same settings as this Oracle home.

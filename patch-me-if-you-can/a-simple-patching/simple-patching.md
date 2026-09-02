@@ -33,7 +33,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     cat scripts/pt-02-simple-patching.cfg
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * `source_home` and `sid` describe the current database.
@@ -295,7 +295,7 @@ Patching a single instance Oracle AI Database require downtime.
     ll
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * The output in your lab varies from the sample output.

@@ -110,7 +110,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     mv $OLD_ORACLE_HOME/dbs/orapwCDB19 $NEW_ORACLE_HOME/dbs
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
     * In this lab, there is no PFile, so we don't need to move that one.
@@ -126,7 +126,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     env | grep ORA
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 9. Update `/etc/oratab` to reflect the new Oracle home.
@@ -138,7 +138,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     grep "CDB19" /etc/oratab
     </copy>
 
-    # Be sure to hit RETURN
+    # Be sure to press RETURN
     ```
 
 10. Connect to the database.
