@@ -15,9 +15,7 @@ In this lab, you will:
 
 ### Prerequisites
 
-This lab assumes:
-
-* You have completed Lab 1: Initialize Environment
+None.
 
 ## Task 1: Analyze database
 
@@ -25,7 +23,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
 1. Use the *blue* terminal 🟦. Examine the config file.
 
-        ``` bash
+    ``` bash
     <copy>
     cd
     cat scripts/pt-04-simple-patching-existing-home.cfg

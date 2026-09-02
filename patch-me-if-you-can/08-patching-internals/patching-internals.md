@@ -17,7 +17,7 @@ In this lab, you will:
 
 This lab assumes:
 
-* You have completed Lab 1: Initialize Environment
+* You have completed Lab 7: Advanced Patching
 
 ## Task 1: Examine Datapatch tables
 
@@ -103,8 +103,8 @@ Datapatch stores patching information inside the database. Understanding these t
     ```
 
     * This database was first patched from the base release, 19.3, to 19.29, including the OJVM and Data Pump bundle patches.
-    * Then, in a previous lab you patched the database to 19.30.
-    * Finally, you manually rolled back to 19.27.
+    * Then, to 19.30 and then to 19.31 before you finally patched to 19.32 in lab 4.
+    * In lab 7, you performed a rollback to 19.31.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -112,34 +112,44 @@ Datapatch stores patching information inside the database. Understanding these t
     ``` text
        PATCH_ID      ACTION     STATUS                        ACTION_TIME                                              DESCRIPTION
     ___________ ___________ __________ __________________________________ ________________________________________________________
-       38194382 APPLY       SUCCESS    23-JUL-26 09.49.51.242060000 PM    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
-       38291812 APPLY       SUCCESS    23-JUL-26 09.51.30.567356000 PM    Database Release Update : 19.29.0.0.251021 (38291812)
-       38535360 APPLY       SUCCESS    23-JUL-26 09.51.42.729845000 PM    DATAPUMP BUNDLE PATCH 19.29.0.0.0
-       38194382 ROLLBACK    SUCCESS    21-AUG-26 06.34.56.337255000 AM    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
-       38523609 APPLY       SUCCESS    21-AUG-26 06.34.56.391827000 AM    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
-       38535360 ROLLBACK    SUCCESS    21-AUG-26 06.34.56.799087000 AM    DATAPUMP BUNDLE PATCH 19.29.0.0.0
-       38632161 APPLY       SUCCESS    21-AUG-26 06.35.26.358145000 AM    Database Release Update : 19.30.0.0.260120(REL-JAN260130) (38632161)
-       38844367 APPLY       SUCCESS    21-AUG-26 06.35.32.997456000 AM    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
-       38844733 APPLY       SUCCESS    21-AUG-26 06.35.59.618434000 AM    DATAPUMP BUNDLE PATCH 19.30.0.0.0
-       38523609 ROLLBACK    SUCCESS    21-AUG-26 06.47.31.865857000 AM    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
-       38906621 APPLY       SUCCESS    21-AUG-26 06.47.31.916632000 AM    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
-       38844367 ROLLBACK    SUCCESS    21-AUG-26 06.47.31.929220000 AM    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
-       38844733 ROLLBACK    SUCCESS    21-AUG-26 06.47.32.415083000 AM    DATAPUMP BUNDLE PATCH 19.30.0.0.0
-       39034528 APPLY       SUCCESS    21-AUG-26 06.47.42.474544000 AM    Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
-       39196236 APPLY       SUCCESS    21-AUG-26 06.48.04.650842000 AM    DATAPUMP BUNDLE PATCH 19.31.0.0.0
-
-    15 rows selected.
+       38194382 APPLY       SUCCESS    01-SEP-26 01.09.16.786413000 PM    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
+       38291812 APPLY       SUCCESS    01-SEP-26 01.10.51.564986000 PM    Database Release Update : 19.29.0.0.251021 (38291812)
+       38535360 APPLY       SUCCESS    01-SEP-26 01.11.03.247364000 PM    DATAPUMP BUNDLE PATCH 19.29.0.0.0
+       38194382 ROLLBACK    SUCCESS    01-SEP-26 01.24.58.500208000 PM    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
+       38523609 APPLY       SUCCESS    01-SEP-26 01.24.58.555208000 PM    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
+       38535360 ROLLBACK    SUCCESS    01-SEP-26 01.24.58.806838000 PM    DATAPUMP BUNDLE PATCH 19.29.0.0.0
+       38632161 APPLY       SUCCESS    01-SEP-26 01.25.20.426521000 PM    Database Release Update : 19.30.0.0.260120(REL-JAN260130) (38632161)
+       38844367 APPLY       SUCCESS    01-SEP-26 01.25.25.846999000 PM    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
+       38844733 APPLY       SUCCESS    01-SEP-26 01.25.51.953086000 PM    DATAPUMP BUNDLE PATCH 19.30.0.0.0
+       38523609 ROLLBACK    SUCCESS    01-SEP-26 01.38.18.880352000 PM    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
+       38906621 APPLY       SUCCESS    01-SEP-26 01.38.18.940987000 PM    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
+       38844367 ROLLBACK    SUCCESS    01-SEP-26 01.38.18.956087000 PM    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
+       38844733 ROLLBACK    SUCCESS    01-SEP-26 01.38.19.471926000 PM    DATAPUMP BUNDLE PATCH 19.30.0.0.0
+       39034528 APPLY       SUCCESS    01-SEP-26 01.38.30.009869000 PM    Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
+       39196236 APPLY       SUCCESS    01-SEP-26 01.38.53.761709000 PM    DATAPUMP BUNDLE PATCH 19.31.0.0.0
+       38906621 ROLLBACK    SUCCESS    02-SEP-26 05.03.36.559447000 AM    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
+       39222882 APPLY       SUCCESS    02-SEP-26 05.03.36.620491000 AM    OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)
+       39196236 ROLLBACK    SUCCESS    02-SEP-26 05.03.37.256063000 AM    DATAPUMP BUNDLE PATCH 19.31.0.0.0
+       39472050 APPLY       SUCCESS    02-SEP-26 05.03.55.879975000 AM    Database Release Update : 19.32.0.0.260721 (39472050)
+       39657094 APPLY       SUCCESS    02-SEP-26 05.04.28.268828000 AM    DATAPUMP BUNDLE PATCH 19.32.0.0.0
+       39222882 ROLLBACK    SUCCESS    02-SEP-26 08.59.57.880157000 AM    OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)
+       38906621 APPLY       SUCCESS    02-SEP-26 08.59.57.947550000 AM    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
+       39657094 ROLLBACK    SUCCESS    02-SEP-26 08.59.58.184537000 AM    DATAPUMP BUNDLE PATCH 19.32.0.0.0
+       39472050 ROLLBACK    SUCCESS    02-SEP-26 09.00.16.186360000 AM    Database Release Update : 19.32.0.0.260721 (39472050)
+       39196236 APPLY       SUCCESS    02-SEP-26 09.00.49.338020000 AM    DATAPUMP BUNDLE PATCH 19.31.0.0.0
+    
+    25 rows selected.
     ```
 
     </details>
 
-4. Find the log file used to apply the 19.28 Release Update.
+4. Find the log file used to apply the 19.32 Release Update.
 
     ``` sql
     <copy>
     select logfile
     from   dba_registry_sqlpatch
-    where  description like 'Database Release Update : 19.28%'
+    where  description like 'Database Release Update : 19.32%'
            and action='APPLY';
     </copy>
 
@@ -152,12 +162,12 @@ Datapatch stores patching information inside the database. Understanding these t
     ``` text
     SQL> select logfile
          from   dba_registry_sqlpatch
-         where  description like 'Database Release Update : 19.28%'
+         where  description like 'Database Release Update : 19.32%'
                 and action='APPLY';
 
     LOGFILE
     ----------------------------------------------------------------------------------------------------
-    /u01/app/oracle/cfgtoollogs/sqlpatch/37960098/27635722/37960098_apply_FTEX_2025Jul26_06_13_58.log
+    /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_apply_UPGR_2026Sep02_05_03_37.log
     ```
 
     </details>
@@ -193,58 +203,59 @@ Datapatch also stores log files in the file system.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd $ORACLE_BASE/cfgtoollogs/sqlpatch
-    $ ll
-    total 48
-    drwxr-x---. 3 oracle oinstall   22 Jul 24 10:21 36878697
-    -rw-r-----. 1 oracle oinstall    0 Jul 24 10:21 36878697_25797620.lock
-    drwxr-x---. 3 oracle oinstall   22 Jul 24 10:21 36912597
-    -rw-r-----. 1 oracle oinstall    0 Jul 24 10:21 36912597_25871884.lock
-    drwxr-x---. 3 oracle oinstall   22 Jul 24 10:21 37056207
-    -rw-r-----. 1 oracle oinstall    0 Jul 24 10:21 37056207_25840925.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 24 10:37 37102264
-    -rw-r--r--. 1 oracle oinstall    0 Jul 24 10:37 37102264_25987410.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 24 10:37 37260974
-    -rw-r--r--. 1 oracle oinstall    0 Jul 24 10:37 37260974_26040769.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 24 10:37 37470729
-    -rw-r--r--. 1 oracle oinstall    0 Jul 24 10:37 37470729_26036111.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 24 10:50 37499406
-    -rw-r--r--. 1 oracle oinstall    0 Jul 24 10:50 37499406_26115603.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 24 10:50 37642901
-    -rw-r--r--. 1 oracle oinstall    0 Jul 24 10:50 37642901_27123174.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 24 10:50 37777295
-    -rw-r--r--. 1 oracle oinstall    0 Jul 24 10:50 37777295_27238855.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 26 06:13 37847857
-    -rw-r--r--. 1 oracle oinstall    0 Jul 26 06:13 37847857_27534561.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 26 06:13 37960098
-    -rw-r--r--. 1 oracle oinstall    0 Jul 26 06:13 37960098_27635722.lock
-    drwxr-xr-x. 3 oracle oinstall   22 Jul 26 06:13 38170982
-    -rw-r--r--. 1 oracle oinstall    0 Jul 26 06:13 38170982_27628376.lock
-    drwxr-xr-x. 2 oracle oinstall  151 Jul 26 06:30 sanity_checks_20250726_062945_168019
-    drwxr-xr-x. 2 oracle oinstall  134 Jul 26 06:13 sqlpatch_165318_2025_07_26_06_13_17
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 26 06:15 sqlpatch_165611_2025_07_26_06_13_50
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 26 06:16 sqlpatch_166073_2025_07_26_06_15_44
-    drwxr-xr-x. 2 oracle oinstall  134 Jul 26 06:44 sqlpatch_172743_2025_07_26_06_44_20
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 26 06:45 sqlpatch_172825_2025_07_26_06_44_29
-    drwxr-x---. 2 oracle oinstall 4096 Jul 24 10:24 sqlpatch_175565_2025_07_24_10_21_21
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 24 10:38 sqlpatch_181458_2025_07_24_10_36_38
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 24 10:52 sqlpatch_186303_2025_07_24_10_49_53
-    drwxr-x---. 2 oracle oinstall 4096 Jul 24 11:10 sqlpatch_188512_2025_07_24_11_06_55
-    drwxr-x---. 2 oracle oinstall 4096 Jul 24 11:41 sqlpatch_193646_2025_07_24_11_37_19
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 27 16:36 sqlpatch_302392_2025_07_27_16_34_06
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 27 16:42 sqlpatch_303293_2025_07_27_16_42_12
-    drwxr-xr-x. 2 oracle oinstall 4096 Jul 27 16:46 sqlpatch_304182_2025_07_27_16_44_43
-    -rw-r-----. 1 oracle oinstall 1456 Jul 27 16:44 sqlpatch_history.txt
+    total 56
+    drwxr-x---. 3 oracle oinstall   22 Sep  1 13:08 38194382
+    -rw-r-----. 1 oracle oinstall    0 Sep  1 13:08 38194382_27894333.lock
+    drwxr-x---. 3 oracle oinstall   22 Sep  1 13:08 38291812
+    -rw-r-----. 1 oracle oinstall    0 Sep  1 13:08 38291812_28130960.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:24 38523609
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:24 38523609_28341036.lock
+    drwxr-x---. 3 oracle oinstall   22 Sep  1 13:08 38535360
+    -rw-r-----. 1 oracle oinstall    0 Sep  1 13:08 38535360_28165873.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:24 38632161
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:24 38632161_28482211.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:24 38844367
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:24 38844367_28560248.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:24 38844733
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:24 38844733_28440761.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:37 38906621
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:37 38906621_28588735.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:37 39034528
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:37 39034528_28740323.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  1 13:37 39196236
+    -rw-r--r--. 1 oracle oinstall    0 Sep  1 13:37 39196236_28705537.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  2 05:03 39222882
+    -rw-r--r--. 1 oracle oinstall    0 Sep  2 05:03 39222882_28830205.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  2 05:02 39472050
+    -rw-r--r--. 1 oracle oinstall    0 Sep  2 05:02 39472050_28919163.lock
+    drwxr-xr-x. 3 oracle oinstall   22 Sep  2 05:03 39657094
+    -rw-r--r--. 1 oracle oinstall    0 Sep  2 05:03 39657094_28915841.lock
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  2 08:41 sqlpatch_120734_2026_09_02_08_38_54
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  2 08:44 sqlpatch_121821_2026_09_02_08_43_45
+    drwxr-xr-x. 2 oracle oinstall  134 Sep  2 08:59 sqlpatch_124610_2026_09_02_08_59_36
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  2 09:00 sqlpatch_124699_2026_09_02_08_59_52
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  2 09:18 sqlpatch_126847_2026_09_02_09_16_32
+    drwxr-x---. 2 oracle oinstall 4096 Sep  1 13:11 sqlpatch_223882_2026_09_01_13_08_38
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  1 13:26 sqlpatch_230350_2026_09_01_13_24_17
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  1 13:38 sqlpatch_236805_2026_09_01_13_37_30
+    drwxr-x---. 2 oracle oinstall 4096 Sep  1 13:54 sqlpatch_238794_2026_09_01_13_51_27
+    drwxr-x---. 2 oracle oinstall 4096 Sep  1 14:12 sqlpatch_242463_2026_09_01_14_09_30
+    drwxr-x---. 2 oracle oinstall 4096 Sep  1 14:37 sqlpatch_248634_2026_09_01_14_32_59
+    drwxr-x---. 2 oracle oinstall 4096 Sep  1 15:03 sqlpatch_254847_2026_09_01_14_58_48
+    drwxr-x---. 2 oracle oinstall 4096 Sep  1 15:29 sqlpatch_260658_2026_09_01_15_24_37
+    drwxr-xr-x. 2 oracle oinstall  133 Sep  2 05:03 sqlpatch_88187_2026_09_02_05_02_49
+    drwxr-xr-x. 2 oracle oinstall 4096 Sep  2 05:04 sqlpatch_88330_2026_09_02_05_03_30
+    -rw-r-----. 1 oracle oinstall 1678 Sep  2 09:16 sqlpatch_history.txt
     ```
 
     </details>
 
-2. Examine the log file used to apply the 19.28 Release Update to the FTEX database. This is the log file you found in the previous task.
+2. Examine the log file used to apply the 19.32 Release Update to the *UPGR* database. This is the log file you found in the previous task.
 
     ``` bash
     <copy>
     cd $ORACLE_BASE/cfgtoollogs/sqlpatch
-    head -n20 37960098/27635722/37960098_apply_FTEX_*.log
+    head -n20 39472050/28919163/39472050_apply_UPGR_*.log
     </copy>
 
     # Be sure to press RETURN
@@ -258,24 +269,22 @@ Datapatch also stores log files in the file system.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd $ORACLE_BASE/cfgtoollogs/sqlpatch
-    $ head -n20 36912597/25871884/36912597_apply_FTEX_*.log
     SQL>
     SQL> SET PAGESIZE 0
-    SQL> SELECT 'Starting apply for patch 37960098/27635722 on ' ||
+    SQL> SELECT 'Starting apply for patch 39472050/28919163 on ' ||
       2         SYSTIMESTAMP FROM dual;
-    Starting apply for patch 37960098/27635722 on 26-JUL-25 06.13.58.374133 AM +00:0
+    Starting apply for patch 39472050/28919163 on 02-SEP-26 05.03.37.275989 AM +00:0
     0
-
-
+    
+    
     1 row selected.
-
+    
     Elapsed: 00:00:00.00
     SQL> SET PAGESIZE 10
     SQL>
     SQL> BEGIN
-      2      dbms_sqlpatch.patch_initialize(p_patch_id      => 37960098,
-      3                                     p_patch_uid     => 27635722,
+      2      dbms_sqlpatch.patch_initialize(p_patch_id      => 39472050,
+      3                                     p_patch_uid     => 28919163,
       4                                     p_logfile       => '&full_logfile');
       5  END;
       6  /
@@ -290,28 +299,30 @@ Datapatch also stores log files in the file system.
     ``` bash
     <copy>
     cd $ORACLE_BASE/cfgtoollogs/sqlpatch
-    grep -r -i "Invalid ORACLE_MAINTAINED" *
+    grep -ri --include='*autorecomp*' "Invalid ORACLE_MAINTAINED" .
     </copy>
 
     # Be sure to press RETURN
     ```
 
     * The results might vary in your environment.
-    * In the below example, you can see that *76* objects were invalidated. But Datapatch automatically recompiles them.
-    * The *recomp_threshold* specifies the number of recompilations allowed before it is reported to the user.
+    * In the below example, you can see recompilation from the patch of a container database. 
+    * For each container, you can see the number of invalid objects before patching (in prereq phase).
+    * You can also see the number of invalid objects after patching.
     * Datapatch always tries to recompile all Oracle-maintained objects invalidated by the patching.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd $ORACLE_BASE/cfgtoollogs/sqlpatch
-    $ grep -r -i "Invalid ORACLE_MAINTAINED" *
-    sqlpatch_108337_2024_12_03_10_55_30/sqlpatch_catcon_0.log:{ftex} Invalid ORACLE_MAINTAINED objects: before patching=0, after patching=76, recomp_threshold=300
-    sqlpatch_108337_2024_12_03_10_55_30/install1.sql:        'Invalid ORACLE_MAINTAINED objects: before patching=' || inv_count_pre ||
-    sqlpatch_108337_2024_12_03_10_55_30/install1.sql:          'New invalid ORACLE_MAINTAINED object count exceeded the recomp_threshold; run utlrp.sql.');
-    sqlpatch_108337_2024_12_03_10_55_30/install1.sql:               ' remaining invalid ORACLE_MAINTAINED objects.');
-    sqlpatch_108337_2024_12_03_10_55_30/sqlpatch_autorecomp_ftex.log:{ftex} Invalid ORACLE_MAINTAINED objects: before patching=0, after patching=76, recomp_threshold=300
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_CDBROOT.log:  CDB$ROOT - Number of invalid ORACLE_MAINTAINED objects in prereq phase: 0
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_CDBROOT.log:{CDB$ROOT} Invalid ORACLE_MAINTAINED objects: after patching=10
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_PDBSEED.log:  PDB$SEED - Number of invalid ORACLE_MAINTAINED objects in prereq phase: 0
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_PDBSEED.log:{PDB$SEED} Invalid ORACLE_MAINTAINED objects: after patching=41
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_ORANGE.log:  ORANGE - Number of invalid ORACLE_MAINTAINED objects in prereq phase: 0
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_ORANGE.log:{ORANGE} Invalid ORACLE_MAINTAINED objects: after patching=41
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_TERRACOTTA.log:  TERRACOTTA - Number of invalid ORACLE_MAINTAINED objects in prereq phase: 0
+    ./sqlpatch_126847_2026_09_02_09_16_32/sqlpatch_autorecomp_TERRACOTTA.log:{TERRACOTTA} Invalid ORACLE_MAINTAINED objects: after patching=41
     ```
 
     </details>
@@ -372,7 +383,7 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
 
     ``` bash
     <copy>
-    . ftex
+    . upgr
     cd $ORACLE_HOME/OPatch
     ./opatch util ListOrderedInactivePatches
     </copy>
@@ -380,47 +391,44 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     # Be sure to press RETURN
     ```
 
-    * The output shows that the patching chain in this Oracle home is from 19.3 (base release) to 19.25 to 19.26 and then 19.27.
+    * The output shows that the patching chain in this Oracle home is from 19.3 (base release) to 19.29 to 19.30 and then 19.31.
     * This means that several in-place patch applies have been made to this Oracle home. Oracle doesn't recommend in-place patching. It's used here for illustrative purposes.
-    * The *active* RU is 19.27 - this is where the Oracle home currently is.
-    * The *inactive* RUs are 19.3, 19.25 and 19.26 - this is where the Oracle home came from.
+    * The *active* RU is 19.31 - this is where the Oracle home currently is.
+    * The *inactive* RUs are 19.3, 19.29 and 19.20 - this is where the Oracle home came from.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ . ftex
-    $ cd $ORACLE_HOME/OPatch
-    $ ./opatch util ListOrderedInactivePatches
-    Oracle Interim Patch Installer version 12.2.0.1.47
-    Copyright (c) 2025, Oracle Corporation.  All rights reserved.
-
-
+    Oracle Interim Patch Installer version 12.2.0.1.52
+    Copyright (c) 2026, Oracle Corporation.  All rights reserved.
+    
+    
     Oracle Home       : /u01/app/oracle/product/19
     Central Inventory : /u01/app/oraInventory
        from           : /u01/app/oracle/product/19/oraInst.loc
-    OPatch version    : 12.2.0.1.47
+    OPatch version    : 12.2.0.1.52
     OUI version       : 12.2.0.7.0
-    Log file location : /u01/app/oracle/product/19/cfgtoollogs/opatch/opatch2025-07-27_17-04-29PM_1.log
-
+    Log file location : /u01/app/oracle/product/19/cfgtoollogs/opatch/opatch2026-09-02_10-36-32AM_1.log
+    
     Invoking utility "listorderedinactivepatches"
     List Inactive patches option provided
-
+    
     The oracle home has the following inactive patch(es) and their respective overlay patches:
-
+    
     The number of RU chains is  2
-
+    
     ***** There are 3 inactive RU patches in chain 1
     -Inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 07:21:17 GMT 2019, with no overlays
-    -Inactive RU/BP 36912597:Database Release Update : 19.25.0.0.241015 (36912597), installed on: Thu Jul 24 09:49:33 GMT 2025, with no overlays
-    -Inactive RU/BP 37260974:Database Release Update : 19.26.0.0.250121 (37260974), installed on: Thu Jul 24 10:30:23 GMT 2025, with no overlays
-    -Active RU/BP 37642901:Database Release Update : 19.27.0.0.250415 (37642901), installed on: Thu Jul 24 10:42:18 GMT 2025, with no overlays
-
+    -Inactive RU/BP 38291812:Database Release Update : 19.29.0.0.251021 (38291812), installed on: Tue Sep 01 12:21:53 GMT 2026, with no overlays
+    -Inactive RU/BP 38632161:Database Release Update : 19.30.0.0.260120(REL-JAN260130) (38632161), installed on: Tue Sep 01 13:17:09 GMT 2026, with no overlays
+    -Active RU/BP 39034528:Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528), installed on: Tue Sep 01 13:29:45 GMT 2026, with no overlays
+    
     ***** There are 2 inactive RU patches in chain 2
-    -Inactive RU/BP 36878697:OJVM RELEASE UPDATE: 19.25.0.0.241015 (36878697), installed on: Thu Jul 24 09:53:30 GMT 2025, with no overlays
-    -Inactive RU/BP 37102264:OJVM RELEASE UPDATE: 19.26.0.0.250121 (37102264), installed on: Thu Jul 24 10:35:00 GMT 2025, with no overlays
-    -Active RU/BP 37499406:OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406), installed on: Thu Jul 24 10:47:46 GMT 2025, with no overlays
-
+    -Inactive RU/BP 38194382:OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382), installed on: Tue Sep 01 12:25:14 GMT 2026, with no overlays
+    -Inactive RU/BP 38523609:OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609), installed on: Tue Sep 01 13:21:44 GMT 2026, with overlays: 38844367
+    -Active RU/BP 38906621:OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621), installed on: Tue Sep 01 13:35:29 GMT 2026, with no overlays
+    
     OPatch succeeded.
     ```
 
@@ -434,14 +442,13 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     </copy>
     ```
 
-    * Currently, OPatch uses 8.2 GB to store old patch files. All the way back to 19.3.
+    * Currently, OPatch uses 9.4 GB to store old patch files. All the way back to 19.3.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ du -sh $ORACLE_HOME/.patch_storage
-    8.2G    /u01/app/oracle/product/19/.patch_storage
+    9.4G	/u01/app/oracle/product/19/.patch_storage
     ```
 
     </details>
@@ -458,51 +465,49 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     * By keeping one inactive patch - the latest - it ensures that you can always roll back to the previous patch. Going back even further would require that you restore the files or simply install a new Oracle home with the required patches.
     * The number of inactive patches to keep is configurable.
     * If you find OPatch is running slow in your own environment, try to clear our inactive patching metadata.
+    * If you patch out-of-place, you never need to use this functionality. 
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ . ftex
-    $ cd $ORACLE_HOME/OPatch
-    $ ./opatch util deleteinactivepatches
-    Oracle Interim Patch Installer version 12.2.0.1.47
-    Copyright (c) 2025, Oracle Corporation.  All rights reserved.
-
-
+    Oracle Interim Patch Installer version 12.2.0.1.52
+    Copyright (c) 2026, Oracle Corporation.  All rights reserved.
+    
+    
     Oracle Home       : /u01/app/oracle/product/19
     Central Inventory : /u01/app/oraInventory
        from           : /u01/app/oracle/product/19/oraInst.loc
-    OPatch version    : 12.2.0.1.47
+    OPatch version    : 12.2.0.1.52
     OUI version       : 12.2.0.7.0
-    Log file location : /u01/app/oracle/product/19/cfgtoollogs/opatch/opatch2025-07-27_17-10-05PM_1.log
-
+    Log file location : /u01/app/oracle/product/19/cfgtoollogs/opatch/opatch2026-09-02_10-41-15AM_1.log
+    
     Invoking utility "deleteinactivepatches"
     Inactive Patches Cleanup option provided
     Delete Inactive Patches .......
-
+    
     ***** There are 3 inactive RU patches in chain 1
-
+    
     ***** 2 inactive patches will be deleted
-    -To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 07:21:17 GMT 2019, with no     overlays
-    -To be deleted inactive RU/BP 36912597:Database Release Update : 19.25.0.0.241015 (36912597), installed on: Thu Jul 24 09:49:33 GMT 2025, with no     overlays
-    -To be retained inactive RU/BP 37260974:Database Release Update : 19.26.0.0.250121 (37260974), installed on: Thu Jul 24 10:30:23 GMT 2025, with no     overlays
-    -Active RU/BP 37642901:Database Release Update : 19.27.0.0.250415 (37642901), installed on: Thu Jul 24 10:42:18 GMT 2025, with no overlays
-
+    -To be deleted inactive RU/BP 29517242:Database Release Update : 19.3.0.0.190416 (29517242), installed on: Thu Apr 18 07:21:17 GMT 2019, with no overlays
+    -To be deleted inactive RU/BP 38291812:Database Release Update : 19.29.0.0.251021 (38291812), installed on: Tue Sep 01 12:21:53 GMT 2026, with no overlays
+    -To be retained inactive RU/BP 38632161:Database Release Update : 19.30.0.0.260120(REL-JAN260130) (38632161), installed on: Tue Sep 01 13:17:09 GMT 2026, with no overlays
+    -Active RU/BP 39034528:Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528), installed on: Tue Sep 01 13:29:45 GMT 2026, with no overlays
+    
     ***** There are 2 inactive RU patches in chain 2
-
+    
     ***** 1 inactive patches will be deleted
-    -To be deleted inactive RU/BP 36878697:OJVM RELEASE UPDATE: 19.25.0.0.241015 (36878697), installed on: Thu Jul 24 09:53:30 GMT 2025, with no     overlays
-    -To be retained inactive RU/BP 37102264:OJVM RELEASE UPDATE: 19.26.0.0.250121 (37102264), installed on: Thu Jul 24 10:35:00 GMT 2025, with no     overlays
-    -Active RU/BP 37499406:OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406), installed on: Thu Jul 24 10:47:46 GMT 2025, with no overlays
-
+    -To be deleted inactive RU/BP 38194382:OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382), installed on: Tue Sep 01 12:25:14 GMT 2026, with no overlays
+    -To be retained inactive RU/BP 38523609:OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609), installed on: Tue Sep 01 13:21:44 GMT 2026, with overlays: 38844367
+    -Active RU/BP 38906621:OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621), installed on: Tue Sep 01 13:35:29 GMT 2026, with no overlays
+    
     Do you want to proceed? [y|n]
     y
     User Responded with: Y
     Deleted RU/BP patch: 29517242
-    Deleted RU/BP patch: 36912597
-    Deleted RU/BP patch: 36878697
-
+    Deleted RU/BP patch: 38291812
+    Deleted RU/BP patch: 38194382
+    
     OPatch succeeded.
     ```
 
@@ -516,15 +521,14 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     </copy>
     ```
 
-    * Now, OPatch uses 5.5 GB to store old patch files.
-    * You reclaimed almost 3 GBs.
+    * Now, OPatch uses 6.2 GB to store old patch files.
+    * You reclaimed more than 3 GBs.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ du -sh $ORACLE_HOME/.patch_storage
-    5.5G    /u01/app/oracle/product/19/.patch_storage
+    6.2G	/u01/app/oracle/product/19/.patch_storage
     ```
 
     </details>
@@ -547,21 +551,20 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd $ORACLE_HOME/.patch_storage
-    $ ll
-    total 392
+    total 424
     drwxr-xr-x.  3 oracle oinstall     74 Apr 18  2019 29585399_Apr_9_2019_19_12_47
-    drwxr-xr-x.  4 oracle oinstall     87 Jul 24 10:35 37102264_Dec_18_2024_05_06_41
-    drwxr-xr-x.  4 oracle oinstall     87 Jul 24 10:33 37260974_Jan_20_2025_04_30_30
-    drwxr-xr-x.  4 oracle oinstall     87 Jul 24 10:48 37499406_Apr_8_2025_08_50_50
-    drwxr-xr-x.  4 oracle oinstall     87 Jul 24 10:46 37642901_Apr_15_2025_08_17_25
-    drwxr-xr-x.  4 oracle oinstall     87 Jul 24 10:49 37777295_Apr_18_2025_16_56_05
-    drwxr-xr-x.  3 oracle oinstall     33 Jul 27 17:46 backup_delete_inactive
-    -rw-r--r--.  1 oracle oinstall 127747 Jul 24 10:49 interim_inventory.txt
-    -rw-r-----.  1 oracle oinstall     93 Jul 24 10:49 LatestOPatchSession.properties
-    drwxr-xr-x. 15 oracle oinstall   4096 Jul 24 10:49 NApply
-    -rw-r--r--.  1 oracle oinstall 131708 Jul 24 10:45 newdirs.txt
-    -rw-r--r--.  1 oracle oinstall 125662 Jul 24 10:49 record_inventory.txt
+    drwxr-xr-x.  4 oracle oinstall     87 Sep  1 13:22 38523609_Jan_13_2026_05_30_16
+    drwxr-xr-x.  4 oracle oinstall     87 Sep  1 13:20 38632161_Jan_27_2026_05_17_30
+    drwxr-xr-x.  4 oracle oinstall     87 Sep  1 13:24 38844367_Mar_4_2026_07_51_42
+    drwxr-xr-x.  4 oracle oinstall     87 Sep  1 13:35 38906621_Apr_28_2026_12_39_34
+    drwxr-xr-x.  4 oracle oinstall     87 Sep  1 13:34 39034528_May_14_2026_10_49_49
+    drwxr-xr-x.  4 oracle oinstall     87 Sep  1 13:37 39196236_Apr_29_2026_15_21_56
+    drwxr-xr-x.  3 oracle oinstall     33 Sep  2 10:42 backup_delete_inactive
+    -rw-r--r--.  1 oracle oinstall 145459 Sep  1 13:37 interim_inventory.txt
+    -rw-r-----.  1 oracle oinstall     93 Sep  1 13:37 LatestOPatchSession.properties
+    drwxr-xr-x. 16 oracle oinstall   4096 Sep  1 13:37 NApply
+    -rw-r--r--.  1 oracle oinstall 131365 Sep  1 13:32 newdirs.txt
+    -rw-r--r--.  1 oracle oinstall 143032 Sep  1 13:37 record_inventory.txt
     ```
 
     </details>
@@ -597,7 +600,7 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     ```
 
     * Datapatch stored the rollback script for each of the patch actions in this database; for Release Updates and one-off patches.
-    * The total size is around 750 MB. Underlying segments are in the SYSTEM tablespace.
+    * The total size is around 900 MB. Underlying segments are in the SYSTEM tablespace.
     * In a container database, Datapatch stores the data in the root container and all PDBs.
 
     <details>
@@ -606,21 +609,22 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     ``` text
     DESCRIPTION                                           SIZE_MB
     -------------------------------------------------- ----------
-    DATAPUMP BUNDLE PATCH 19.25.0.0.0                        1.03
-    DATAPUMP BUNDLE PATCH 19.26.0.0.0                        1.03
-    DATAPUMP BUNDLE PATCH 19.27.0.0.0                        1.03
-    DATAPUMP BUNDLE PATCH 19.28.0.0.0                        1.04
-    OJVM RELEASE UPDATE: 19.25.0.0.241015 (36878697)          .01
-    OJVM RELEASE UPDATE: 19.26.0.0.250121 (37102264)          .02
-    OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)          .02
-    OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)          .02
-    Release Update 19.25.0.0.0                                175
-    Release Update 19.26.0.0.0                                184
-    Release Update 19.27.0.0.0                                194
-    Release Update 19.28.0.0.0                                203
-    Release Update 19.3.0.0.0                                   4
-
-    10 rows selected.
+    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT             0
+    DATAPUMP BUNDLE PATCH 19.29.0.0.0                                            1.03
+    DATAPUMP BUNDLE PATCH 19.30.0.0.0                                            1.08
+    DATAPUMP BUNDLE PATCH 19.31.0.0.0                                            1.09
+    DATAPUMP BUNDLE PATCH 19.32.0.0.0                                            1.09
+    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)                             0.02
+    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)                             0.03
+    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)                             0.03
+    OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)                             0.03
+    Release Update 19.29.0.0.0                                                    213
+    Release Update 19.3.0.0.0                                                       4
+    Release Update 19.30.0.0.0                                                    223
+    Release Update 19.31.0.0.0                                                    233
+    Release Update 19.32.0.0.0                                                    243
+    
+    14 rows selected.
     ```
 
     </details>
@@ -650,55 +654,58 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL Patching tool version 19.28.0.0.0 Production on Fri Aug  1 06:55:12 2025
-    Copyright (c) 2012, 2025, Oracle.  All rights reserved.
-
-    Log file for this invocation: /u01/app/oracle/cfgtoollogs/sqlpatch/sqlpatch_120240_2025_08_01_06_55_12/sqlpatch_invocation.log
-
+    SQL Patching tool version 19.31.0.0.0 Production on Wed Sep  2 10:45:23 2026
+    Copyright (c) 2012, 2026, Oracle.  All rights reserved.
+    
+    Log file for this invocation: /u01/app/oracle/cfgtoollogs/sqlpatch/sqlpatch_135655_2026_09_02_10_45_23/sqlpatch_invocation.log
+    
     Connecting to database...OK
     Gathering database info...done
     Bootstrapping registry and package to current versions...done
     Determining current state...done
-
+    
     Current state of interim SQL patches:
-    Interim patch 36878697 (OJVM RELEASE UPDATE: 19.25.0.0.241015 (36878697)):
+    Interim patch 38194382 (OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)):
       Binary registry: Not installed
-      SQL registry: Rolled back successfully on 31-JUL-25 08.23.09.135446 AM
-    Interim patch 37056207 (DATAPUMP BUNDLE PATCH 19.25.0.0.0):
+      SQL registry: Rolled back successfully on 01-SEP-26 01.24.58.500208 PM
+    Interim patch 38523609 (OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)):
       Binary registry: Not installed
-      SQL registry: Rolled back successfully on 31-JUL-25 08.23.09.246077 AM
-    Interim patch 37102264 (OJVM RELEASE UPDATE: 19.26.0.0.250121 (37102264)):
+      SQL registry: Rolled back successfully on 01-SEP-26 01.38.18.880352 PM
+    Interim patch 38535360 (DATAPUMP BUNDLE PATCH 19.29.0.0.0):
       Binary registry: Not installed
-      SQL registry: Rolled back successfully on 31-JUL-25 08.38.11.022067 AM
-    Interim patch 37470729 (DATAPUMP BUNDLE PATCH 19.26.0.0.0):
+      SQL registry: Rolled back successfully on 01-SEP-26 01.24.58.806838 PM
+    Interim patch 38844367 (19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT):
       Binary registry: Not installed
-      SQL registry: Rolled back successfully on 31-JUL-25 08.38.11.360518 AM
-    Interim patch 37499406 (OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)):
+      SQL registry: Rolled back successfully on 01-SEP-26 01.38.18.956087 PM
+    Interim patch 38844733 (DATAPUMP BUNDLE PATCH 19.30.0.0.0):
       Binary registry: Not installed
-      SQL registry: Rolled back successfully on 01-AUG-25 06.08.25.411000 AM
-    Interim patch 37777295 (DATAPUMP BUNDLE PATCH 19.27.0.0.0):
-      Binary registry: Not installed
-      SQL registry: Rolled back successfully on 01-AUG-25 06.08.25.837984 AM
-    Interim patch 37847857 (OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)):
+      SQL registry: Rolled back successfully on 01-SEP-26 01.38.19.471926 PM
+    Interim patch 38906621 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)):
       Binary registry: Installed
-      SQL registry: Applied successfully on 01-AUG-25 06.08.25.457376 AM
-    Interim patch 38170982 (DATAPUMP BUNDLE PATCH 19.28.0.0.0):
+      SQL registry: Applied successfully on 02-SEP-26 08.59.57.947550 AM
+    Interim patch 39196236 (DATAPUMP BUNDLE PATCH 19.31.0.0.0):
       Binary registry: Installed
-      SQL registry: Applied successfully on 01-AUG-25 06.09.26.991082 AM
-
+      SQL registry: Applied successfully on 02-SEP-26 09.00.49.338020 AM
+    Interim patch 39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)):
+      Binary registry: Not installed
+      SQL registry: Rolled back successfully on 02-SEP-26 08.59.57.880157 AM
+    Interim patch 39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0):
+      Binary registry: Not installed
+      SQL registry: Rolled back successfully on 02-SEP-26 08.59.58.184537 AM
+    
     Current state of release update SQL patches:
       Binary registry:
-        19.28.0.0.0 Release_Update 250705030417: Installed
+        19.31.0.0.0 Release_Update 260514003012: Installed
       SQL registry:
-        Applied 19.28.0.0.0 Release_Update 250705030417 successfully on 01-AUG-25 06.08.48.499528 AM
-
+        Rolled back to 19.31.0.0.0 Release_Update 260514003012 successfully on 02-SEP-26 09.00.16.186360 AM
+    
       Purging old patch metadata process started...
-
-    CAUTION: This could be I/O intensive sometimes due to cleanup of BLOB columns. If you find this process taking unusually long time or if you are     seeing any impact to the database performance, then abort this datapatch process and reschedule this clean up activity in a quiet maintenance     window.
-
+    
+    CAUTION: This could be I/O intensive sometimes due to cleanup of BLOB columns. If you find this process taking unusually long time or if you are seeing any impact to the     database performance, then abort this datapatch process and reschedule this clean up activity in a quiet maintenance window.
+    
       Purge old patch metadata process completed.
-
-    SQL Patching tool complete on Fri Aug  1 06:55:33 2025
+    
+    SQL Patching tool complete on Wed Sep  2 10:45:55 2026
     ```
 
     </details>
@@ -726,37 +733,38 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     </copy>
     ```
 
-    * The total size is around 200 MB.
+    * The total size is around 230 MB.
     * The cleanup happens via a `TRUNCATE TABLE` command which effectively reclaims space so other segments may use it. However, it doesn't shrink the tablespace, so the physical size of the data files remain the same.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    DESCRIPTION                                           SIZE_MB
-    -------------------------------------------------- ----------
-    DATAPUMP BUNDLE PATCH 19.25.0.0.0
-    DATAPUMP BUNDLE PATCH 19.26.0.0.0
-    DATAPUMP BUNDLE PATCH 19.27.0.0.0
-    DATAPUMP BUNDLE PATCH 19.28.0.0.0                        1.04
-    OJVM RELEASE UPDATE: 19.25.0.0.241015 (36878697)
-    OJVM RELEASE UPDATE: 19.26.0.0.250121 (37102264)
-    OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)
-    OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)          .02
-    Release Update 19.25.0.0.0
-    Release Update 19.26.0.0.0
-    Release Update 19.27.0.0.0
-    Release Update 19.28.0.0.0                                203
+                                                               DESCRIPTION    SIZE_MB
+    ______________________________________________________________________ __________
+    19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT
+    DATAPUMP BUNDLE PATCH 19.29.0.0.0
+    DATAPUMP BUNDLE PATCH 19.30.0.0.0
+    DATAPUMP BUNDLE PATCH 19.31.0.0.0                                            1.09
+    DATAPUMP BUNDLE PATCH 19.31.0.0.0
+    DATAPUMP BUNDLE PATCH 19.32.0.0.0
+    OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
+    OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)
+    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)                             0.03
+    OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
+    OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)
+    Release Update 19.29.0.0.0
     Release Update 19.3.0.0.0
-
-    10 rows selected.
+    Release Update 19.30.0.0.0
+    Release Update 19.31.0.0.0                                                    233
+    Release Update 19.32.0.0.0
+    
+    16 rows selected.
     ```
 
     </details>
 
-7. Oracle expects to add the Datapatch cleanup functionality in Release Update 19.29. Until then, you can add the functionality using a one-off patch (37738908).
-
-**Congratulations!** This is the end of *Patch Me If You Can*.
+You may now [*proceed to the next lab*](#next).
 
 ## Acknowledgements
 

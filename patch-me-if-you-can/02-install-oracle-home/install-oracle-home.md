@@ -14,9 +14,7 @@ In this lab, you will:
 
 ### Prerequisites
 
-This lab assumes:
-
-* You have completed Lab 1: Initialize environment
+None.
 
 ## Task 1: Install using AutoUpgrade
 
@@ -43,7 +41,7 @@ This lab assumes:
 
     ``` text
     $ cat scripts/pt-02-install-oracle-home.cfg
-    global.global_log_dir=/home/oracle/logs-patching/install-oracle-home/log
+    global.global_log_dir=/home/oracle/logs/install-oracle-home
     patch1.source_home=/u01/app/oracle/product/19
     patch1.target_home=/u01/app/oracle/product/dbhome_%RELEASE%_%UPDATE%_au
     patch1.download_folder=/home/oracle/patch-repo

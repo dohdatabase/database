@@ -16,10 +16,7 @@ In this lab, you will:
 
 ### Prerequisites
 
-This lab assumes:
-
-* You have completed Lab 1: Initialize Environment
-
+None.
 
 ## Task 1: Check patch files
 

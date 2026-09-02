@@ -1,10 +1,10 @@
 # Install Oracle Home - Continued
 
-In this lab, you will install an Oracle home using AutoUpgrade. This method is simple and easy.
+In this lab, you will use a gold image to install an Oracle home.
 
 ## Introduction
 
-Estimated Time: 20 Minutes
+Estimated Time: 10 Minutes
 
 ### Objectives
 
@@ -38,11 +38,9 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     Jobs restored                  [0]
     Jobs pending                   [0]
 
-
-
     Please check the summary report at:
-    /home/oracle/autoupgrade-patching/install-oracle-home/log/cfgtoollogs/patch/auto/status/status.html
-    /home/oracle/autoupgrade-patching/install-oracle-home/log/cfgtoollogs/patch/auto/status/status.log
+    /home/oracle/logs/install-oracle-home/cfgtoollogs/patch/auto/status/status.html
+    /home/oracle/logs/install-oracle-home/cfgtoollogs/patch/auto/status/status.log
     ```
 
     </details>
@@ -61,8 +59,10 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cat /u01/app/oraInventory/ContentsXML/inventory.xml
     <?xml version="1.0" standalone="yes" ?>
+    <!-- Copyright (c) 1999, 2026, Oracle and/or its affiliates.
+    All rights reserved. -->
+    <!-- Do not modify the contents of this file by hand. -->
     <INVENTORY>
     <VERSION_INFO>
        <SAVED_WITH>12.2.0.7.0</SAVED_WITH>
@@ -70,10 +70,10 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     </VERSION_INFO>
     <HOME_LIST>
     <HOME NAME="OraDB19Home1" LOC="/u01/app/oracle/product/19" TYPE="O" IDX="1"/>
-    <HOME NAME="OraDB21Home1" LOC="/u01/app/oracle/product/21" TYPE="O" IDX="2"/>
-    <HOME NAME="OraDB23Home1" LOC="/u01/app/oracle/product/23" TYPE="O" IDX="3"/>
-    <HOME NAME="OraDB19Home2" LOC="/u01/app/oracle/product/19_28" TYPE="O" IDX="4"/>
-    <HOME NAME="OraDB19Home3" LOC="/u01/app/oracle/product/19_28_au" TYPE="O" IDX="5"/>
+    <HOME NAME="OraDB19Home2" LOC="/u01/app/oracle/product/dbhome_19_32" TYPE="O" IDX="2"/>
+    <HOME NAME="OraDB21Home1" LOC="/u01/app/oracle/product/21" TYPE="O" IDX="3"/>
+    <HOME NAME="OraDB23Home1" LOC="/u01/app/oracle/product/26" TYPE="O" IDX="4"/>
+    <HOME NAME="OraDB19Home3" LOC="/u01/app/oracle/product/dbhome_19_32_au" TYPE="O" IDX="5"/>
     </HOME_LIST>
     <COMPOSITEHOME_LIST>
     </COMPOSITEHOME_LIST>
@@ -86,79 +86,34 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
 
     ``` bash
     <copy>
-    export ORACLE_HOME=/u01/app/oracle/product/19_28_au
+    export ORACLE_HOME=/u01/app/oracle/product/dbhome_19_32_au
     $ORACLE_HOME/OPatch/opatch lspatches
     </copy>
 
     # Be sure to press RETURN
     ```
 
-    * AutoUpgrade installed the Release Update you specified including the other patches. 
-    * Notice how the OCW component has been updated as well. It is now on *19.28.0.0.0*. 
+    * Here is the patch specification from the AutoUpgrade config file: `patch=RECOMMENDED,OCW,JDK,SDOBP,29213893`.
+    * At the creation of this lab, *19.32* was the latest Release Update which is what AutoUpgrade installed because of the `RECOMMENDED` keyword.
+    * Notice that the OCW component has been updated as well. It is now on *19.32.0.0.0*. 
+    * The *Fix for Bug* entries are patches coming from the MRP.
 
     <details>
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ /u01/app/oracle/product/19_28_au/OPatch/opatch lspatches
-
     29213893;DBMS_STATS FAILING WITH ERROR ORA-01422 WHEN GATHERING STATS FOR USER$ TABLE
-    37847857;OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)
-    37962946;OCW RELEASE UPDATE 19.28.0.0.0 (37962946)
-    38170982;DATAPUMP BUNDLE PATCH 19.28.0.0.0
-    37960098;Database Release Update : 19.28.0.0.250715 (37960098)
-
+    39692747;SPATIAL BUNDLE PATCH #1 ON DBRU 19.32.0.0.0
+    39791916;JDK BUNDLE PATCH 19.0.0.0.260818
+    39526364;OCW RELEASE UPDATE 19.32.0.0.0 (39526364)
+    39779336;Fix for Bug 39779336
+    39750798;Fix for Bug 39750798
+    39661089;Fix for Bug 39661089
+    39222882;OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)
+    39657094;DATAPUMP BUNDLE PATCH 19.32.0.0.0
+    39472050;Database Release Update : 19.32.0.0.260721 (39472050)
+    
     OPatch succeeded.
-    ```
-
-    </details>
-
-## Task 4: Optional: Use Gold Image
-
-Gold images are a convenient way of installing Oracle homes on many different servers. You prepare and patch an Oracle home only once, and then distribute the patched Oracle home to all other servers.
-
-1. **This is an optional lab that takes around 10 minutes**. If you are short on time, you can skip executing the commands, but do read on.
-
-2. Still in the *yellow* terminal 🟨. Set the environment to the new Oracle home.
-
-    ``` bash
-    <copy>
-    export ORACLE_HOME=/u01/app/oracle/product/19_28_au
-    export PATH=$ORACLE_HOME/bin:$PATH
-    </copy>
-
-    # Be sure to press RETURN
-    ```
-
-    * This is the Oracle home you created using AutoUpgrade.
-    * The Oracle home is patched with Release Update 28.
-
-3. Create the gold image.
-
-    ``` bash
-    <copy>
-    $ORACLE_HOME/runInstaller -createGoldImage \
-       -destinationLocation /home/oracle/patch-repo \
-       -name goldImage_dbHome_19_28_0.zip \
-       -silent
-    </copy>
-    ```
-
-    * It takes a few minutes to create the gold image.
-    * The installer puts the Oracle home into a zip file.
-    * `destinationLocation` determines where the gold image is placed.
-    * `name` tells the installer the name of the zip file.
-    * While the installer creates a gold image, reflect on the differences between creating the new Oracle home using AutoUpgrade and manually?
-    * You can move on with the next lab while the installer completes.
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    Launching Oracle Database Setup Wizard...
-
-    Successfully Setup Software.
-    Gold Image location: /home/oracle/patch-repo/goldImage_dbHome_19_28_0.zip
     ```
 
     </details>
@@ -167,7 +122,61 @@ Gold images are a convenient way of installing Oracle homes on many different se
 
     ``` bash
     <copy>
-    ls -l /home/oracle/patch-repo/goldImage*
+    cd ~/patch-repo
+    ll gold_image*
+    </copy>
+
+    # Be sure to press RETURN
+    ```
+
+    * In the AutoUpgrade config file, you selected to create a gold image of the new Oracle home using the parameter `create_gold_image`. 
+    * AutoUpgrade stores the gold image in the `download_folder` together with all the patches.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    -rw-r--r--. 1 oracle oinstall 5423128024 Sep  1 18:44 gold_image_dbhome_1932.zip
+    ```
+
+    </details>
+
+## Task 2: Create Oracle home using gold image
+
+Gold images are a convenient way of installing Oracle homes on many different servers. You prepare and patch an Oracle home only once, and then distribute the patched Oracle home to all other servers.
+
+1. Examine the precreated config file.
+
+    ``` bash
+    <copy>
+    cat ~/scripts/pt-05-install-from-gold-image.cfg
+    </copy>
+    ```
+
+    * `patch` defines the use of the gold image, you created earlier. You don't specify which patches you want. You install what's included in the gold image.
+    * In this lab you don't use a `source_home` to copy settings from, so you must use define the Edition and Oracle base using `home_settings`. All other Oracle home settings are left at the default. You can override the defaults using other `home_settings`. 
+    * You must define the `target_version` since it can't be deduced from the `patch` setting.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    global.global_log_dir=/home/oracle/logs/install-from-gold-image
+    patch1.target_home=/u01/app/oracle/product/dbhome_19_32_gold_image
+    patch1.target_version=19
+    patch1.download_folder=/home/oracle/patch-repo
+    patch1.patch=GOLDIMAGE:gold_image_dbhome_1932.zip
+    patch1.home_settings.edition=EE
+    patch1.home_settings.oracle_base=/u01/app/oracle    
+    ```
+
+    </details>
+
+2. Start AutoUpgrade to create the Oracle home.
+
+    ``` bash
+    <copy>
+    java -jar autoupgrade.jar -config scripts/pt-05-install-from-gold-image.cfg -patch -mode create_home
     </copy>
     ```
 
@@ -175,52 +184,110 @@ Gold images are a convenient way of installing Oracle homes on many different se
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ ls -l /home/oracle/patch-repo/goldImage*
-    -rw-r--r--. 1 oracle oinstall 4625522638 Nov  5 11:43 /home/oracle/patch-repo/goldImage_dbHome_19_28_0.zip
+    Processing config file ...
+    +-----------------------------------------+
+    | Starting AutoUpgrade Patching execution |
+    +-----------------------------------------+
+    Type 'help' to list console commands
+    patch>
     ```
 
     </details>
 
-5. In this lab, you won't use the gold image. But you can review the commands needed to install it.
+3. It takes a few minutes to extract and install the gold image. Leave AutoUpgrade running.
 
-    ``` bash
-    # Set environment to new Oracle home
-    export ORACLE_HOME=/u01/app/oracle/product/19_28_gold
+4. You can use the gold image created by AutoUpgrade many times on the same or different servers. The advantages of using gold images are:
+    * You know all servers get the exact same Oracle home.
+    * You can install faster because you don't need to apply all the patches.
+    * They fit very well with automation.
+    * They're easier to test and work well with configuration management.
 
-    # Extract gold image
-    unzip /home/oracle/patch-repo/goldImage_dbHome_19_28_0.zip -d $ORACLE_HOME
+5. You can also use the gold image created by AutoUpgrade to install a new Oracle home manually. 
+    * You unzip the gold image to the new Oracle home location.
+    * Run the installer with appropriate settings.
 
-    # Install the Oracle home
-    export PATH=$ORACLE_HOME/bin:$PATH
-    export ORAINVENTORY=/u01/app/oraInventory
-    export ORACLE_BASE=/u01/app/oracle
-    export CV_ASSUME_DISTID=OEL7.6
-    cd $ORACLE_HOME
-    ./runInstaller \
-       -silent -ignorePrereqFailure -waitforcompletion \
-       oracle.install.option=INSTALL_DB_SWONLY \
-       UNIX_GROUP_NAME=oinstall \
-       INVENTORY_LOCATION=$ORAINVENTORY \
-       ORACLE_HOME=$ORACLE_HOME \
-       ORACLE_BASE=$ORACLE_BASE \
-       oracle.install.db.InstallEdition=EE \
-       oracle.install.db.OSDBA_GROUP=dba \
-       oracle.install.db.OSOPER_GROUP=dba \
-       oracle.install.db.OSBACKUPDBA_GROUP=dba \
-       oracle.install.db.OSDGDBA_GROUP=dba \
-       oracle.install.db.OSKMDBA_GROUP=dba \
-       oracle.install.db.OSRACDBA_GROUP=dba \
-       SECURITY_UPDATES_VIA_MYORACLESUPPORT=false \
-       DECLINE_SECURITY_UPDATES=true
+6. What are you thoughts about installing a new Oracle home using AutoUpgrade? How do you think it compares to installing Oracle homes manually?
+
+7. Wait for AutoUpgrade to complete the installation. When done, AutoUpgrade prints *Job 100 completed*.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    Job 100 completed
+    ------------------- Final Summary --------------------
+    Number of databases            [ 1 ]
+    
+    Jobs finished                  [1]
+    Jobs failed                    [0]
+    Jobs restored                  [0]
+    Jobs pending                   [0]
+    
+    Please check the summary report at:
+    /home/oracle/logs/install-from-gold-image/cfgtoollogs/patch/auto/status/status.html
+    /home/oracle/logs/install-from-gold-image/cfgtoollogs/patch/auto/status/status.log    
     ```
 
-    * Notice that you don't use the `-applyRU` or `-applyOneOffs` parameters.
-    * The Oracle home is already patched, so you can skip that part.
-    * OPatch is also already updated.
-    * By using a gold image in your environment, you know that the same set of patches are in all of your databases.
-    * You patch only once, then create a gold image, and use that to distribute to all systems.
+    </details>
 
-What are you thoughts about installing a new Oracle home using AutoUpgrade? How do you think it compares to installing Oracle homes manually?
+8. In lab 2, you installed another Oracle home from scratch. Compare the time it took to using the gold image.
+
+    ``` bash
+    <copy>
+    grep -ho "Total Job Time.*min" /home/oracle/logs/install-oracle-home/create_home_1/100/autoupgrade_patching_*.log | sed 's/^/From scratch: /'
+    grep -ho "Total Job Time.*min" /home/oracle/logs/install-from-gold-image/create_home_1/100/autoupgrade_patching_*.log | sed 's/^/From gold image: /'
+    </copy>
+
+    # Be sure to press RETURN
+    ```
+
+    * You can find the AutoUpgrade job duration in the log files.
+    * Installing the Oracle home from scratch and applying the Release Update and other patches takes 24 minutes. This includes the creation of the gold image so the installation time is probably around 18-20 minutes.
+    * Installing from a gold image takes only two minutes.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    From scratch: Total Job Time    24 min
+    From gold image: Total Job Time    2 min
+    ```
+
+    </details>
+
+9. Check the patches installed.
+
+    ``` bash
+    <copy>
+    export ORACLE_HOME=/u01/app/oracle/product/dbhome_19_32_gold_image
+    $ORACLE_HOME/OPatch/opatch lspatches
+    </copy>
+
+    # Be sure to press RETURN
+    ```
+
+    * The Oracle home is fully up-to-date with same patches as originally. 
+    * At the creation of this lab, *19.32* was the latest Release Update.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    29213893;DBMS_STATS FAILING WITH ERROR ORA-01422 WHEN GATHERING STATS FOR USER$ TABLE
+    39692747;SPATIAL BUNDLE PATCH #1 ON DBRU 19.32.0.0.0
+    39791916;JDK BUNDLE PATCH 19.0.0.0.260818
+    39526364;OCW RELEASE UPDATE 19.32.0.0.0 (39526364)
+    39779336;Fix for Bug 39779336
+    39750798;Fix for Bug 39750798
+    39661089;Fix for Bug 39661089
+    39222882;OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)
+    39657094;DATAPUMP BUNDLE PATCH 19.32.0.0.0
+    39472050;Database Release Update : 19.32.0.0.260721 (39472050)
+    
+    OPatch succeeded.
+    ```
+
+    </details>
 
 You may now [*proceed to the next lab*](#next).
 

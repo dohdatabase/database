@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will manually patch a container database. The *CDB19* database is running on 19.27 and you will patch it to an existing Oracle home on 19.28. In addition, you will check how PDBs behaves during patching.
+In this lab, you will manually patch a container database. The *CDB19* database is running on 19.31 and you will patch it to an existing Oracle home on 19.32. In addition, you will check how PDBs behaves during patching.
 
 Estimated Time: 15 Minutes
 
@@ -15,13 +15,11 @@ In this lab, you will:
 
 ### Prerequisites
 
-This lab assumes:
-
-* You have completed Lab 2: Simple Patching With AutoUpgrade
+None.
 
 ## Task 1: Patch a container database
 
-You will patch *CDB19* to 19.28 and use an existing Oracle home.
+You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
 1. Use the *yellow* terminal 🟨. Set the environment to the *CDB19* database and connect.
 
@@ -34,15 +32,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     -- Be sure to hit RETURN
     ```
 
-2. Start the database.
-
-    ``` sql
-    <copy>
-    startup
-    </copy>
-    ```
-
-3. Create a new PDB.
+2. Create a new PDB.
 
     ``` sql
     <copy>
@@ -61,7 +51,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
 
     </details>
 
-4. Check the current version.
+3. Check the current version.
 
     ``` sql
     <copy>
@@ -77,12 +67,12 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
 
     VERSION_FULL
     -----------------
-    19.27.0.0.0
+    19.31.0.0.0
     ```
 
     </details>
 
-5. Shut down the database, so you can patch it to 19.28.
+4. Shut down the database, so you can patch it to 19.32.
 
     ``` sql
     <copy>
@@ -92,7 +82,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
 
     * You must shut down a single instance database to patch it. In contrast, if it was an Oracle RAC Database, you could patch it using the *RAC Rolling* method without downtime.
 
-6. Exit SQLcl.
+5. Exit SQLcl.
 
     ``` sql
     <copy>
@@ -100,11 +90,11 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     </copy>
     ```
 
-7. Move the SPFile and password file to the new Oracle home.
+6. Move the SPFile and password file to the new Oracle home.
 
     ``` bash
     <copy>
-    export NEW_ORACLE_HOME=/u01/app/oracle/product/19_28
+    export NEW_ORACLE_HOME=/u01/app/oracle/product/dbhome_19_32
     export OLD_ORACLE_HOME=/u01/app/oracle/product/19
     mv $OLD_ORACLE_HOME/dbs/spfileCDB19.ora $NEW_ORACLE_HOME/dbs
     mv $OLD_ORACLE_HOME/dbs/orapwCDB19 $NEW_ORACLE_HOME/dbs
@@ -117,11 +107,11 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     * Also, there are no network files, like `tnsnames.ora` and `sqlnet.ora` in `$ORACLE_HOME/network/admin` so we don't move those either.
     * There might be many other files in the Oracle home. Check the blog post [Files to Move During Oracle Database Out-Of-Place Patching](https://dohdatabase.com/2023/05/30/files-to-move-during-oracle-database-out-of-place-patching/) for details.
 
-8. You need to set the environment to the new Oracle home. Update the profile script and reset the environment.
+7. You need to set the environment to the new Oracle home. Update the profile script and reset the environment.
 
     ``` bash
     <copy>
-    sed -i 's|^ORACLE_HOME=.*|ORACLE_HOME=/u01/app/oracle/product/19_28|' /usr/local/bin/cdb19
+    sed -i 's|^ORACLE_HOME=.*|ORACLE_HOME=/u01/app/oracle/product/dbhome_19_32|' /usr/local/bin/cdb19
     . cdb19
     env | grep ORA
     </copy>
@@ -129,19 +119,19 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     # Be sure to press RETURN
     ```
 
-9. Update `/etc/oratab` to reflect the new Oracle home.
+8. Update `/etc/oratab` to reflect the new Oracle home.
 
     ``` bash
     <copy>
-    sed 's|^CDB19:.*|CDB19:/u01/app/oracle/product/19_28:Y|' /etc/oratab > /tmp/oratab
+    sed 's|^CDB19:.*|CDB19:/u01/app/oracle/product/dbhome_19_32:Y|' /etc/oratab > /tmp/oratab
     cat /tmp/oratab > /etc/oratab
-    grep "CDB19" /etc/oratab
+    grep "CDB19:" /etc/oratab
     </copy>
 
     # Be sure to press RETURN
     ```
 
-10. Connect to the database.
+9. Connect to the database.
 
     ``` bash
     <copy>
@@ -149,12 +139,12 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     </copy>
     ```
 
-11. Start the database instance and check PDBs.
+10. Start the database instance and check PDBs.
 
     ``` sql
     <copy>
     startup
-    show pdbs
+    select name, open_mode, restricted from v$pdbs;
     </copy>
 
     -- Be sure to hit RETURN
@@ -176,18 +166,19 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     Redo Buffers                7589888 bytes
     Database mounted.
     Database opened.
-    SQL> show pdbs
+    SQL> select name, open_mode, restricted from v$pdbs;
 
-        CON_ID CON_NAME      OPEN MODE  RESTRICTED
-    ---------- ------------- ---------- ----------
-             2 PDB$SEED      READ ONLY  NO
-             3 INDIGO        MOUNTED
-             4 ORANGE        READ WRITE NO
+             NAME     OPEN_MODE    RESTRICTED
+    _____________ _____________ _____________
+    PDB$SEED      READ ONLY     NO
+    INDIGO        MOUNTED
+    ORANGE        READ WRITE    NO
+    TERRACOTTA    READ WRITE    NO
     ```
 
     </details>
 
-12. Exit SQLcl.
+11. Exit SQLcl.
 
     ``` sql
     <copy>
@@ -215,103 +206,118 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ $ORACLE_HOME/OPatch/datapatch
-    SQL Patching tool version 19.28.0.0.0 Production on Sun Jul 27 16:34:06 2025
-    Copyright (c) 2012, 2025, Oracle.  All rights reserved.
-
-    Log file for this invocation: /u01/app/oracle/cfgtoollogs/sqlpatch/sqlpatch_302392_2025_07_27_16_34_06/sqlpatch_invocation.log
-
+    SQL Patching tool version 19.32.0.0.0 Production on Wed Sep  2 08:38:54 2026
+    Copyright (c) 2012, 2026, Oracle.  All rights reserved.
+    
+    Log file for this invocation: /u01/app/oracle/cfgtoollogs/sqlpatch/sqlpatch_120734_2026_09_02_08_38_54/sqlpatch_invocation.log
+    
     Connecting to database...OK
     Gathering database info...done
-
+    
     Note:  Datapatch will only apply or rollback SQL fixes for PDBs
            that are in an open state, no patches will be applied to closed PDBs.
            Please refer to Note: Datapatch: Database 12c Post Patch SQL Automation
            (Doc ID 1585822.1)
-
+    
     Warning: PDB INDIGO is in mode MOUNTED and will be skipped.
     Bootstrapping registry and package to current versions...done
     Determining current state...done
-
+    
     Current state of interim SQL patches:
-    Interim patch 37499406 (OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)):
+    Interim patch 38906621 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)):
       Binary registry: Not installed
-      PDB CDB$ROOT: Applied successfully on 24-JUL-25 11.38.03.761631 AM
-      PDB ORANGE: Applied successfully on 24-JUL-25 11.40.06.122876 AM
-      PDB PDB$SEED: Applied successfully on 24-JUL-25 11.40.06.122876 AM
-    Interim patch 37777295 (DATAPUMP BUNDLE PATCH 19.27.0.0.0):
+      PDB CDB$ROOT: Applied successfully on 01-SEP-26 02.34.09.543024 PM
+      PDB ORANGE: Applied successfully on 01-SEP-26 02.35.56.902699 PM
+      PDB PDB$SEED: Applied successfully on 01-SEP-26 02.35.56.902699 PM
+      PDB TERRACOTTA: Applied successfully on 01-SEP-26 02.35.56.902699 PM
+    Interim patch 39196236 (DATAPUMP BUNDLE PATCH 19.31.0.0.0):
       Binary registry: Not installed
-      PDB CDB$ROOT: Applied successfully on 24-JUL-25 11.40.00.817914 AM
-      PDB ORANGE: Applied successfully on 24-JUL-25 11.41.23.598307 AM
-      PDB PDB$SEED: Applied successfully on 24-JUL-25 11.41.23.598307 AM
-    Interim patch 37847857 (OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)):
+      PDB CDB$ROOT: Applied successfully on 01-SEP-26 02.35.51.553181 PM
+      PDB ORANGE: Applied successfully on 01-SEP-26 02.37.08.635055 PM
+      PDB PDB$SEED: Applied successfully on 01-SEP-26 02.37.08.635055 PM
+      PDB TERRACOTTA: Applied successfully on 01-SEP-26 02.37.08.635055 PM
+    Interim patch 39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)):
       Binary registry: Installed
       PDB CDB$ROOT: Not installed
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
-    Interim patch 38170982 (DATAPUMP BUNDLE PATCH 19.28.0.0.0):
+      PDB TERRACOTTA: Not installed
+    Interim patch 39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0):
       Binary registry: Installed
       PDB CDB$ROOT: Not installed
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
-
+      PDB TERRACOTTA: Not installed
+    
     Current state of release update SQL patches:
       Binary registry:
-        19.28.0.0.0 Release_Update 250705030417: Installed
+        19.32.0.0.0 Release_Update 260705220710: Installed
       PDB CDB$ROOT:
-        Applied 19.27.0.0.0 Release_Update 250406131139 successfully on 24-JUL-25 11.39.47.050576 AM
+        Applied 19.31.0.0.0 Release_Update 260514003012 successfully on 01-SEP-26 02.35.39.827433 PM
       PDB ORANGE:
-        Applied 19.27.0.0.0 Release_Update 250406131139 successfully on 24-JUL-25 11.41.15.860182 AM
+        Applied 19.31.0.0.0 Release_Update 260514003012 successfully on 01-SEP-26 02.37.02.349192 PM
       PDB PDB$SEED:
-        Applied 19.27.0.0.0 Release_Update 250406131139 successfully on 24-JUL-25 11.41.15.860182 AM
-
+        Applied 19.31.0.0.0 Release_Update 260514003012 successfully on 01-SEP-26 02.37.02.349192 PM
+      PDB TERRACOTTA:
+        Applied 19.31.0.0.0 Release_Update 260514003012 successfully on 01-SEP-26 02.37.02.349192 PM
+    
     Adding patches to installation queue and performing prereq checks...done
     Installation queue:
-      For the following PDBs: CDB$ROOT PDB$SEED ORANGE
+      For the following PDBs: CDB$ROOT PDB$SEED ORANGE TERRACOTTA
         The following interim patches will be rolled back:
-          37499406 (OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406))
-          37777295 (DATAPUMP BUNDLE PATCH 19.27.0.0.0)
-        Patch 37960098 (Database Release Update : 19.28.0.0.250715 (37960098)):
-          Apply from 19.27.0.0.0 Release_Update 250406131139 to 19.28.0.0.0 Release_Update 250705030417
+          38906621 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621))
+          39196236 (DATAPUMP BUNDLE PATCH 19.31.0.0.0)
+        Patch 39472050 (Database Release Update : 19.32.0.0.260721 (39472050)):
+          Apply from 19.31.0.0.0 Release_Update 260514003012 to 19.32.0.0.0 Release_Update 260705220710
         The following interim patches will be applied:
-          37847857 (OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857))
-          38170982 (DATAPUMP BUNDLE PATCH 19.28.0.0.0)
-
+          39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882))
+          39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0)
+    
     Installing patches...
-    Patch installation complete.  Total patches installed: 15
-
+    Patch installation complete.  Total patches installed: 20
+    
     Validating logfiles...done
-    Patch 37499406 rollback (pdb CDB$ROOT): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37499406/26115603/37499406_rollback_CDB19_CDBROOT_2025Jul27_16_34_50.log (no errors)
-    Patch 37777295 rollback (pdb CDB$ROOT): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37777295/27238855/37777295_rollback_CDB19_CDBROOT_2025Jul27_16_34_50.log (no errors)
-    Patch 37960098 apply (pdb CDB$ROOT): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37960098/27635722/37960098_apply_CDB19_CDBROOT_2025Jul27_16_34_50.log (no errors)
-    Patch 37847857 apply (pdb CDB$ROOT): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37847857/27534561/37847857_apply_CDB19_CDBROOT_2025Jul27_16_34_50.log (no errors)
-    Patch 38170982 apply (pdb CDB$ROOT): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38170982/27628376/38170982_apply_CDB19_CDBROOT_2025Jul27_16_35_19.log (no errors)
-    Patch 37499406 rollback (pdb PDB$SEED): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37499406/26115603/37499406_rollback_CDB19_PDBSEED_2025Jul27_16_35_47.log (no errors)
-    Patch 37777295 rollback (pdb PDB$SEED): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37777295/27238855/37777295_rollback_CDB19_PDBSEED_2025Jul27_16_35_47.log (no errors)
-    Patch 37960098 apply (pdb PDB$SEED): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37960098/27635722/37960098_apply_CDB19_PDBSEED_2025Jul27_16_35_47.log (no errors)
-    Patch 37847857 apply (pdb PDB$SEED): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37847857/27534561/37847857_apply_CDB19_PDBSEED_2025Jul27_16_35_47.log (no errors)
-    Patch 38170982 apply (pdb PDB$SEED): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38170982/27628376/38170982_apply_CDB19_PDBSEED_2025Jul27_16_35_57.log (no errors)
-    Patch 37499406 rollback (pdb ORANGE): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37499406/26115603/37499406_rollback_CDB19_ORANGE_2025Jul27_16_35_47.log (no errors)
-    Patch 37777295 rollback (pdb ORANGE): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37777295/27238855/37777295_rollback_CDB19_ORANGE_2025Jul27_16_35_47.log (no errors)
-    Patch 37960098 apply (pdb ORANGE): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37960098/27635722/37960098_apply_CDB19_ORANGE_2025Jul27_16_35_47.log (no errors)
-    Patch 37847857 apply (pdb ORANGE): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37847857/27534561/37847857_apply_CDB19_ORANGE_2025Jul27_16_35_47.log (no errors)
-    Patch 38170982 apply (pdb ORANGE): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38170982/27628376/38170982_apply_CDB19_ORANGE_2025Jul27_16_35_58.log (no errors)
-    SQL Patching tool complete on Sun Jul 27 16:36:15 2025
+    Patch 38906621 rollback (pdb CDB$ROOT): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_rollback_CDB19_CDBROOT_2026Sep02_08_39_39.log (no errors)
+    Patch 39196236 rollback (pdb CDB$ROOT): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_rollback_CDB19_CDBROOT_2026Sep02_08_39_39.log (no errors)
+    Patch 39472050 apply (pdb CDB$ROOT): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_apply_CDB19_CDBROOT_2026Sep02_08_39_40.log (no errors)
+    Patch 39222882 apply (pdb CDB$ROOT): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39222882/28830205/39222882_apply_CDB19_CDBROOT_2026Sep02_08_39_39.log (no errors)
+    Patch 39657094 apply (pdb CDB$ROOT): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39657094/28915841/39657094_apply_CDB19_CDBROOT_2026Sep02_08_40_02.log (no errors)
+    Patch 38906621 rollback (pdb PDB$SEED): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_rollback_CDB19_PDBSEED_2026Sep02_08_40_24.log (no errors)
+    Patch 39196236 rollback (pdb PDB$SEED): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_rollback_CDB19_PDBSEED_2026Sep02_08_40_24.log (no errors)
+    Patch 39472050 apply (pdb PDB$SEED): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_apply_CDB19_PDBSEED_2026Sep02_08_40_24.log (no errors)
+    Patch 39222882 apply (pdb PDB$SEED): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39222882/28830205/39222882_apply_CDB19_PDBSEED_2026Sep02_08_40_24.log (no errors)
+    Patch 39657094 apply (pdb PDB$SEED): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39657094/28915841/39657094_apply_CDB19_PDBSEED_2026Sep02_08_40_35.log (no errors)
+    Patch 38906621 rollback (pdb ORANGE): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_rollback_CDB19_ORANGE_2026Sep02_08_40_24.log (no errors)
+    Patch 39196236 rollback (pdb ORANGE): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_rollback_CDB19_ORANGE_2026Sep02_08_40_24.log (no errors)
+    Patch 39472050 apply (pdb ORANGE): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_apply_CDB19_ORANGE_2026Sep02_08_40_25.log (no errors)
+    Patch 39222882 apply (pdb ORANGE): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39222882/28830205/39222882_apply_CDB19_ORANGE_2026Sep02_08_40_24.log (no errors)
+    Patch 39657094 apply (pdb ORANGE): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39657094/28915841/39657094_apply_CDB19_ORANGE_2026Sep02_08_40_36.log (no errors)
+    Patch 38906621 rollback (pdb TERRACOTTA): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_rollback_CDB19_TERRACOTTA_2026Sep02_08_40_24.log (no errors)
+    Patch 39196236 rollback (pdb TERRACOTTA): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_rollback_CDB19_TERRACOTTA_2026Sep02_08_40_24.log (no errors)
+    Patch 39472050 apply (pdb TERRACOTTA): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_apply_CDB19_TERRACOTTA_2026Sep02_08_40_25.log (no errors)
+    Patch 39222882 apply (pdb TERRACOTTA): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39222882/28830205/39222882_apply_CDB19_TERRACOTTA_2026Sep02_08_40_24.log (no errors)
+    Patch 39657094 apply (pdb TERRACOTTA): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39657094/28915841/39657094_apply_CDB19_TERRACOTTA_2026Sep02_08_40_36.log (no errors)
+    SQL Patching tool complete on Wed Sep  2 08:41:05 2026
     ```
 
     </details>
@@ -373,13 +379,13 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
          from   pdb_plug_in_violations
          where  name='INDIGO' and status!='RESOLVED';
 
-    CAUSE          TYPE     MESSAGE
-    -------------- -------- --------------------------------------------------------------------------------------------------------------------------------------------
-    SQL Patch      ERROR    Interim patch 37847857/27534561 (OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)): Installed in the CDB but not in the PDB
-    SQL Patch      ERROR    Interim patch 38170982/27628376 (DATAPUMP BUNDLE PATCH 19.28.0.0.0): Installed in the CDB but not in the PDB
-    SQL Patch      ERROR    Interim patch 37499406/26115603 (OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)): Not installed in the CDB but installed in the PDB
-    SQL Patch      ERROR    Interim patch 37777295/27238855 (DATAPUMP BUNDLE PATCH 19.27.0.0.0): Not installed in the CDB but installed in the PDB
-    SQL Patch      ERROR    '19.28.0.0.0 Release_Update 2507050304' is installed in the CDB but '19.27.0.0.0 Release_Update 2504061311' is installed in the PDB
+    CAUSE        TYPE     MESSAGE
+    ------------ -------- --------------------------------------------------------------------------------------------------------------------------------------------
+    SQL Patch    ERROR    Interim patch 39222882/28830205 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)): Installed in the CDB but not in the PDB
+    SQL Patch    ERROR    Interim patch 39657094/28915841 (DATAPUMP BUNDLE PATCH 19.32.0.0.0): Installed in the CDB but not in the PDB
+    SQL Patch    ERROR    Interim patch 38906621/28588735 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)): Not installed in the CDB but installed in the PDB
+    SQL Patch    ERROR    Interim patch 39196236/28705537 (DATAPUMP BUNDLE PATCH 19.31.0.0.0): Not installed in the CDB but installed in the PDB
+    SQL Patch    ERROR    '19.32.0.0.0 Release_Update 2607052207' is installed in the CDB but '19.31.0.0.0 Release_Update 2605140030' is installed in the PDB
     ```
 
     </details>
@@ -388,7 +394,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
 
     ``` sql
     <copy>
-    show pdbs
+    select name, open_mode, restricted from v$pdbs;
     </copy>
     ```
 
@@ -399,13 +405,12 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> show pdbs
-
-        CON_ID CON_NAME      OPEN MODE  RESTRICTED
-    ---------- ------------- ---------- ----------
-             2 PDB$SEED      READ ONLY  NO
-             3 INDIGO        READ WRITE YES
-             4 ORANGE        READ WRITE NO
+             NAME     OPEN_MODE    RESTRICTED
+    _____________ _____________ _____________
+    PDB$SEED      READ ONLY     NO
+    INDIGO        READ WRITE    YES
+    ORANGE        READ WRITE    NO
+    TERRACOTTA    READ WRITE    NO
     ```
 
     </details>
@@ -449,7 +454,7 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
 
     ``` sql
     <copy>
-    show pdbs
+    select name, open_mode, restricted from v$pdbs;
     </copy>
     ```
 
@@ -459,13 +464,12 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     <summary>*click to see the output*</summary>
 
     ``` text
-    SQL> show pdbs
-
-        CON_ID CON_NAME      OPEN MODE  RESTRICTED
-    ---------- ------------- ---------- ----------
-             2 PDB$SEED      READ ONLY  NO
-             3 INDIGO        READ WRITE NO
-             4 ORANGE        READ WRITE NO
+             NAME     OPEN_MODE    RESTRICTED
+    _____________ _____________ _____________
+    PDB$SEED      READ ONLY     NO
+    INDIGO        READ WRITE    NO
+    ORANGE        READ WRITE    NO
+    TERRACOTTA    READ WRITE    NO
     ```
 
     </details>
@@ -493,70 +497,69 @@ You will patch *CDB19* to 19.28 and use an existing Oracle home.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ $ORACLE_HOME/OPatch/datapatch -pdbs INDIGO
-    SQL Patching tool version 19.28.0.0.0 Production on Sun Jul 27 16:42:12 2025
-    Copyright (c) 2012, 2025, Oracle.  All rights reserved.
-
-    Log file for this invocation: /u01/app/oracle/cfgtoollogs/sqlpatch/sqlpatch_303293_2025_07_27_16_42_12/sqlpatch_invocation.log
-
+    SQL Patching tool version 19.32.0.0.0 Production on Wed Sep  2 08:43:45 2026
+    Copyright (c) 2012, 2026, Oracle.  All rights reserved.
+    
+    Log file for this invocation: /u01/app/oracle/cfgtoollogs/sqlpatch/sqlpatch_121821_2026_09_02_08_43_45/sqlpatch_invocation.log
+    
     Connecting to database...OK
     Gathering database info...done
-
+    
     Note:  Datapatch will only apply or rollback SQL fixes for PDBs
            that are in an open state, no patches will be applied to closed PDBs.
            Please refer to Note: Datapatch: Database 12c Post Patch SQL Automation
            (Doc ID 1585822.1)
-
+    
     Bootstrapping registry and package to current versions...done
     Determining current state...done
-
+    
     Current state of interim SQL patches:
-    Interim patch 37499406 (OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406)):
+    Interim patch 38906621 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)):
       Binary registry: Not installed
-      PDB INDIGO: Applied successfully on 24-JUL-25 11.40.06.122876 AM
-    Interim patch 37777295 (DATAPUMP BUNDLE PATCH 19.27.0.0.0):
+      PDB INDIGO: Applied successfully on 01-SEP-26 02.35.56.902699 PM
+    Interim patch 39196236 (DATAPUMP BUNDLE PATCH 19.31.0.0.0):
       Binary registry: Not installed
-      PDB INDIGO: Applied successfully on 24-JUL-25 11.41.23.598307 AM
-    Interim patch 37847857 (OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857)):
+      PDB INDIGO: Applied successfully on 01-SEP-26 02.37.08.635055 PM
+    Interim patch 39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)):
       Binary registry: Installed
       PDB INDIGO: Not installed
-    Interim patch 38170982 (DATAPUMP BUNDLE PATCH 19.28.0.0.0):
+    Interim patch 39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0):
       Binary registry: Installed
       PDB INDIGO: Not installed
-
+    
     Current state of release update SQL patches:
       Binary registry:
-        19.28.0.0.0 Release_Update 250705030417: Installed
+        19.32.0.0.0 Release_Update 260705220710: Installed
       PDB INDIGO:
-        Applied 19.27.0.0.0 Release_Update 250406131139 successfully on 24-JUL-25 11.41.15.860182 AM
-
+        Applied 19.31.0.0.0 Release_Update 260514003012 successfully on 01-SEP-26 02.37.02.349192 PM
+    
     Adding patches to installation queue and performing prereq checks...done
     Installation queue:
       For the following PDBs: INDIGO
         The following interim patches will be rolled back:
-          37499406 (OJVM RELEASE UPDATE: 19.27.0.0.250415 (37499406))
-          37777295 (DATAPUMP BUNDLE PATCH 19.27.0.0.0)
-        Patch 37960098 (Database Release Update : 19.28.0.0.250715 (37960098)):
-          Apply from 19.27.0.0.0 Release_Update 250406131139 to 19.28.0.0.0 Release_Update 250705030417
+          38906621 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621))
+          39196236 (DATAPUMP BUNDLE PATCH 19.31.0.0.0)
+        Patch 39472050 (Database Release Update : 19.32.0.0.260721 (39472050)):
+          Apply from 19.31.0.0.0 Release_Update 260514003012 to 19.32.0.0.0 Release_Update 260705220710
         The following interim patches will be applied:
-          37847857 (OJVM RELEASE UPDATE: 19.28.0.0.250715 (37847857))
-          38170982 (DATAPUMP BUNDLE PATCH 19.28.0.0.0)
-
+          39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882))
+          39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0)
+    
     Installing patches...
     Patch installation complete.  Total patches installed: 5
-
+    
     Validating logfiles...done
-    Patch 37499406 rollback (pdb INDIGO): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37499406/26115603/37499406_rollback_CDB19_INDIGO_2025Jul27_16_42_37.log (no errors)
-    Patch 37777295 rollback (pdb INDIGO): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37777295/27238855/37777295_rollback_CDB19_INDIGO_2025Jul27_16_42_37.log (no errors)
-    Patch 37960098 apply (pdb INDIGO): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37960098/27635722/37960098_apply_CDB19_INDIGO_2025Jul27_16_42_37.log (no errors)
-    Patch 37847857 apply (pdb INDIGO): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/37847857/27534561/37847857_apply_CDB19_INDIGO_2025Jul27_16_42_37.log (no errors)
-    Patch 38170982 apply (pdb INDIGO): SUCCESS
-      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38170982/27628376/38170982_apply_CDB19_INDIGO_2025Jul27_16_42_47.log (no errors)
-    SQL Patching tool complete on Sun Jul 27 16:42:57 2025
+    Patch 38906621 rollback (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_rollback_CDB19_INDIGO_2026Sep02_08_44_09.log (no errors)
+    Patch 39196236 rollback (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_rollback_CDB19_INDIGO_2026Sep02_08_44_09.log (no errors)
+    Patch 39472050 apply (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_apply_CDB19_INDIGO_2026Sep02_08_44_09.log (no errors)
+    Patch 39222882 apply (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39222882/28830205/39222882_apply_CDB19_INDIGO_2026Sep02_08_44_09.log (no errors)
+    Patch 39657094 apply (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39657094/28915841/39657094_apply_CDB19_INDIGO_2026Sep02_08_44_19.log (no errors)
+    SQL Patching tool complete on Wed Sep  2 08:44:41 2026
     ```
 
     </details>
