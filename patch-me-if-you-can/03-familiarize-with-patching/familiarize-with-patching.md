@@ -33,7 +33,7 @@ None.
 
     * Patch files comes from My Oracle Support as zip files.
     * The patch zip file you are extracting is the 19.32 Release Update.
-    * It takes a minute or two to unzip. 
+    * It takes a minute or two to unzip. Just watch the characters fly by on screen as if you were part of the *Matrix* movies. 
 
 2. Switch to the directory where you extracted the Release Update. Here you find the patch metadata stored in PatchSearch.xml
 
@@ -50,8 +50,6 @@ None.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd 37960098
-    $ ll
     total 2632
     drwxr-xr-x. 5 oracle oinstall      81 Jul 13 14:51 39472050
     -rw-rw-r--. 1 oracle oinstall 2693881 Jul 22 15:20 PatchSearch.xml
@@ -103,8 +101,6 @@ None.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd 37960098
-    $ ll
     total 108
     drwxr-x---.  3 oracle oinstall     21 Jul 13 14:55 custom
     drwxr-x---.  3 oracle oinstall     20 Jul 13 14:55 etc
@@ -145,7 +141,6 @@ None.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ find . -iname "bug*apply*sql*"
     ./files/rdbms/admin/bug31115653_postapply.sql
     ./files/rdbms/admin/bug29261906_apply.sql
     ./files/rdbms/admin/bug_35271571_apply.sql
@@ -181,7 +176,6 @@ None.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cat ./files/rdbms/admin/backport_files/bug_28971177_apply.sql
     Rem
     Rem $Header: rdbms/admin/backport_files/bug_28971177_apply.sql /st_rdbms_19/1 2022/09/21 16:37:52 skiyer Exp $
     Rem
@@ -256,8 +250,6 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd OPatch
-    $ ./opatch version
     OPatch Version: 12.2.0.1.51
 
     OPatch succeeded.
@@ -277,7 +269,6 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cat version.txt
     OPATCH_VERSION:12.2.0.1.51
     ```
 
@@ -303,9 +294,6 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd $ORACLE_HOME
-    $ mv OPatch OPatch_backup
-    $ unzip /home/oracle/patch-repo/p6880880_190000_Linux-x86-64.zip
     Archive:  /home/oracle/patch-repo/p6880880_190000_Linux-x86-64.zip
        creating: OPatch/
       inflating: OPatch/opatchauto
@@ -332,7 +320,6 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ $ORACLE_HOME/OPatch/opatch version
     OPatch Version: 12.2.0.1.52
 
     OPatch succeeded.
@@ -356,7 +343,6 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ $ORACLE_HOME/OPatch/opatch lspatches
     39196236;DATAPUMP BUNDLE PATCH 19.31.0.0.0
     38906621;OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
     39034528;Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
@@ -397,7 +383,6 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ more opatch_lsinventory.txt
     Oracle Interim Patch Installer version 12.2.0.1.52
     Copyright (c) 2026, Oracle Corporation.  All rights reserved.
 
@@ -532,12 +517,12 @@ You can use the *queryable inventory* inside the database to get information fro
     <summary>*click to see the output*</summary>
 
     ``` text
-       PATCH_ID    PATCH_UNIQUE_ID                                                        DESCRIPTION
-    ___________ __________________ __________________________________________________________________
-       39196236           28705537 DATAPUMP BUNDLE PATCH 19.31.0.0.0
-       38906621           28588735 OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
-       39034528           28740323 Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
-       29585399           22840393 OCW RELEASE UPDATE 19.3.0.0.0 (29585399)
+    PATCH_ID    PATCH_UNIQUE_ID DESCRIPTION
+    ___________ _______________ __________________________________________________________________
+    39196236           28705537 DATAPUMP BUNDLE PATCH 19.31.0.0.0
+    38906621           28588735 OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)
+    39034528           28740323 Database Release Update : 19.31.0.0.260421 (REL-APR2026) (39034528)
+    29585399           22840393 OCW RELEASE UPDATE 19.3.0.0.0 (29585399)
     ```
 
     </details>
@@ -569,8 +554,6 @@ Datapatch applies or rolls back SQL changes to the database.
     <summary>*click to see the output*</summary>
 
     ``` text
-    $ cd $ORACLE_HOME/OPatch
-    $ ls -l datapatch
     -rwxr-x---. 1 oracle oinstall 589 Jul 22 07:47 datapatch
     ```
 
@@ -785,7 +768,7 @@ Datapatch applies or rolls back SQL changes to the database.
     <summary>*click to see the output*</summary>
 
     ``` text
-       EVENT_DATE    PATCH_ID    PATCH_TYPE      ACTION                                                             DESCRIPTION
+    EVENT_DATE    PATCH_ID    PATCH_TYPE      ACTION    DESCRIPTION
     _____________ ___________ _____________ ___________ _______________________________________________________________________
     2026-07-23       38194382 INTERIM       APPLY       OJVM RELEASE UPDATE: 19.29.0.0.251021 (38194382)
     2026-07-23       38291812 RU            APPLY       Database Release Update : 19.29.0.0.251021 (38291812)

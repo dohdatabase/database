@@ -61,9 +61,9 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
 
     ``` text
     <?xml version="1.0" standalone="yes" ?>
-    <!-- Copyright (c) 1999, 2026, Oracle and/or its affiliates.
-    All rights reserved. -->
-    <!-- Do not modify the contents of this file by hand. -->
+    <! -- Copyright (c) 1999, 2026, Oracle and/or its affiliates.
+    All rights reserved. -- >
+    <! -- Do not modify the contents of this file by hand. -- >
     <INVENTORY>
     <VERSION_INFO>
        <SAVED_WITH>12.2.0.7.0</SAVED_WITH>

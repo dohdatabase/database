@@ -65,7 +65,7 @@ None.
     </copy>
     ```
 
-    * It may stay a while on *Processing config file ...*, while AutoUpgrade reads and catalog the zip files on */home/oracle/patch-repo* folder.
+    * It may stay a while on *Processing config file ...*, while AutoUpgrade reads and catalogs the zip files on */home/oracle/patch-repo* folder.
 
     <details>
     <summary>*click to see the output*</summary>
