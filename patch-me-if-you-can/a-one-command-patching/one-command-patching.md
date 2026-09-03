@@ -391,7 +391,7 @@ You may now [*proceed to the next lab*](#next).
 
 AutoUpgrade can also connect to My Oracle Support and find and download the necessary patches. Learn more in the below webinar:
 
-* Webinar, [One-Button Patching – makes life easier for every Oracle DBA](https://youtu.be/brnBavVLyM0)
+* Webinar, [One-Button Patching - makes life easier for every Oracle DBA](https://youtu.be/brnBavVLyM0)
 
 ## Acknowledgements
 

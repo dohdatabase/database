@@ -32,7 +32,12 @@ None.
     * `source_home` is an existing Oracle home that you will use as a template to install the new Oracle home. AutoUpgrade installs the new Oracle home using the same settings as this Oracle home.
     * `target_home` is where you want to install the new Oracle home. Notice the placeholders *%RELEASE%* and *%UPDATE%* which AutoUpgrade translates based on what patches are installed.
     * `download_folder` is the location where AutoUpgrade can find and store patch files. Ideally, this location is a network share accessible to all your database hosts.
-    * `patch` informs AutoUpgrade which patches you want to apply. You can specify a specific Release Update using the *RU* keyword with the Release Update specified after the colon. The keywords *OPATCH*, *OJVM* and *DPBP* installs the lastest version of OPatch and the OJVM and Data Pump bundle patches. *OCW* updates the OCW component in the Oracle home. In addition, you are also installing a one-off patch, *29213893*.
+    * `patch` informs AutoUpgrade which patches you want to apply. 
+        * *RECOMMENDED* gives you the latest Release Update with the newest MRP, plus the lastest versions of OPatch and the OJVM and Data Pump bundle patches. 
+        * *OCW* updates the OCW component in the Oracle home. 
+        * *JDK* updates the JDK in the Oracle home.
+        * *SDOBP* adds the bundle patch for Spatial.
+        * In addition, you are also installing a one-off patch, *29213893*.
     * `download` tells whether AutoUpgrade should attempt to download the patches from My Oracle Support using your My Oracle Support credentials. This is not possible inside this lab environment, so all patches have been pre-downloaded.
     * `create_gold_image` instructs AutoUpgrade to create a new gold image once it has applied all the patches. You will use the gold image later.
 

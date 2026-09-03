@@ -22,15 +22,13 @@ You can switch between environments with the shortcuts shown in the last column 
 ![Overview of the Oracle Homes and databases in the lab](./images/introduction-overview.png " ")
 
 The lab contains:
-* 9 labs total
-* 7 labs on the main track
+* 11 labs total
+* 9 labs on the main track
 * 2 optional labs
 
 Guidance:
-* Start by completing labs 1 through 7 in the specified order.
+* Start by completing labs 1 through 9 in the specified order.
 * Then, you may complete the optional labs in any order.
-* You may also start an optional lab when time allows. For instance, if you're waiting for an upgrade to complete.
-* All the optional labs are self-contained and can be run simultaneously with other labs.
 
 ## Patching methods and processes
 
@@ -51,7 +49,7 @@ You may now [*proceed to the next lab*](#next).
 ## Learn More
 
 * Webinar, [Release and Patching Strategies for Oracle Database 23ai](https://www.youtube.com/watch?v=sF-rmD78zIo)
-* Webinar, [One-Button Patching – makes life easier for every Oracle DBA](https://youtu.be/brnBavVLyM0)
+* Webinar, [One-Button Patching - makes life easier for every Oracle DBA](https://youtu.be/brnBavVLyM0)
 
 ## Acknowledgments
 
