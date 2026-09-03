@@ -1,4 +1,4 @@
-# Simple Patching to Existing Oracle Home
+# Patch a database to existing Oracle home
 
 ## Introduction
 

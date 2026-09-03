@@ -54,6 +54,7 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     ```
 
     * You should be able to find the XML element matching the Oracle home you just installed. The Oracle home ends with *au*.
+    * Notice how the config file placeholders (`%RELEASE%` and `%UPDATE%`) were translated into the proper values, *19* and *32*. 
 
     <details>
     <summary>*click to see the output*</summary>
