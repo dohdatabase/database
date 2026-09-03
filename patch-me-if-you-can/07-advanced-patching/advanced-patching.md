@@ -443,46 +443,7 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
     </copy>
     ```
 
-3. Certain directories in the database points to the Oracle home. Check the directories.
-
-    ``` sql
-    <copy>
-    select directory_name, directory_path from dba_directories where owner='SYS' order by 2;
-    </copy>
-
-    -- Be sure to hit RETURN
-    ```
-
-    * Notice how many of the directories point to a path in the 19.32 Oracle home.
-
-    <details>
-    <summary>*click to see the output*</summary>
-
-    ``` text
-    SQL> select directory_name, directory_path from dba_directories where owner='SYS' order by 2;
-
-    DIRECTORY_NAME            DIRECTORY_PATH
-    ------------------------- --------------------------------------------------
-    ORACLE_BASE               /u01/app/oracle
-    OPATCH_INST_DIR           /u01/app/oracle/product/19/OPatch
-    OPATCH_SCRIPT_DIR         /u01/app/oracle/product/19/QOpatch
-    ORACLE_OCM_CONFIG_DIR     /u01/app/oracle/product/19/ccr/state
-    ORACLE_OCM_CONFIG_DIR2    /u01/app/oracle/product/19/ccr/state
-    JAVA$JOX$CUJS$DIRECTORY$  /u01/app/oracle/product/19/javavm/admin/
-    OPATCH_LOG_DIR            /u01/app/oracle/product/19/rdbms/log
-    ORACLE_HOME               /u01/app/oracle/product/dbhome_19_32
-    DBMS_OPTIM_LOGDIR         /u01/app/oracle/product/dbhome_19_32/cfgtoollogs
-    DBMS_OPTIM_ADMINDIR       /u01/app/oracle/product/dbhome_19_32/rdbms/admin
-    DATA_PUMP_DIR             /u01/app/oracle/product/dbhome_19_32/rdbms/log/
-    XMLDIR                    /u01/app/oracle/product/dbhome_19_32/rdbms/xml
-    XSDDIR                    /u01/app/oracle/product/dbhome_19_32/rdbms/xml/schema
-
-    13 rows selected.
-    ```
-
-    </details>
-
-4. Update the directories.
+3. Update the directories that points to the Oracle home.
 
     ``` python
     <copy>
@@ -526,7 +487,7 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
 
     </details>
 
-5. Check the directories again.
+4. Check the directories.
 
     ``` sql
     <copy>

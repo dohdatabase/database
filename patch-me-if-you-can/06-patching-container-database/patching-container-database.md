@@ -564,6 +564,271 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
     </details>
 
+## Task 3: Complete patching
+
+1. Remain in the *yellow* terminal 🟨.
+
+2. Reconnect to *CDB19*. 
+
+    ``` bash
+    <copy>
+    sql / as sysdba
+    </copy>
+    ```
+
+3. Check the database directories.
+
+    ``` bash
+    <copy>
+    set pagesize 1100
+    select directory_name , directory_path from dba_directories where owner='SYS' order by 2;    
+    </copy>
+
+    # Be sure to press RETURN
+    ```
+
+    * There are certain database directories that point to the Oracle home. 
+    * When you patch out-of-place the Oracle home location changes, and the directory path must point to the new Oracle home.
+    * Some of these directories are not updated and still point to the old Oracle home.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> select directory_name , directory_path from dba_directories where owner='SYS' order by 2;
+    
+                 DIRECTORY_NAME                                        DIRECTORY_PATH
+    ___________________________ _____________________________________________________
+    ORACLE_BASE                 /u01/app/oracle
+    ORACLE_HOME                 /u01/app/oracle/product/19
+    ORACLE_OCM_CONFIG_DIR       /u01/app/oracle/product/19/ccr/state
+    ORACLE_OCM_CONFIG_DIR2      /u01/app/oracle/product/19/ccr/state
+    DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/19/cfgtoollogs
+    DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/19/rdbms/admin
+    DATA_PUMP_DIR               /u01/app/oracle/product/19/rdbms/log/
+    XMLDIR                      /u01/app/oracle/product/19/rdbms/xml
+    XSDDIR                      /u01/app/oracle/product/19/rdbms/xml/schema
+    OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    
+    13 rows selected.    
+    ```
+
+    </details>
+
+4. It is a problem in all containers.
+
+    ``` bash
+    <copy>
+    select   con$name, directory_name , directory_path 
+    from     cdb_directories 
+    where.   owner='SYS'
+    order by 1, 3, 2;
+    </copy>
+    ```
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> select   con$name, directory_name , directory_path 
+         from     cdb_directories 
+         where    owner='SYS' 
+         order by 1, 3, 2;
+    
+         CON$NAME              DIRECTORY_NAME                                                                     DIRECTORY_PATH
+    _____________ ___________________________ __________________________________________________________________________________
+    CDB$ROOT      ORACLE_BASE                 /u01/app/oracle
+    CDB$ROOT      ORACLE_HOME                 /u01/app/oracle/product/19
+    CDB$ROOT      ORACLE_OCM_CONFIG_DIR       /u01/app/oracle/product/19/ccr/state
+    CDB$ROOT      ORACLE_OCM_CONFIG_DIR2      /u01/app/oracle/product/19/ccr/state
+    CDB$ROOT      DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/19/cfgtoollogs
+    CDB$ROOT      DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/19/rdbms/admin
+    CDB$ROOT      DATA_PUMP_DIR               /u01/app/oracle/product/19/rdbms/log/
+    CDB$ROOT      XMLDIR                      /u01/app/oracle/product/19/rdbms/xml
+    CDB$ROOT      XSDDIR                      /u01/app/oracle/product/19/rdbms/xml/schema
+    CDB$ROOT      OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    CDB$ROOT      OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    CDB$ROOT      JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    CDB$ROOT      OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    INDIGO        ORACLE_BASE                 /u01/app/oracle
+    INDIGO        ORACLE_HOME                 /u01/app/oracle/product/19
+    INDIGO        DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/19/cfgtoollogs
+    INDIGO        DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/19/rdbms/admin
+    INDIGO        DATA_PUMP_DIR               /u01/app/oracle/product/19/rdbms/log/5A98C02165A191EDE0631D01000AFDFA
+    INDIGO        XMLDIR                      /u01/app/oracle/product/19/rdbms/xml
+    INDIGO        XSDDIR                      /u01/app/oracle/product/19/rdbms/xml/schema
+    INDIGO        OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    INDIGO        OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    INDIGO        JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    INDIGO        OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    ORANGE        ORACLE_BASE                 /u01/app/oracle
+    ORANGE        ORACLE_HOME                 /u01/app/oracle/product/19
+    ORANGE        DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/19/cfgtoollogs
+    ORANGE        DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/19/rdbms/admin
+    ORANGE        DATA_PUMP_DIR               /u01/app/oracle/product/19/rdbms/log/5A91FC7727F88FEBE0631D01000ABD4F
+    ORANGE        XMLDIR                      /u01/app/oracle/product/19/rdbms/xml
+    ORANGE        XSDDIR                      /u01/app/oracle/product/19/rdbms/xml/schema
+    ORANGE        OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    ORANGE        OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    ORANGE        JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    ORANGE        OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    TERRACOTTA    ORACLE_BASE                 /u01/app/oracle
+    TERRACOTTA    ORACLE_HOME                 /u01/app/oracle/product/19
+    TERRACOTTA    DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/19/cfgtoollogs
+    TERRACOTTA    DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/19/rdbms/admin
+    TERRACOTTA    DATA_PUMP_DIR               /u01/app/oracle/product/19/rdbms/log/5A91FC7727FA8FEBE0631D01000ABD4F
+    TERRACOTTA    XMLDIR                      /u01/app/oracle/product/19/rdbms/xml
+    TERRACOTTA    XSDDIR                      /u01/app/oracle/product/19/rdbms/xml/schema
+    TERRACOTTA    OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    TERRACOTTA    OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    TERRACOTTA    JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    TERRACOTTA    OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    
+    46 rows selected.    
+    ```
+
+    </details>
+
+5. Update the directories.
+
+    ``` bash
+    <copy>
+    @?/rdbms/admin/utlfixdirs.sql    
+    </copy>
+    ```
+
+    * You update the directories in the root container.
+    * These directories are shared as metadata links. Once you update the root container, they are updated in all containers.
+    
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> @?/rdbms/admin/utlfixdirs.sql
+    
+    Container: CDB$ROOT
+    
+    Current  ORACLE_HOME: /u01/app/oracle/product/dbhome_19_32
+    Original ORACLE_HOME: /u01/app/oracle/product/19
+    
+    DATA_PUMP_DIR
+    ...OLD: /u01/app/oracle/product/19/rdbms/log/
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/rdbms/log/
+    DBMS_OPTIM_ADMINDIR
+    ...OLD: /u01/app/oracle/product/19/rdbms/admin
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/rdbms/admin
+    DBMS_OPTIM_LOGDIR
+    ...OLD: /u01/app/oracle/product/19/cfgtoollogs
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/cfgtoollogs
+    ORACLE_HOME
+    ...OLD: /u01/app/oracle/product/19
+    ...NEW: /u01/app/oracle/product/dbhome_19_32
+    ORACLE_OCM_CONFIG_DIR
+    ...OLD: /u01/app/oracle/product/19/ccr/state
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/ccr/state
+    ORACLE_OCM_CONFIG_DIR2
+    ...OLD: /u01/app/oracle/product/19/ccr/state
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/ccr/state
+    XMLDIR
+    ...OLD: /u01/app/oracle/product/19/rdbms/xml
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/rdbms/xml
+    XSDDIR
+    ...OLD: /u01/app/oracle/product/19/rdbms/xml/schema
+    ...NEW: /u01/app/oracle/product/dbhome_19_32/rdbms/xml/schema
+    
+    
+    PL/SQL procedure successfully completed.    
+    ```
+
+    </details>
+
+6. Verify the directories are correct.
+
+    ``` bash
+    <copy>
+    select   con$name, directory_name , directory_path 
+    from     cdb_directories 
+    where    owner='SYS'
+    order by 1, 3, 2;
+    </copy>
+    ```
+
+    * Notice that all directory paths are pointing to the new Oracle home.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    SQL> select   con$name, directory_name , directory_path 
+         from     cdb_directories 
+         where    owner='SYS' 
+         order by 1, 3, 2;
+    
+         CON$NAME              DIRECTORY_NAME                                                                     DIRECTORY_PATH
+    _____________ ___________________________ __________________________________________________________________________________
+    CDB$ROOT      ORACLE_BASE                 /u01/app/oracle
+    CDB$ROOT      ORACLE_HOME                 /u01/app/oracle/product/dbhome_19_32
+    CDB$ROOT      OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    CDB$ROOT      OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    CDB$ROOT      ORACLE_OCM_CONFIG_DIR       /u01/app/oracle/product/dbhome_19_32/ccr/state
+    CDB$ROOT      ORACLE_OCM_CONFIG_DIR2      /u01/app/oracle/product/dbhome_19_32/ccr/state
+    CDB$ROOT      DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/dbhome_19_32/cfgtoollogs
+    CDB$ROOT      JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    CDB$ROOT      DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/dbhome_19_32/rdbms/admin
+    CDB$ROOT      OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    CDB$ROOT      DATA_PUMP_DIR               /u01/app/oracle/product/dbhome_19_32/rdbms/log/
+    CDB$ROOT      XMLDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml
+    CDB$ROOT      XSDDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml/schema
+    INDIGO        ORACLE_BASE                 /u01/app/oracle
+    INDIGO        ORACLE_HOME                 /u01/app/oracle/product/dbhome_19_32
+    INDIGO        OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    INDIGO        OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    INDIGO        DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/dbhome_19_32/cfgtoollogs
+    INDIGO        JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    INDIGO        DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/dbhome_19_32/rdbms/admin
+    INDIGO        OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    INDIGO        DATA_PUMP_DIR               /u01/app/oracle/product/dbhome_19_32/rdbms/log/5A98C02165A191EDE0631D01000AFDFA
+    INDIGO        XMLDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml
+    INDIGO        XSDDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml/schema
+    ORANGE        ORACLE_BASE                 /u01/app/oracle
+    ORANGE        ORACLE_HOME                 /u01/app/oracle/product/dbhome_19_32
+    ORANGE        OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    ORANGE        OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    ORANGE        DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/dbhome_19_32/cfgtoollogs
+    ORANGE        JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    ORANGE        DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/dbhome_19_32/rdbms/admin
+    ORANGE        OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    ORANGE        DATA_PUMP_DIR               /u01/app/oracle/product/dbhome_19_32/rdbms/log/5A91FC7727F88FEBE0631D01000ABD4F
+    ORANGE        XMLDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml
+    ORANGE        XSDDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml/schema
+    TERRACOTTA    ORACLE_BASE                 /u01/app/oracle
+    TERRACOTTA    ORACLE_HOME                 /u01/app/oracle/product/dbhome_19_32
+    TERRACOTTA    OPATCH_INST_DIR             /u01/app/oracle/product/dbhome_19_32/OPatch
+    TERRACOTTA    OPATCH_SCRIPT_DIR           /u01/app/oracle/product/dbhome_19_32/QOpatch
+    TERRACOTTA    DBMS_OPTIM_LOGDIR           /u01/app/oracle/product/dbhome_19_32/cfgtoollogs
+    TERRACOTTA    JAVA$JOX$CUJS$DIRECTORY$    /u01/app/oracle/product/dbhome_19_32/javavm/admin/
+    TERRACOTTA    DBMS_OPTIM_ADMINDIR         /u01/app/oracle/product/dbhome_19_32/rdbms/admin
+    TERRACOTTA    OPATCH_LOG_DIR              /u01/app/oracle/product/dbhome_19_32/rdbms/log
+    TERRACOTTA    DATA_PUMP_DIR               /u01/app/oracle/product/dbhome_19_32/rdbms/log/5A91FC7727FA8FEBE0631D01000ABD4F
+    TERRACOTTA    XMLDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml
+    TERRACOTTA    XSDDIR                      /u01/app/oracle/product/dbhome_19_32/rdbms/xml/schema
+    
+    46 rows selected.    
+    ```
+
+    </details>
+
+7. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```    
+
 You may now [*proceed to the next lab*](#next).
 
 ## Acknowledgements
