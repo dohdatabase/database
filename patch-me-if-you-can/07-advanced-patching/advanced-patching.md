@@ -25,7 +25,7 @@ This lab assumes:
 
 ## Task 1: Rollback using AutoUpgrade
 
-In lab 4, you patched the *UPGR* database to 19.32 (`/u01/app/oracle/product/dbhome_19_32`). You want to go back to 19.31 (`/u01/app/oracle/product/19`). You can roll back without losing data with Datapatch.
+In lab 4, you patched the *UPGR* database to 19.32. Imagine you found a critical issue and decide to go back to 19.31. You can roll back without losing data with Datapatch.
 
 1. Use the *yellow* terminal 🟨. Since you patched the database using AutoUpgrade, you can roll back as well. Start AutoUpgrade:
 
@@ -55,7 +55,8 @@ In lab 4, you patched the *UPGR* database to 19.32 (`/u01/app/oracle/product/dbh
 
 ## Task 2: Manual rollback
 
-You can also roll back manually. 
+You can also roll back manually. In lab 6, you patched the *CDB19* database to 19.32. Now, you roll back to 19.31.
+
 
 1. Use the *blue* terminal 🟦. Set the environment to the *CDB19* database and connect.
 
@@ -160,6 +161,7 @@ You can also roll back manually.
     ``` sql
     <copy>
     startup
+    alter pluggable database all open;
     exit
     </copy>
 
@@ -175,6 +177,8 @@ You can also roll back manually.
     ```
 
 ## Task 3: Rollback using AutoUpgrade, continued
+
+In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
 
 1. Switch back to the *yellow* terminal 🟨. AutoUpgrade should be done with the rollback.
 
@@ -273,6 +277,8 @@ You can also roll back manually.
     ```    
 
 ## Task 4: Manual rollback, continued
+
+In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* to complete the rollback.
 
 1. Switch back to the *blue* terminal 🟦. Datapatch should be done by now. Check the output.
 
@@ -660,8 +666,9 @@ In the Oracle home you find other software components, that is patched together 
     This is perl 5, version 38, subversion 4 (v5.38.4) built for x86_64-linux-thread-multi
     $ $NEW_ORACLE_HOME/perl/bin/perl -version | grep version
     This is perl 5, version 38, subversion 4 (v5.38.4) built for x86_64-linux-thread-multi
+    ```
 
-    </details>
+    </details>    
 
 ## Task 6: Enable optimizer fixes
 

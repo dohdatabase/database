@@ -177,8 +177,11 @@ Gold images are a convenient way of installing Oracle homes on many different se
 
     ``` bash
     <copy>
+    cd
     java -jar autoupgrade.jar -config scripts/pt-05-install-from-gold-image.cfg -patch -mode create_home
     </copy>
+
+    # Be sure to press RETURN
     ```
 
     <details>
@@ -245,6 +248,7 @@ Gold images are a convenient way of installing Oracle homes on many different se
     * You can find the AutoUpgrade job duration in the log files.
     * Installing the Oracle home from scratch and applying the Release Update and other patches takes 24 minutes. This includes the creation of the gold image so the installation time is probably around 18-20 minutes.
     * Installing from a gold image takes only two minutes.
+    * Your numbers may vary.
 
     <details>
     <summary>*click to see the output*</summary>
