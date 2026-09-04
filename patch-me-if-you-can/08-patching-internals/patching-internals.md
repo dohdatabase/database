@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will examine how some parts of Datapatch works. This will give you insights into the patching process.
+In this lab, you will examine how parts of Datapatch work. This will give you insight into the patching process.
 
 Estimated Time: 15 Minutes
 
@@ -31,7 +31,7 @@ Datapatch stores patching information inside the database. Understanding these t
     sql / as sysdba
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
 2. Datapatch uses two tables to keep track of patching activities. Examine the two tables.
@@ -42,7 +42,7 @@ Datapatch stores patching information inside the database. Understanding these t
     desc REGISTRY$SQLPATCH
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * Datapatch uses `REGISTRY$SQLPATCH_RU_INFO` to hold information about Release Updates, whereas it uses `REGISTRY$SQLPATCH` for all patches.
@@ -90,7 +90,7 @@ Datapatch stores patching information inside the database. Understanding these t
 
     </details>
 
-3. To check Datapatch activity you should not use the dictionary tables. Instead use the view `DBA_REGISTRY_SQLPATCH`. Examine the patching history of this database.
+3. To check Datapatch activity, do not use the dictionary tables. Instead, use the `DBA_REGISTRY_SQLPATCH` view. Examine the patching history of this database.
 
     ``` sql
     <copy>
@@ -99,11 +99,11 @@ Datapatch stores patching information inside the database. Understanding these t
     order by action_time;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * This database was first patched from the base release, 19.3, to 19.29, including the OJVM and Data Pump bundle patches.
-    * Then, to 19.30 and then to 19.31 before you finally patched to 19.32 in lab 4.
+    * Then it was patched to 19.30, then to 19.31, and finally to 19.32 in Lab 4.
     * In lab 7, you performed a rollback to 19.31.
 
     <details>
@@ -153,7 +153,7 @@ Datapatch stores patching information inside the database. Understanding these t
            and action='APPLY';
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     <details>
@@ -197,7 +197,7 @@ Datapatch also stores log files in the file system.
 
     * `sqlpatch_history.txt` contains an overview of all Datapatch invocations.
     * Each invocation writes to a specific directory named `sqlpatch_<number>_<timestamp>`.
-    * The apply and/or rollback actions of each patch is stored in a folder matching the patch number.
+    * The apply and/or rollback actions for each patch are stored in a folder matching the patch number.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -263,7 +263,7 @@ Datapatch also stores log files in the file system.
 
     * The apply starts by recording the action to the Datapatch tables through `DBMS_SQLPATCH`.
     * These tables and packages are for internal use only. You should never use them, but they give an understanding of the patch infrastructure.
-    * If you want you can view more of the file using `vi`.
+    * If you want, you can view more of the file using `vi`.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -292,7 +292,7 @@ Datapatch also stores log files in the file system.
 
     </details>
 
-3. Each invocation has it's own subdirectory named `sqlpatch_<number>_<timestamp>`. Change to one of the directories and examine the files.
+3. Each invocation has its own subdirectory named `sqlpatch_<number>_<timestamp>`. Change to one of the directories and examine its files.
 
 4. When Datapatch applies patches it might invalidate objects. Datapatch keeps track of this and will recompile the objects at the end of the patching process. Examine the log files for traces of recompilation.
 
@@ -306,8 +306,8 @@ Datapatch also stores log files in the file system.
     ```
 
     * The results might vary in your environment.
-    * In the below example, you can see recompilation from the patch of a container database. 
-    * For each container, you can see the number of invalid objects before patching (in prereq phase).
+    * In the example below, you can see recompilation after patching a container database.
+    * For each container, you can see the number of invalid objects before patching (in the prerequisite phase).
     * You can also see the number of invalid objects after patching.
     * Datapatch always tries to recompile all Oracle-maintained objects invalidated by the patching.
 
@@ -339,7 +339,7 @@ Datapatch also stores log files in the file system.
     ```
 
     * *SQLPatch* is found in `$ORACLE_HOME/sqlpatch`.
-    * Since SQLPatch is not in the `OPatch` folder, it means that you don't update Datapatch when you update OPatch.
+    * Since SQLPatch is not in the `OPatch` folder, it means that you do not update Datapatch when you update OPatch.
     * SQLPatch is updated by Release Updates.
 
     <details>
@@ -375,9 +375,9 @@ Datapatch also stores log files in the file system.
 
     </details>
 
-## Task 3: Patch storage clean-up
+## Task 3: Patch Storage Clean-Up
 
-OPatch keeps track of all the patches that you apply over time to an Oracle home. It stores a lot of patching metadata as well as the actual patches.
+OPatch keeps track of all the patches that you apply over time to an Oracle home. It stores patching metadata as well as the patch files themselves.
 
 1. Stay in the *yellow* terminal 🟨. Set the environment and use OPatch to generate a list of patch metadata.
 
@@ -392,9 +392,9 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     ```
 
     * The output shows that the patching chain in this Oracle home is from 19.3 (base release) to 19.29 to 19.30 and then 19.31.
-    * This means that several in-place patch applies have been made to this Oracle home. Oracle doesn't recommend in-place patching. It's used here for illustrative purposes.
+    * This means that several in-place patch applies have been made to this Oracle home. Oracle does not recommend in-place patching. It is used here for illustrative purposes.
     * The *active* RU is 19.31 - this is where the Oracle home currently is.
-    * The *inactive* RUs are 19.3, 19.29 and 19.20 - this is where the Oracle home came from.
+    * The *inactive* RUs are 19.3, 19.29, and 19.30; this is where the Oracle home came from.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -461,11 +461,11 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     </copy>
     ```
 
-    * OPatch keeps one inactive patch - and deletes the rest of the inactive patches.
-    * By keeping one inactive patch - the latest - it ensures that you can always roll back to the previous patch. Going back even further would require that you restore the files or simply install a new Oracle home with the required patches.
+    * OPatch keeps one inactive patch and deletes the rest of the inactive patches.
+    * Keeping one inactive patch—the latest—ensures that you can always roll back to the previous patch. Going back even further would require that you restore the files or simply install a new Oracle home with the required patches.
     * The number of inactive patches to keep is configurable.
-    * If you find OPatch is running slow in your own environment, try to clear our inactive patching metadata.
-    * If you patch out-of-place, you never need to use this functionality. 
+    * If OPatch runs slowly in your own environment, try to clear out inactive patching metadata.
+    * If you patch out of place, you do not need this functionality.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -522,7 +522,7 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
     ```
 
     * Now, OPatch uses 6.2 GB to store old patch files.
-    * You reclaimed more than 3 GBs.
+    * You reclaimed more than 3 GB.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -569,9 +569,9 @@ OPatch keeps track of all the patches that you apply over time to an Oracle home
 
     </details>
 
-## Task 4: Datapatch clean-up
+## Task 4: Datapatch Clean-Up
 
-Everytime you patch your datababase, Datapatch stores the rollback scripts inside the database. This ensures, that Datapatch always have the option of rolling back patches - even when you use out-of-place patching and the rollback scripts are no longer in the Oracle home. Datapatch stores the rollback scripts in the SYSTEM tablespace and over time it might take up a significant amount of space.
+Every time you patch your database, Datapatch stores the rollback scripts inside the database. This ensures that Datapatch always has the option to roll back patches, even when you use out-of-place patching and the rollback scripts are no longer in the Oracle home. Datapatch stores the rollback scripts in the SYSTEM tablespace, which can consume a significant amount of space over time.
 
 1. Stay in the *yellow* terminal 🟨. Set the environment and connect to the *UPGR* database.
 
@@ -581,7 +581,7 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     sql / as sysdba
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
 2. Generate a list of rollback scripts and the size of them.
@@ -599,8 +599,8 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     </copy>
     ```
 
-    * Datapatch stored the rollback script for each of the patch actions in this database; for Release Updates and one-off patches.
-    * The total size is around 900 MB. Underlying segments are in the SYSTEM tablespace.
+    * Datapatch stores the rollback script for each patch action in this database, including Release Updates and one-off patches.
+    * The total size is approximately 900 MB. The underlying segments are in the SYSTEM tablespace.
     * In a container database, Datapatch stores the data in the root container and all PDBs.
 
     <details>
@@ -646,9 +646,9 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     ```
 
     * Datapatch removes the rollback scripts from the database for all patches except those that are currently applied.
-    * This doesn't prevent you from rolling back the currently applied patches.
+    * This does not prevent you from rolling back the currently applied patches.
     * The old rollback scripts are no longer needed and can be safely cleaned up.
-    * This doesn't remove the patching history, just the rollback scripts.
+    * This does not remove the patching history, just the rollback scripts.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -734,7 +734,7 @@ Everytime you patch your datababase, Datapatch stores the rollback scripts insid
     ```
 
     * The total size is around 230 MB.
-    * The cleanup happens via a `TRUNCATE TABLE` command which effectively reclaims space so other segments may use it. However, it doesn't shrink the tablespace, so the physical size of the data files remain the same.
+    * The cleanup uses a `TRUNCATE TABLE` command, which effectively reclaims space for other segments to use. However, it does not shrink the tablespace, so the physical size of the data files remains the same.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -771,4 +771,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
