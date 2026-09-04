@@ -150,7 +150,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     -- Be sure to hit RETURN
     ```
 
-    * Notice how the *INDIGO* PDB doesn't start because you didn't save the state.
+    * Notice how the *INDIGO* PDB doesn't start because you didn't save the open state.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -588,7 +588,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     ```
 
     * There are certain database directories that point to the Oracle home. 
-    * When you patch out-of-place the Oracle home location changes, and the directory path must point to the new Oracle home.
+    * When you patch out-of-place the Oracle home location changes, and those directory paths must point to the new Oracle home.
     * Some of these directories are not updated and still point to the old Oracle home.
 
     <details>

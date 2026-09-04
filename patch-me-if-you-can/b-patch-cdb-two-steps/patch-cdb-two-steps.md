@@ -460,9 +460,47 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
     ``` bash
     <copy>
-    sed -i 's|^ORACLE_HOME=.*|ORACLE_HOME=/u01/app/oracle/product/dbhome_26_3_1|' /usr/local/bin/upgr
+    sed -i 's|^ORACLE_HOME=.*|ORACLE_HOME=/u01/app/oracle/product/dbhome_26_3_1|' /usr/local/bin/cdb26
     </copy>
     ```
+
+7. Set the environment and connect.
+
+    ``` bash
+    <copy>
+    . cdb26
+    sql / as sysdba
+    </copy>
+
+    # Be sure to press RETURN
+    ```
+
+8. Check the version.
+
+    ``` bash
+    <copy>
+    select version_full from v$instance;
+    </copy>
+    ```
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    VERSION_FULL
+    -----------------
+    23.26.3.0.0
+    ```
+
+    </details>
+
+9. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```    
 
 9. That's it. You just patched your Oracle AI Database.
 
