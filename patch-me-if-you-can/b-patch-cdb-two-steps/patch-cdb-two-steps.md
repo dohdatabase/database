@@ -294,6 +294,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     </copy>
     ```
 
+    * Both *Version Before Upgrade* and *Version After Upgrade* is *23.26.3* so why patch this database? The new Oracle home contained the Monthly Recommended Patches (MRP #1), so the new Oracle home is more up-to-date.
     * This database was found to be ready for patching.
     * AutoUpgrade reports *Check passed and no manual intervention needed*. 
 

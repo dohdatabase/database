@@ -23,7 +23,7 @@ This lab assumes:
 
 Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
 
-1. Switch back to the *yellow* terminal 🟨. AutoUpgrade should be done by now. Otherwise, wait for it to complete. In the end, AutoUpgrade prints the following information and exists.
+1. Switch back to the *yellow* terminal 🟨. AutoUpgrade should have completed by now. If not, wait for it to finish. In the end, AutoUpgrade prints the following information and exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -54,7 +54,7 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     ```
 
     * You should be able to find the XML element matching the Oracle home you just installed. The Oracle home ends with *au*.
-    * Notice how the config file placeholders (`%RELEASE%` and `%UPDATE%`) were translated into the proper values, *19* and *32*. 
+    * Notice that the configuration file placeholders (`%RELEASE%` and `%UPDATE%`) were translated into the correct values, *19* and *32*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -95,9 +95,9 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
     ```
 
     * Here is the patch specification from the AutoUpgrade config file: `patch=RECOMMENDED,OCW,JDK,SDOBP,29213893`.
-    * At the creation of this lab, *19.32* was the latest Release Update which is what AutoUpgrade installed because of the `RECOMMENDED` keyword.
+    * When this lab was created, *19.32* was the latest Release Update, which AutoUpgrade installed because of the `RECOMMENDED` keyword.
     * Notice that the OCW component has been updated as well. It is now on *19.32.0.0.0*. 
-    * The *Fix for Bug* entries are patches coming from the MRP.
+    * The *Fix for Bug* entries are patches from the MRP.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -142,7 +142,7 @@ Ensure that AutoUpgrade installed the Oracle home and perform a few checks.
 
     </details>
 
-## Task 2: Create Oracle home using gold image
+## Task 2: Create Oracle Home Using a Gold Image
 
 Gold images are a convenient way of installing Oracle homes on many different servers. You prepare and patch an Oracle home only once, and then distribute the patched Oracle home to all other servers.
 
@@ -154,8 +154,8 @@ Gold images are a convenient way of installing Oracle homes on many different se
     </copy>
     ```
 
-    * `patch` defines the use of the gold image, you created earlier. You don't specify which patches you want. You install what's included in the gold image.
-    * In this lab you don't use a `source_home` to copy settings from, so you must use define the Edition and Oracle base using `home_settings`. All other Oracle home settings are left at the default. You can override the defaults using other `home_settings`. 
+    * The `patch` parameter specifies the gold image you created earlier. You do not specify which patches you want; you install what is included in the gold image.
+    * In this lab, you do not use a `source_home` to copy settings from, so you must define the edition and Oracle base using `home_settings`. All other Oracle home settings remain at their default values. You can override the defaults using other `home_settings`.
     * You must define the `target_version` since it can't be deduced from the `patch` setting.
 
     <details>
@@ -202,7 +202,7 @@ Gold images are a convenient way of installing Oracle homes on many different se
 
 4. You can use the gold image created by AutoUpgrade many times on the same or different servers. The advantages of using gold images are:
     * You know all servers get the exact same Oracle home.
-    * You can install faster because you don't need to apply all the patches.
+    * You can install faster because you do not need to apply all the patches.
     * They fit very well with automation.
     * They're easier to test and work well with configuration management.
 
@@ -210,7 +210,7 @@ Gold images are a convenient way of installing Oracle homes on many different se
     * You unzip the gold image to the new Oracle home location.
     * Run the installer with appropriate settings.
 
-6. What are you thoughts about installing a new Oracle home using AutoUpgrade? How do you think it compares to installing Oracle homes manually?
+6. What are your thoughts about installing a new Oracle home using AutoUpgrade? How do you think it compares to installing Oracle homes manually?
 
 7. Wait for AutoUpgrade to complete the installation. When done, AutoUpgrade prints *Job 100 completed*.
 
@@ -234,7 +234,7 @@ Gold images are a convenient way of installing Oracle homes on many different se
 
     </details>
 
-8. In lab 2, you installed another Oracle home from scratch. Compare the time it took to using the gold image.
+8. In Lab 2, you installed another Oracle home from scratch. Compare the time it took to use the gold image.
 
     ``` bash
     <copy>
@@ -271,7 +271,7 @@ Gold images are a convenient way of installing Oracle homes on many different se
     # Be sure to press RETURN
     ```
 
-    * The Oracle home is fully up-to-date with same patches as originally. 
+    * The Oracle home is fully up to date with the same patches as the original Oracle home.
     * At the creation of this lab, *19.32* was the latest Release Update.
 
     <details>
@@ -301,4 +301,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
