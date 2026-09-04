@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will patch an Oracle AI Database in the most simple way using AutoUpgrade. AutoUpgrade not only patches the database but also downloads the right patches and builds a new Oracle home. This allows you to apply patches using the *out-of-place* method according to our best practices.
+In this lab, you will patch an Oracle AI Database in the simplest way using AutoUpgrade. AutoUpgrade not only patches the database but also downloads the required patches and builds a new Oracle home. This allows you to apply patches using the *out-of-place* method according to our best practices.
 
 Estimated Time: 30 Minutes
 
@@ -18,9 +18,11 @@ In this lab, you will:
 
 None.
 
-## Task 1: Analyze database
+## Task 1: Analyze Database
 
 Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode is a lightweight and non-intrusive check of an Oracle AI Database.
+
+This lab uses the *BEIGE* non-CDB.
 
 1. In this lab, you use a pre-created config file. Examine the config file.
 
@@ -33,11 +35,11 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     # Be sure to press RETURN
     ```
 
-    * `source_home` and `sid` describe the current database.
-    * `target_home` is the location of the new Oracle home. It doesn't exist yet. AutoUpgrade creates it for you. AutoUpgrade uses the settings from the source Oracle home to create the new one.
+    * `source_home` and `sid` identify the current database.
+    * `target_home` is the location of the new Oracle home. It does not exist yet. AutoUpgrade creates it for you. AutoUpgrade uses the settings from the source Oracle home to create the new one.
     * `download_folder` is the location where AutoUpgrade can find and store patch files. Ideally, this location is a network share accessible to all your database hosts.
-    * `patch` informs AutoUpgrade which patches you want to apply. `RECOMMENDED` means the recent-most OPatch and Release Update plus matching OJVM and Data Pump bundle patches. In addition, you're adding a one-off patch.
-    * `download` tells whether AutoUpgrade should attempt to download the patches from My Oracle Support using your My Oracle Support credentials. This is not possible inside this lab environment, so all patches have been pre-downloaded.
+    * `patch` informs AutoUpgrade which patches you want to apply. `RECOMMENDED` means the most recent OPatch and Release Update plus matching OJVM and Data Pump bundle patches.
+    * `download` tells whether AutoUpgrade should attempt to download the patches from My Oracle Support using your My Oracle Support credentials. This is not possible in this lab environment, so all patches have been pre-downloaded.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -54,7 +56,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-2. Ensure the target Oracle home doesn't exist yet.
+2. Ensure the target Oracle home does not exist yet.
 
     ``` bash
     <copy>
@@ -96,7 +98,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-3. You are now in the AutoUpgrade console. Monitor the progress.
+4. You are now in the AutoUpgrade console. Monitor the progress.
 
     ``` bash
     <copy>
@@ -123,9 +125,9 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-4. Wait a minute or two until AutoUpgrade completes. Don't exit from the AutoUpgrade console.
+5. Wait a minute or two until AutoUpgrade completes. Do not exit from the AutoUpgrade console.
 
-5. When the job completes, AutoUpgrade prints the location of the *summary report* which contains detailed information about the analysis. Check the summary report.
+6. When the job completes, AutoUpgrade prints the location of the *summary report*, which contains detailed information about the analysis. Check the summary report.
 
     ``` bash
     <copy>
@@ -133,11 +135,11 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     </copy>
     ```
 
-    * You can see that you're patching the *BEIGE* database.
-    * You can also see that you're patching from 19.31 to 19.32.
+    * You can see that you are patching the *BEIGE* database.
+    * You can also see that you are patching from 19.31 to 19.32.
     * In this lab, you can only use already downloaded patches. When this lab was created, 19.32 was the latest Release Update. 
-    * In your own environment, when AutoUpgrade downloads patches, it will always take the latest available Release Upgrade from MOS when you specify *patch=recommended*. 
-    * In the end, you can see that all checks passed and there's no manual intervention needed.
+    * In your own environment, when AutoUpgrade downloads patches, it will always take the latest available Release Update from MOS when you specify *patch=recommended*.
+    * Finally, all checks passed, and no manual intervention was needed.
     * This database was found to be ready for patching.
 
     <details>
@@ -174,9 +176,9 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-## Task 2: Patch database
+## Task 2: Patch Database
 
-Patching a single instance Oracle AI Database require downtime.
+Patching a single instance Oracle AI Database requires downtime.
 
 **Downtime starts now.**
 
@@ -188,9 +190,9 @@ Patching a single instance Oracle AI Database require downtime.
     </copy>
     ```
 
-    * You're reusing the same command line as the analysis, however, this time you are activating deploy mode.
-    * Deploy mode is the complete automation which performs all parts of a patch process.
-    * Since AutoUpgrade is in *patching* mode, the prompt is `patch>`. 
+    * You are reusing the command line from the analysis, but this time you are using deploy mode.
+    * Deploy mode automates all parts of the patching process.
+    * Since AutoUpgrade is in *patching* mode, the prompt is `patch>`.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -207,7 +209,7 @@ Patching a single instance Oracle AI Database require downtime.
 
     </details>
 
-2. Again, you're in the AutoUpgrade console. Monitor the progress.
+2. You are again in the AutoUpgrade console. Monitor the progress.
 
     ``` bash
     <copy>
@@ -242,9 +244,9 @@ Patching a single instance Oracle AI Database require downtime.
     </copy>
     ```
 
-    * The `status` command gives much more details.
-    * It requires the *jobid* which you can find in the output of `lsj`.
-    * Take a look at the different stages that the job will go through.
+    * The `status` command provides more detail.
+    * It requires the *job ID*, which you can find in the output of `lsj`.
+    * Examine the different stages that the job will go through.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -296,14 +298,14 @@ Patching a single instance Oracle AI Database require downtime.
 
     </details>
 
-4. **It takes around 20 minutes to patch the database**. 
+4. **Patching the database takes approximately 20 minutes.**
     * Most of the time is spent in *INSTALL* and *OH_PATCHING* stages when AutoUpgrade builds and patches the new Oracle home.
-    * In this lab, you build the new Oracle home and patches the database in one command. This is a convenient option.
-    * For less downtime, you build the Oracle home in advance, and then patches to an existing Oracle home. This is what you did in lab 4. 
+    * In this lab, you build the new Oracle home and patch the database in one command. This is a convenient option.
+    * For less downtime, you can build the Oracle home in advance and then patch the database using an existing Oracle home. This is what you did in Lab 4.
 
-5. When AutoUpgrade completes, it prints a message to the console and exists.
+5. When AutoUpgrade completes, it prints a message to the console and exits.
 
-    * AutoUpgrade informs that there is a guaranteed restore point which you must remove when it is no longer needed. 
+    * AutoUpgrade informs you that there is a guaranteed restore point, which you must remove when it is no longer needed.
     * Optionally, you can instruct AutoUpgrade to remove the restore point automatically using `drop_grp_after_upgrade=yes` in the config file.
 
     <details>
@@ -329,7 +331,7 @@ Patching a single instance Oracle AI Database require downtime.
 
     </details>
 
-6. Update the profile script. Since the database now runs out of a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
+6. Update the profile script. Since the database now runs from a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
 
     ``` bash
     <copy>
@@ -403,9 +405,9 @@ Patching a single instance Oracle AI Database require downtime.
     OPatch succeeded.
     ```
 
-    </details>
+    </details>    
 
-11. That's it. In one command, you just patched your Oracle AI Database including:
+11. You have now patched your Oracle AI Database with one command, including the following:
 
     * Building a brand-new Oracle home enabling out-of-place patching
     * Updating OPatch
@@ -428,4 +430,3 @@ AutoUpgrade can also connect to My Oracle Support and find and download the nece
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
