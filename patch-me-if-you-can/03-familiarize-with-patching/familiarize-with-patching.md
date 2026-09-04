@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will familiarize with some of the tools used to patch Oracle AI Database.
+In this lab, you will become familiar with the tools used to patch Oracle AI Database.
 
 Estimated Time: 15 Minutes
 
@@ -18,7 +18,7 @@ In this lab, you will:
 
 None.
 
-## Task 1: Check patch files
+## Task 1: Check Patch Files
 
 1. Switch to the *blue* terminal 🟦. Extract one of the patch files.
 
@@ -31,11 +31,11 @@ None.
     # Be sure to press RETURN
     ```
 
-    * Patch files comes from My Oracle Support as zip files.
+    * Patch files come from My Oracle Support as ZIP files.
     * The patch zip file you are extracting is the 19.32 Release Update.
     * It takes a minute or two to unzip. Just watch the characters fly by on screen as if you were part of the *Matrix* movies. 
 
-2. Switch to the directory where you extracted the Release Update. Here you find the patch metadata stored in PatchSearch.xml
+2. Switch to the directory where you extracted the Release Update. The patch metadata is stored in PatchSearch.xml.
 
     ``` bash
     <copy>
@@ -111,7 +111,7 @@ None.
 
     </details>
 
-5. Open the patch read me.
+5. Open the patch *README* file.
 
     ``` bash
     <copy>
@@ -168,8 +168,8 @@ None.
 
     * The apply script adds two indexes on `SYS.RECYCLEBIN$`.
     * The text on bug 28971177 states *Delete from recyclebin$ going for full table scan*.
-    * The bug is solved by adding two indexes.
-    * This illustrates how changes required by a bug fix gets into the database.
+    * The bug is fixed by adding two indexes.
+    * This illustrates how a bug fix can introduce changes into the database.
     * Also note how the backport is registered by inserting a row into `REGISTRY$BACKPORTS`.
 
     <details>
@@ -220,7 +220,7 @@ None.
 
     </details>
 
-## Task 2: Use OPatch from shell
+## Task 2: Use OPatch From Shell
 
 You use *OPatch* to perform the first part of patching an Oracle AI Database; patching the Oracle home. OPatch replaces some files in the Oracle home and might also add new files. If the Oracle home is in use, for instance by a database instance or listener, you must stop those processes.
 
@@ -235,7 +235,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     # Be sure to press RETURN
     ```
 
-2. You find OPatch in a subdirectory. Check the version of OPatch.
+2. OPatch is located in a subdirectory. Check the OPatch version.
 
     ``` bash
     <copy>
@@ -257,7 +257,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
 
     </details>
 
-3. There are other means of finding the OPatch version.
+3. You can also check the OPatch version by inspecting `version.txt`.
 
     ``` bash
     <copy>
@@ -274,7 +274,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
 
     </details>
 
-4. Update OPatch by unzipping the OPatch patch file. Keep the old Oracle home as back.
+4. Update OPatch by unzipping the OPatch patch file. Keep the old OPatch directory as a backup.
 
     ``` bash
     <copy>
@@ -287,8 +287,8 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     ```
 
     * You should always use the latest version of OPatch.
-    * AutoUpgrade automatically updates OPatch when you use `patch=RECOMMENDED` or includes the `OPATCH` keyword in the the `patch=` specification.
-    * You can manually download the latest of OPatch from My Oracle Support. Search for patch *6880880*.
+    * AutoUpgrade automatically updates OPatch when you use `patch=RECOMMENDED` or include the `OPATCH` keyword in the `patch` specification.
+    * You can manually download the latest version of OPatch from My Oracle Support. Search for patch *6880880*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -337,7 +337,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
 
     * Currently, the Oracle home is on Release Update 19.31.
     * The OJVM and Data Pump bundle patches are installed as well.
-    * You can see that the OCW component in the Oracle home has not been updated. It's still on the base release, *19.3.0.0.0*. Oracle requires that the OCW component is updated only when you use Oracle RAC or Oracle Restart, which is not the case in this lab. Nevertheless, it is a good idea to always update the component. You'll see how you can do that in another lab using the `OCW` keyword in the `patch` parameter.
+    * The OCW component in the Oracle home has not been updated; it remains at the base release, *19.3.0.0.0*. Oracle RAC and Oracle Restart use OCW. Although this lab does not use either, keeping OCW updated is generally recommended. You will see how to do this in another lab using the `OCW` keyword in the `patch` parameter.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -366,7 +366,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
 
     * You spool the contents to a file.
     * If you create a service request in My Oracle Support, it is often a good idea to attach the file.
-    * The file is mandatory in many cases, e.g., when requesting a merge patch or backport.
+    * The file is mandatory in many cases, for example, when requesting a merge patch or backport.
 
 8. Examine the contents of the file.
 
@@ -433,7 +433,7 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
 
     </details>
 
-## Task 3: Use OPatch inside the database
+## Task 3: Use OPatch Inside the Database
 
 You can use the *queryable inventory* inside the database to get information from OPatch.
 
@@ -445,17 +445,17 @@ You can use the *queryable inventory* inside the database to get information fro
     sql / as sysdba
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
-2. Get information about Oracle home.
+2. Get information about the Oracle home.
 
      ``` sql
     <copy>
     select xmltransform(dbms_qopatch.get_opatch_install_info, dbms_qopatch.get_opatch_xslt) as install_info from dual;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     <details>
@@ -496,7 +496,7 @@ You can use the *queryable inventory* inside the database to get information fro
 
     </details>
 
-4. Get the output of `opatch lsinventory` and find the patches installed.
+4. Use `opatch lsinventory` to find the installed patches.
 
     ``` sql
     <copy>
@@ -506,12 +506,12 @@ You can use the *queryable inventory* inside the database to get information fro
          xmltable('InventoryInstance/patches/*' passing inv.output columns patch_id number path 'patchID', patch_unique_id number path 'uniquePatchID', description varchar2(80) path 'patchDescription') patches;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * The output is a very detailed XML document.
-    * You can extract the information of interest.
-    * Here you are extracting the patches installed.
+    * You can extract the information you need.
+    * This query extracts the installed patches.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -539,7 +539,7 @@ You can use the *queryable inventory* inside the database to get information fro
 
 Datapatch applies or rolls back SQL changes to the database.
 
-1. Remain in the *blue* terminal 🟦. You find Datapatch in the *OPatch* directory.
+1. Remain in the *blue* terminal 🟦. Datapatch is located in the *OPatch* directory.
 
     ``` bash
     <copy>
@@ -582,7 +582,7 @@ Datapatch applies or rolls back SQL changes to the database.
 
     </details>
 
-3. Run the prerequisites check.
+3. Run the prerequisite check.
 
     ``` bash
     <copy>
@@ -590,10 +590,10 @@ Datapatch applies or rolls back SQL changes to the database.
     </copy>
     ```
 
-    * Datapatch works on one database only.
-    * This check is non-intrusive. It examines your database and checks if Datapatch needs to install patches.
+    * Datapatch operates on one database at a time.
+    * This nonintrusive check examines the database and determines whether Datapatch needs to install patches.
     * Datapatch reports that no patches need to be applied.
-    * If you need to work on two databases at the same time, you would need to start another terminal, set the environment accordingly, and execute Datapatch.
+    * To work on two databases simultaneously, open another terminal, set its environment for the second database, and run Datapatch.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -656,8 +656,8 @@ Datapatch applies or rolls back SQL changes to the database.
     </copy>
     ```
 
-    * The sanity checks are lightweight and non-intrusive. You can run it on a live database.
-    * It examines your database for issues that are known to cause problems during patching.
+    * The sanity checks are lightweight and nonintrusive. You can run them on a live database.
+    * They examine the database for issues known to cause problems during patching.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -757,11 +757,11 @@ Datapatch applies or rolls back SQL changes to the database.
     order by action_time;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * Datapatch keeps track of all apply and rollback actions in a database.
-    * You can see those using this view.
+    * You can view these actions in this view.
     * Over time, as you patch this database, you will see more actions.
 
     <details>
@@ -791,18 +791,18 @@ Datapatch applies or rolls back SQL changes to the database.
 
     </details>
 
-## Task 5: Useful queries
+## Task 5: Useful Queries
 
-Here are a few useful queries that informs about the database.
+Here are a few useful queries that provide information about the database.
 
-1. Remain in the *blue* terminal 🟦 and still connected to the *UPGR* database. Get the Oracle home of the database.
+1. Remain in the *blue* terminal 🟦 and connected to the *UPGR* database. Get the Oracle home for the database.
 
     ``` sql
     <copy>
     select sys_context('USERENV','ORACLE_HOME') as oracle_home from dual;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     <details>
@@ -849,7 +849,7 @@ Here are a few useful queries that informs about the database.
     </copy>
     ```
 
-    * All components are either *VALID* or *OPTION OFF*. All looks good.
+    * All components have a status of *VALID* or *OPTION OFF*, so the database appears healthy.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -923,4 +923,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
