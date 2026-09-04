@@ -296,12 +296,12 @@ Patching a single instance Oracle AI Database require downtime.
 
     </details>
 
-8. **It takes around 20 minutes to patch the database**. 
+4. **It takes around 20 minutes to patch the database**. 
     * Most of the time is spent in *INSTALL* and *OH_PATCHING* stages when AutoUpgrade builds and patches the new Oracle home.
     * In this lab, you build the new Oracle home and patches the database in one command. This is a convenient option.
     * For less downtime, you build the Oracle home in advance, and then patches to an existing Oracle home. This is what you did in lab 4. 
 
-9. When AutoUpgrade completes, it prints a message to the console and exists.
+5. When AutoUpgrade completes, it prints a message to the console and exists.
 
     * AutoUpgrade informs that there is a guaranteed restore point which you must remove when it is no longer needed. 
     * Optionally, you can instruct AutoUpgrade to remove the restore point automatically using `drop_grp_after_upgrade=yes` in the config file.
@@ -329,7 +329,7 @@ Patching a single instance Oracle AI Database require downtime.
 
     </details>
 
-10. Update the profile script. Since the database now runs out of a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
+6. Update the profile script. Since the database now runs out of a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
 
     ``` bash
     <copy>
@@ -337,7 +337,7 @@ Patching a single instance Oracle AI Database require downtime.
     </copy>
     ```
 
-11. Set the environment and connect.
+7. Set the environment and connect.
 
     ``` bash
     <copy>
@@ -348,7 +348,7 @@ Patching a single instance Oracle AI Database require downtime.
     # Be sure to press RETURN
     ```
 
-12. Check the version.
+8. Check the version.
 
     ``` bash
     <copy>
@@ -367,7 +367,7 @@ Patching a single instance Oracle AI Database require downtime.
 
     </details>
 
-13. Exit SQLcl.
+9. Exit SQLcl.
 
     ``` sql
     <copy>
@@ -375,7 +375,37 @@ Patching a single instance Oracle AI Database require downtime.
     </copy>
     ```
 
-14. That's it. In one command, you just patched your Oracle AI Database including:
+10. Check the Oracle home. 
+
+    ``` bash
+    <copy>
+    $ORACLE_HOME/OPatch/opatch lspatches
+    </copy>
+
+    # Be sure to press RETURN
+    ```
+
+    * The new Oracle home is fully up-to-date.
+    * 19.32 was the newest Release Update when the workshop was created.
+
+    <details>
+    <summary>*click to see the output*</summary>
+
+    ``` text
+    39779336;Fix for Bug 39779336
+    39750798;Fix for Bug 39750798
+    39661089;Fix for Bug 39661089
+    39222882;OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)
+    39657094;DATAPUMP BUNDLE PATCH 19.32.0.0.0
+    39472050;Database Release Update : 19.32.0.0.260721 (39472050)
+    29585399;OCW RELEASE UPDATE 19.3.0.0.0 (29585399)
+    
+    OPatch succeeded.
+    ```
+
+    </details>
+
+11. That's it. In one command, you just patched your Oracle AI Database including:
 
     * Building a brand-new Oracle home enabling out-of-place patching
     * Updating OPatch

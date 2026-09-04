@@ -1,6 +1,6 @@
 # Install Oracle Home
 
-Out-of-place patching starts with creation of a new Oracle home. In this lab, you will install an Oracle home using AutoUpgrade. This method is simple and easy.
+Out-of-place patching starts with the creation of a new Oracle home. In this lab, you will use AutoUpgrade to install and patch an Oracle home.
 
 ## Introduction
 
@@ -10,13 +10,13 @@ Estimated Time: 5 Minutes
 
 In this lab, you will:
 
-* Install Oracle home using AutoUpgrade
+* Install an Oracle home using AutoUpgrade
 
 ### Prerequisites
 
 None.
 
-## Task 1: Install using AutoUpgrade
+## Task 1: Install Using AutoUpgrade
 
 1. Use the *yellow* terminal 🟨. Examine the following AutoUpgrade config file:
 
@@ -29,17 +29,17 @@ None.
     # Be sure to press RETURN
     ```
 
-    * `source_home` is an existing Oracle home that you will use as a template to install the new Oracle home. AutoUpgrade installs the new Oracle home using the same settings as this Oracle home.
-    * `target_home` is where you want to install the new Oracle home. Notice the placeholders *%RELEASE%* and *%UPDATE%* which AutoUpgrade translates based on what patches are installed.
+    * `source_home` identifies an existing Oracle home that AutoUpgrade uses as the basis for creating the new Oracle home. Applicable settings are synchronized from the source Oracle home unless you override them with `home_settings` parameters.
+    * `target_home` specifies where to install the new Oracle home. Notice the `%RELEASE%` and `%UPDATE%` placeholders; AutoUpgrade replaces them with values based on the installed patches.
     * `download_folder` is the location where AutoUpgrade can find and store patch files. Ideally, this location is a network share accessible to all your database hosts.
     * `patch` informs AutoUpgrade which patches you want to apply. 
-        * *RECOMMENDED* gives you the latest Release Update with the newest MRP, plus the lastest versions of OPatch and the OJVM and Data Pump bundle patches. 
+        * *RECOMMENDED* selects the latest Release Update with the newest Monthly Recommended Patch (MRP), along with the latest versions of OPatch and the OJVM and Data Pump bundle patches. 
         * *OCW* updates the OCW component in the Oracle home. 
         * *JDK* updates the JDK in the Oracle home.
         * *SDOBP* adds the bundle patch for Spatial.
         * In addition, you are also installing a one-off patch, *29213893*.
-    * `download` tells whether AutoUpgrade should attempt to download the patches from My Oracle Support using your My Oracle Support credentials. This is not possible inside this lab environment, so all patches have been pre-downloaded.
-    * `create_gold_image` instructs AutoUpgrade to create a new gold image once it has applied all the patches. You will use the gold image later.
+    * `download` indicates whether AutoUpgrade should attempt to download patches from My Oracle Support using your My Oracle Support credentials. This is not possible in this lab environment, so all patches have been pre-downloaded.
+    * `create_gold_image` instructs AutoUpgrade to create a gold image after applying all patches. You will use the gold image later.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -65,7 +65,7 @@ None.
     </copy>
     ```
 
-    * It may stay a while on *Processing config file ...*, while AutoUpgrade reads and catalogs the zip files on */home/oracle/patch-repo* folder.
+    * AutoUpgrade may display *Processing config file ...* for a while as it reads and catalogs the ZIP files in */home/oracle/patch-repo*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -82,7 +82,7 @@ None.
 
     </details>
 
-3. You're now in the AutoUpgrade console. Monitor the progress.
+3. You are now in the AutoUpgrade console. Monitor the progress.
 
     ``` bash
     <copy>
@@ -107,16 +107,16 @@ None.
 
     </details>
 
-4. When you have an existing Oracle home specified using `source_home` parameter, AutoUpgrade checks the settings of the source Oracle home and creates the target Oracle home with the same settings.
+4. When you specify an existing Oracle home with the `source_home` parameter, AutoUpgrade checks the source Oracle home settings and creates the target Oracle home with the applicable settings.
 
     * You can override the Oracle home settings using config file parameters. For instance, you could enable the OLAP option by using `patch1.home_settings.binopt.olap=yes`.
-    * Some prefer to give the Oracle home a custom name which you can do with `patch1.home_settings.home_name=your_custom_home_name`.
+    * You can give the Oracle home a custom name by using `patch1.home_settings.home_name=your_custom_home_name`.
 
-5. If you have a brand-new server with no existing Oracle home, you can still using `-mode create_home`. AutoUpgrade creates the Oracle home with the default settings rather than copying from a source Oracle home. In this case, you can specify most of the runInstaller settings using `patch1.home_settings`.
+5. If you have a brand-new server with no existing Oracle home, you can still use `-mode create_home`. AutoUpgrade creates the Oracle home with the default settings rather than copying them from a source Oracle home. In this case, you can specify most of the `runInstaller` settings by using `patch1.home_settings`.
 
 6. **It takes around 15 minutes to install a new Oracle home, patch it, and create a gold image.**
 
-7. Leave AutoUpgrade running and move on with the next lab.
+7. Leave AutoUpgrade running and move on to the next lab.
 
 You may now [*proceed to the next lab*](#next).
 
