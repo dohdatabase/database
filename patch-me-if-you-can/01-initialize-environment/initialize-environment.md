@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, ou will verify that all components required to run this workshop are available and running.
+In this lab, you will verify that all components required to run this workshop are available and running.
 
 Estimated Time: 5 Minutes
 
@@ -13,35 +13,35 @@ In this lab, you will:
 * Familiarize yourself with the workshop environment
 * Initialize the workshop environment
 
-## Task 1: Familiarize yourself with the workshop environment
+## Task 1: Familiarize Yourself With the Workshop Environment
 
-1. The easiest way to complete the lab is to copy and paste the commands directly into a terminal. Be sure to execute all commands shown in a code block. After pasting, you must press *RETURN*.
+1. The easiest way to complete the lab is to copy and paste the commands directly into a terminal. Execute all commands shown in code blocks and press *RETURN* after pasting each command.
 
-2. Before copying and pasting commands, review them; it is important to understand what each the commands does.
+2. Before copying and pasting commands, review them to understand what each command does.
 
 3. Double-click the *Terminal* shortcut on the desktop.
 
     ![Click shortcut to start a terminal](./images/initialize-environment-desktop-click-terminal.jpeg " ")
 
-4. The terminal has two tabs, *yellow* 🟨 and *blue* 🟦. The instructions may specify which tab to use. If not, you can use either of them. All labs start by setting up the appropriate environment.
+4. The terminal has two tabs: *yellow* 🟨 and *blue* 🟦. The instructions may specify which tab to use. If not, you can use either one. All labs start by setting up the appropriate environment.
 
 5. If needed, zoom in within the terminal to make the text larger.
 
     ![Zoom in to make the text larger in the terminal](./images/initialize-environment-terminal-zoom-in.png)
 
-6. You also find *VS Code* on the desktop. It has the *Oracle SQL Developer Extension* installed (the new SQL Developer). You won't use it in this lab, but it is installed for convenience.
+6. You can also find *VS Code* on the desktop. It has the *Oracle SQL Developer Extension* installed. You won't use it in this lab, but it is installed for convenience.
 
-7. If you want to open HTML documents, you can use the Firefox browser. If the text is too small, zoom in as needed.
+7. If you want to open HTML documents, you can use Firefox. If the text is too small, zoom in as needed.
 
     ![Zoom in in Firefox to make text bigger](images/initialize-environment-firefox-zoom.png)
 
-## Task 2: Initialize the workshop environment
+## Task 2: Initialize the Workshop Environment
 
-. When you start the lab, the following components should be running.
+1. When you start the lab, the following components should be running.
 
-    * Database Listener
+    * Database listener
         * LISTENER
-    * Database Instances
+    * Database instances
         * BEIGE
         * UPGR
         * CDB19
