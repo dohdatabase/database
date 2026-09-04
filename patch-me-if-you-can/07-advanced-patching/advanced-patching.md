@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This lab allows you to patch *backwards*. In other words, going to a previous Release Update. Only in the rare cases that you find a critical issue in a newer Release Update, would you go back to a previous one. Also, you learn how to enable certain optimizer fixes.
+This lab allows you to patch *back to an earlier Release Update*. You would do this only in the rare case that you find a critical issue in a newer Release Update. You will also learn how to enable certain optimizer fixes.
 
 Estimated Time: 20 Minutes
 
@@ -23,9 +23,9 @@ This lab assumes:
 * You have completed Lab 5: Install Oracle Home - Continued
 * You have completed Lab 6: Manual Patching of a Container Database
 
-## Task 1: Rollback using AutoUpgrade
+## Task 1: Rollback Using AutoUpgrade
 
-In lab 4, you patched the *UPGR* database to 19.32. Imagine you found a critical issue and decide to go back to 19.31. You can roll back without losing data with Datapatch.
+In Lab 4, you patched the *UPGR* database to 19.32. Imagine that you found a critical issue and decided to go back to 19.31. You can roll back the SQL changes with Datapatch without losing data.
 
 1. Use the *yellow* terminal 🟨. Since you patched the database using AutoUpgrade, you can roll back as well. Start AutoUpgrade:
 
@@ -35,7 +35,7 @@ In lab 4, you patched the *UPGR* database to 19.32. Imagine you found a critical
     </copy>
     ```
 
-    * You must specify the job ID that performed the patching.
+    * Replace `101` with the job ID of the job that performed the patching, if the job ID differs in your environment.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -51,11 +51,11 @@ In lab 4, you patched the *UPGR* database to 19.32. Imagine you found a critical
 
     </details>
 
-2. AutoUpgrade needs a few minutes to perfom the rollback. Leave AutoUpgrade running.   
+2. AutoUpgrade needs a few minutes to perform the rollback. Leave AutoUpgrade running.
 
-## Task 2: Manual rollback
+## Task 2: Manual Rollback
 
-You can also roll back manually. In lab 6, you patched the *CDB19* database to 19.32. Now, you roll back to 19.31.
+You can also roll back manually. In Lab 6, you patched the *CDB19* database to 19.32. Now, you will roll back to 19.31.
 
 
 1. Use the *blue* terminal 🟦. Set the environment to the *CDB19* database and connect.
@@ -66,7 +66,7 @@ You can also roll back manually. In lab 6, you patched the *CDB19* database to 1
     sql / as sysdba
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
 2. Shut down the database.
@@ -99,7 +99,7 @@ You can also roll back manually. In lab 6, you patched the *CDB19* database to 1
     ```
 
     * In this lab, there is no PFile, so you don't need to move that one.
-    * Also, there are no network files, like `tnsnames.ora` and `sqlnet.ora` in `$ORACLE_HOME/network/admin` so you don't move those either.
+    * There are also no network files, such as `tnsnames.ora` and `sqlnet.ora`, in `$ORACLE_HOME/network/admin`, so you do not move those either.
     * There might be many other files in the Oracle home. Check the blog post [Files to Move During Oracle Database Out-Of-Place Patching](https://dohdatabase.com/2023/05/30/files-to-move-during-oracle-database-out-of-place-patching/) for details.
 
 5. You need to set the environment to the previous Oracle home. Update the profile script and reset the environment.
@@ -165,7 +165,7 @@ You can also roll back manually. In lab 6, you patched the *CDB19* database to 1
     exit
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
 9. Run Datapatch to rollback the SQL changes from the database. It takes a few minutes. Leave Datapatch running and move to the next task. Do not close the terminal.
@@ -176,11 +176,11 @@ You can also roll back manually. In lab 6, you patched the *CDB19* database to 1
     </copy>
     ```
 
-## Task 3: Rollback using AutoUpgrade, continued
+## Task 3: Rollback Using AutoUpgrade, Continued
 
-In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
+In Task 1, you left AutoUpgrade while it performed the rollback of *UPGR*.
 
-1. Switch back to the *yellow* terminal 🟨. AutoUpgrade should be done with the rollback.
+1. Switch back to the *yellow* terminal 🟨. AutoUpgrade should have completed the rollback.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -197,9 +197,6 @@ In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
     
     Jobs restored                  [1]
     Jobs failed                    [0]
-    -------------------- JOBS PENDING --------------------
-    Job 101 for UPGR
-    
     Please check the summary report at:
     /home/oracle/logs/simple-patching-existing-home/cfgtoollogs/upgrade/auto/status/status.html
     /home/oracle/logs/simple-patching-existing-home/cfgtoollogs/upgrade/auto/status/status.log
@@ -216,7 +213,7 @@ In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
     </copy>
     ```
 
-3. Check the `orabtab` file. 
+3. Check the `oratab` file.
 
     ``` bash
     <copy>
@@ -224,7 +221,7 @@ In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
     </copy>
     ```
 
-    * As part of the roll back, AutoUpgrade updated `/etc/oratab`. 
+    * As part of the rollback, AutoUpgrade updated `/etc/oratab`.
     * It also moved database configuration files, such as SPFile and password file, back to the original Oracle home.
 
     <details>
@@ -247,7 +244,7 @@ In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
     # Be sure to press RETURN
     ```
 
-5. Verify the database version.
+6. Verify the database version.
 
     ``` bash
     <copy>
@@ -268,7 +265,7 @@ In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
 
     </details>
 
-5. Exit SQLcl.
+7. Exit SQLcl.
 
     ``` sql
     <copy>
@@ -276,14 +273,15 @@ In task 1, you left AutoUpgrade while it was performing the rollback of *UPGR*.
     </copy>
     ```    
 
-## Task 4: Manual rollback, continued
+## Task 4: Manual Rollback, Continued
 
-In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* to complete the rollback.
+In Task 2, you left Datapatch while it applied the SQL changes to *CDB19* to complete the rollback.
 
-1. Switch back to the *blue* terminal 🟦. Datapatch should be done by now. Check the output.
+1. Switch back to the *blue* terminal 🟦. Datapatch should be done by now. Check the output. Verify the PDB open state; the output below shows that INDIGO was mounted and skipped.
 
     * 19.32 Release Update and matching bundle patches were rolled back.
     * 19.31 Release Update and matching bundle patches were applied.
+    * The report first shows the current 19.32 SQL patch state, then shows the rollback actions that return the database to 19.31.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -302,7 +300,6 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
            Please refer to Note: Datapatch: Database 12c Post Patch SQL Automation
            (Doc ID 1585822.1)
     
-    Warning: PDB INDIGO is in mode MOUNTED and will be skipped.
     Bootstrapping registry and package to current versions...done
     Determining current state...done
     
@@ -313,54 +310,63 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
       PDB TERRACOTTA: Not installed
+      PDB INDIGO: Not installed
     Interim patch 38523609 (OJVM RELEASE UPDATE: 19.30.0.0.260120 (38523609)):
       Binary registry: Not installed
       PDB CDB$ROOT: Not installed
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
       PDB TERRACOTTA: Not installed
+      PDB INDIGO: Not installed
     Interim patch 38535360 (DATAPUMP BUNDLE PATCH 19.29.0.0.0):
       Binary registry: Not installed
       PDB CDB$ROOT: Not installed
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
       PDB TERRACOTTA: Not installed
+      PDB INDIGO: Not installed
     Interim patch 38844367 (19.30 OJVM PATCH APPLY IS FAILING ON SECOND NODE IN RAC ENVIRONMENT):
       Binary registry: Not installed
       PDB CDB$ROOT: Not installed
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
       PDB TERRACOTTA: Not installed
+      PDB INDIGO: Not installed
     Interim patch 38844733 (DATAPUMP BUNDLE PATCH 19.30.0.0.0):
       Binary registry: Not installed
       PDB CDB$ROOT: Not installed
       PDB ORANGE: Not installed
       PDB PDB$SEED: Not installed
       PDB TERRACOTTA: Not installed
+      PDB INDIGO: Not installed
     Interim patch 38906621 (OJVM RELEASE UPDATE: 19.31.0.0.260421 (38906621)):
       Binary registry: Installed
       PDB CDB$ROOT: Rolled back successfully on 02-SEP-26 08.39.39.597794 AM
       PDB ORANGE: Rolled back successfully on 02-SEP-26 08.40.24.396895 AM
       PDB PDB$SEED: Rolled back successfully on 02-SEP-26 08.40.24.300039 AM
       PDB TERRACOTTA: Rolled back successfully on 02-SEP-26 08.40.24.406620 AM
+      PDB INDIGO: Rolled back successfully on 02-SEP-26 08.40.24.406620 AM
     Interim patch 39196236 (DATAPUMP BUNDLE PATCH 19.31.0.0.0):
       Binary registry: Installed
       PDB CDB$ROOT: Rolled back successfully on 02-SEP-26 08.39.40.227002 AM
       PDB ORANGE: Rolled back successfully on 02-SEP-26 08.40.25.200260 AM
       PDB PDB$SEED: Rolled back successfully on 02-SEP-26 08.40.24.978736 AM
       PDB TERRACOTTA: Rolled back successfully on 02-SEP-26 08.40.25.211283 AM
+      PDB INDIGO: Rolled back successfully on 02-SEP-26 08.40.25.211283 AM
     Interim patch 39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882)):
       Binary registry: Not installed
       PDB CDB$ROOT: Applied successfully on 02-SEP-26 08.39.39.662600 AM
       PDB ORANGE: Applied successfully on 02-SEP-26 08.40.24.481642 AM
       PDB PDB$SEED: Applied successfully on 02-SEP-26 08.40.24.370309 AM
       PDB TERRACOTTA: Applied successfully on 02-SEP-26 08.40.24.476454 AM
+      PDB INDIGO: Applied successfully on 02-SEP-26 08.40.24.476454 AM
     Interim patch 39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0):
       Binary registry: Not installed
       PDB CDB$ROOT: Applied successfully on 02-SEP-26 08.40.22.856727 AM
       PDB ORANGE: Applied successfully on 02-SEP-26 08.40.43.071173 AM
       PDB PDB$SEED: Applied successfully on 02-SEP-26 08.40.42.210025 AM
       PDB TERRACOTTA: Applied successfully on 02-SEP-26 08.40.42.928391 AM
+      PDB INDIGO: Applied successfully on 02-SEP-26 08.40.42.928391 AM
     
     Current state of release update SQL patches:
       Binary registry:
@@ -373,10 +379,12 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
         Applied 19.32.0.0.0 Release_Update 260705220710 successfully on 02-SEP-26 08.40.33.866042 AM
       PDB TERRACOTTA:
         Applied 19.32.0.0.0 Release_Update 260705220710 successfully on 02-SEP-26 08.40.34.380717 AM
+      PDB INDIGO:
+        Applied 19.32.0.0.0 Release_Update 260705220710 successfully on 02-SEP-26 08.40.34.380717 AM  
     
     Adding patches to installation queue and performing prereq checks...done
     Installation queue:
-      For the following PDBs: CDB$ROOT PDB$SEED ORANGE TERRACOTTA
+      For the following PDBs: CDB$ROOT PDB$SEED ORANGE TERRACOTTA INDIGO
         The following interim patches will be rolled back:
           39222882 (OJVM RELEASE UPDATE: 19.32.0.0.260721 (39222882))
           39657094 (DATAPUMP BUNDLE PATCH 19.32.0.0.0)
@@ -430,6 +438,16 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
       logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_apply_CDB19_TERRACOTTA_2026Sep02_09_17_40.log (no errors)
     Patch 39196236 apply (pdb TERRACOTTA): SUCCESS
       logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_apply_CDB19_TERRACOTTA_2026Sep02_09_17_50.log (no errors)
+    Patch 39222882 rollback (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39222882/28830205/39222882_rollback_CDB19_INDIGO_2026Sep02_09_17_39.log (no errors)
+    Patch 39657094 rollback (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39657094/28915841/39657094_rollback_CDB19_INDIGO_2026Sep02_09_17_40.log (no errors)
+    Patch 39472050 rollback (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39472050/28919163/39472050_rollback_CDB19_INDIGO_2026Sep02_09_17_40.log (no errors)
+    Patch 38906621 apply (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/38906621/28588735/38906621_apply_CDB19_INDIGO_2026Sep02_09_17_40.log (no errors)
+    Patch 39196236 apply (pdb INDIGO): SUCCESS
+      logfile: /u01/app/oracle/cfgtoollogs/sqlpatch/39196236/28705537/39196236_apply_CDB19_INDIGO_2026Sep02_09_17_50.log (no errors)      
     SQL Patching tool complete on Wed Sep  2 09:18:19 2026
     ```
 
@@ -494,7 +512,7 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
     select directory_name , directory_path from dba_directories where owner='SYS' order by 2;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * All of them now points to the current Oracle home.
@@ -526,7 +544,7 @@ In task 2, you left Datapatch while it was applying the SQL changes to *CDB19* t
 
     </details>
 
-## Task 5: Check software components
+## Task 5: Check Software Components
 
 In the Oracle home you find other software components, that is patched together with the database.
 
@@ -616,7 +634,7 @@ In the Oracle home you find other software components, that is patched together 
     # Be sure to press RETURN
     ```
 
-    * The Perl is up-to-date in both Oracle homes.
+    * Perl is up to date in both Oracle homes.
     * Perl patches are included in Release Updates, but apparently there were no Perl updates when 19.32 was built.
 
     <details>
@@ -631,9 +649,9 @@ In the Oracle home you find other software components, that is patched together 
 
     </details>    
 
-## Task 6: Enable optimizer fixes
+## Task 6: Enable Optimizer Fixes
 
-Optimizer fixes are provided as part of the Release Update. However, those optimizer fixes which might cause plan changes are turned off. Meaning the fix is present in the database, but the old code is still activated. This allows you to maintain maximum plan stability in your database and only turn on those optimizer fixes that you need for a given problem.
+Optimizer fixes are provided as part of the Release Update. However, optimizer fixes that might cause plan changes are turned off. This means that the fixes are present in the database, but the old code is still active. This allows you to maintain maximum plan stability in your database and turn on only the optimizer fixes that you need for a given problem.
 
 1. Switch to the *yellow* terminal 🟨. Set the environment to the *BEIGE* database and connect.
 
@@ -654,7 +672,7 @@ Optimizer fixes are provided as part of the Release Update. However, those optim
     execute dbms_optim_bundle.getBugsforBundle;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * *BEIGE* has already been patched to 19.31.
@@ -755,7 +773,7 @@ Optimizer fixes are provided as part of the Release Update. However, those optim
     </copy>
     ```
 
-    * It is currently empty because no fixed have been turned on.
+    * It is currently empty because no fixes have been turned on.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -777,8 +795,8 @@ Optimizer fixes are provided as part of the Release Update. However, those optim
     ```
 
     * Normally, Oracle recommends turning all fixes *ON* only for new databases or when you are upgrading to a new release.
-    * When you upgrade you typically perform extensive testing and then you can better check the effect on all the new optimizer fixes.
-    * Since optimizer fixes may cause plan changes, you typically don't do this after patching, because you often conduct less test compared to an upgrade.
+    * When you upgrade, you typically perform extensive testing, so you can better evaluate the effects of all the new optimizer fixes.
+    * Since optimizer fixes may cause plan changes, you typically do not do this after patching because you often conduct less testing than during an upgrade.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -831,11 +849,11 @@ Optimizer fixes are provided as part of the Release Update. However, those optim
     ) order by 1;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * Each bug is now in a separate row.
-    * You can see there are 219 bug fixes currently.
+    * You can see there are 242 bug fixes currently.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -908,7 +926,7 @@ Optimizer fixes are provided as part of the Release Update. However, those optim
 
     </details>
 
-9. Check the parameter *\_fix\_control* again and see that the value has changed for bug 35412607 from *1* to *0*.
+9. Check the parameter *\_fix\_control* again and see that the value has changed for bug 37818321 from *1* to *0*.
 
     ``` sql
     <copy>
@@ -969,7 +987,7 @@ Optimizer fixes are provided as part of the Release Update. However, those optim
     ```
 
     * All bug fix key-value pairs are in one long comma-separated line.
-    * The comment at the end of the line tells that the value was `#added through dbms_optim_bundle package`.
+    * The comment at the end of the line indicates that the value was added through the `DBMS_OPTIM_BUNDLE` package.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -987,4 +1005,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
