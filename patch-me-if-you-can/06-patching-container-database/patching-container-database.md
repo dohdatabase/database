@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, you will manually patch a container database. The *CDB19* database is running on 19.31 and you will patch it to an existing Oracle home on 19.32. In addition, you will check how PDBs behaves during patching.
+In this lab, you will manually patch a container database. The *CDB19* database is running on 19.31 and you will patch it to an existing Oracle home on 19.32. In addition, you will check how PDBs behave during patching.
 
 Estimated Time: 15 Minutes
 
@@ -17,7 +17,7 @@ In this lab, you will:
 
 None.
 
-## Task 1: Patch a container database
+## Task 1: Patch a Container Database
 
 You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
@@ -29,7 +29,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     sql / as sysdba
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
 2. Create a new PDB.
@@ -104,7 +104,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     ```
 
     * In this lab, there is no PFile, so we don't need to move that one.
-    * Also, there are no network files, like `tnsnames.ora` and `sqlnet.ora` in `$ORACLE_HOME/network/admin` so we don't move those either.
+    * There are also no network files, such as `tnsnames.ora` and `sqlnet.ora`, in `$ORACLE_HOME/network/admin`, so we do not move those either.
     * There might be many other files in the Oracle home. Check the blog post [Files to Move During Oracle Database Out-Of-Place Patching](https://dohdatabase.com/2023/05/30/files-to-move-during-oracle-database-out-of-place-patching/) for details.
 
 7. You need to set the environment to the new Oracle home. Update the profile script and reset the environment.
@@ -147,10 +147,10 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     select name, open_mode, restricted from v$pdbs;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
-    * Notice how the *INDIGO* PDB doesn't start because you didn't save the open state.
+    * Notice that the *INDIGO* PDB is mounted because its open state was not saved.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -186,7 +186,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     </copy>
     ```
 
-## Task 2: Examine Datapatch behavior
+## Task 2: Examine Datapatch Behavior
 
 1. Remain in the *yellow* terminal 🟨.
 
@@ -364,10 +364,10 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     where  name='INDIGO' and status!='RESOLVED';
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
-    * The PDB won't open because it hasn't been properly patched.
+    * The PDB does not open because it has not been properly patched.
     * The dictionary version of the CDB$ROOT and the PDB are now different and must be aligned.
     * Datapatch skipped the PDB because it was not open.
 
@@ -424,7 +424,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     alter pluggable database indigo open;
     </copy>
 
-    -- Be sure to hit RETURN
+    -- Be sure to press RETURN
     ```
 
     * Notice that *INDIGO* now opens without errors.
@@ -490,7 +490,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     </copy>
     ```
 
-    * The command line parameter `-pdbs` ensure that Datapatch just works on the *INDIGO* PDB.
+    * The command-line parameter `-pdbs` ensures that Datapatch works only on the *INDIGO* PDB.
     * You could also run Datapatch without the parameter. It would then examine the database and determine only *INDIGO* needed patching. However, this might take slightly longer.
 
     <details>
@@ -564,7 +564,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
     </details>
 
-## Task 3: Complete patching
+## Task 3: Complete Patching
 
 1. Remain in the *yellow* terminal 🟨.
 
@@ -587,9 +587,9 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     # Be sure to press RETURN
     ```
 
-    * There are certain database directories that point to the Oracle home. 
-    * When you patch out-of-place the Oracle home location changes, and those directory paths must point to the new Oracle home.
-    * Some of these directories are not updated and still point to the old Oracle home.
+    * Some database directories point to the Oracle home.
+    * When you patch out-of-place the Oracle home location changes, and the directory path must point to the new Oracle home.
+    * Some of these directories are not updated and continue to point to the old Oracle home.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -618,13 +618,13 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
     </details>
 
-4. It is a problem in all containers.
+4. The outdated directory paths occur in all containers.
 
-    ``` bash
+    ``` sql
     <copy>
     select   con$name, directory_name , directory_path 
     from     cdb_directories 
-    where.   owner='SYS'
+    where    owner='SYS'
     order by 1, 3, 2;
     </copy>
     ```
@@ -701,7 +701,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     ```
 
     * You update the directories in the root container.
-    * These directories are shared as metadata links. Once you update the root container, they are updated in all containers.
+    * These directories are shared through metadata links. Once you update the root container, they are updated in all containers.
     
     <details>
     <summary>*click to see the output*</summary>
@@ -756,7 +756,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
     </copy>
     ```
 
-    * Notice that all directory paths are pointing to the new Oracle home.
+    * Notice that all Oracle-home-dependent directory paths point to the new Oracle home; `ORACLE_BASE` remains `/u01/app/oracle`.
 
     <details>
     <summary>*click to see the output*</summary>
