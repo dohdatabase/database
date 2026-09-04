@@ -35,7 +35,6 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     * `source_home` and `sid` describe the current database.
     * `target_home` is the location of the new Oracle home. It has already been created.
     * Also, you specify which database to patch using `sid`.
-    * The *UPGR* database is not running ARCHIVELOG mode, so you must disable restoration.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -45,7 +44,6 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     patch1.source_home=/u01/app/oracle/product/19
     patch1.target_home=/u01/app/oracle/product/dbhome_19_32
     patch1.sid=UPGR
-    patch1.restoration=no
     ```
 
     </details>
@@ -92,7 +90,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     patch> +----+-------+---------+---------+-------+----------+-------+----------------+
     |Job#|DB_NAME|    STAGE|OPERATION| STATUS|START_TIME|UPDATED|         MESSAGE|
     +----+-------+---------+---------+-------+----------+-------+----------------+
-    | 100|   FTEX|PRECHECKS|EXECUTING|RUNNING|  07:43:51|37s ago|Executing Checks|
+    | 100|   UPGR|PRECHECKS|EXECUTING|RUNNING|  07:43:51|37s ago|Executing Checks|
     +----+-------+---------+---------+-------+----------+-------+----------------+
     Total jobs 1
 
@@ -303,7 +301,6 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     +----+-------+---------+---------+-------+----------+-------+-------------------+
     | 101|   UPGR|PREFIXUPS|EXECUTING|RUNNING|  05:01:11| 1s ago|Re-Executing Checks|
     +----+-------+---------+---------+-------+----------+-------+-------------------+
-    Total jobs 1
     Total jobs 1
     ```
 

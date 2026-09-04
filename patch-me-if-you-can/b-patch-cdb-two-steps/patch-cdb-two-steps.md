@@ -116,8 +116,9 @@ None.
     </copy>
     ```
 
-    * Find the entry matching your new Oracle home and check the *NAME* attribute.
-    * The *NAME* attribute matches the custom name you provided in the config file.
+    * You can find the Oracle home by the *NAME* attribute.
+    * Look for *OraDbHome2631*.
+    * The name looks similar to the other Oracle homes, but there is a difference.
 
     <details>
     <summary>*click to see the output*</summary>
