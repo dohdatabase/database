@@ -1,8 +1,8 @@
-# Patch a database to existing Oracle home
+# Patch a Database to an Existing Oracle Home
 
 ## Introduction
 
-In this lab, you will patch an Oracle AI Database using AutoUpgrade. You patch out-of-place and use an already created Oracle home.
+In this lab, you will patch an Oracle AI Database using AutoUpgrade. You perform an out-of-place patch and use an existing Oracle home.
 
 Estimated Time: 10 Minutes
 
@@ -17,9 +17,9 @@ In this lab, you will:
 
 None.
 
-## Task 1: Analyze database
+## Task 1: Analyze Database
 
-Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode is a lightweight and non-intrusive check of an Oracle AI Database. 
+Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode performs a lightweight, nonintrusive check of an Oracle AI Database.
 
 1. Use the *blue* terminal 🟦. Examine the config file.
 
@@ -101,7 +101,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
 4. Wait a minute or two until AutoUpgrade completes. Don't exit from the AutoUpgrade console.
 
-5. When the job completes, AutoUpgrade prints the location of the *summary report* which contains information about the analysis. Check the summary report.
+5. When the job completes, AutoUpgrade prints the location of the *summary report*, which contains information about the analysis. Check the summary report.
 
     ``` bash
     <copy>
@@ -142,7 +142,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-6. You can find even more details in the precheck reports. You find them in the *Log Directory* mentioned in the above summary report. Examine the precheck directory.
+6. You can find more details in the precheck reports. You can find them in the *Log Directory* listed in the summary report. Examine the precheck directory.
 
     ``` bash
     <copy>
@@ -153,8 +153,8 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     # Be sure to press RETURN
     ```
 
-    * The detailed precheck report comes in HTML and text formats for humans to read.
-    * Plus, it comes as XML or JSON files which is useful for scripting and automation.
+    * The detailed precheck report is available in HTML and text formats for easy reading.
+    * It is also available as XML or JSON files, which are useful for scripting and automation.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -180,7 +180,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     </copy>
     ```
 
-    * Scroll through the report using *SPACE BAR*.
+    * Scroll through the report using the *spacebar*.
     * You can exit the report by pressing the *Q* key.
     * The report starts with details about the database.
     * Next it divides the findings into *BEFORE UPGRADE* and *AFTER UPGRADE* findings.
@@ -247,7 +247,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
 9. Close Firefox.
 
-## Task 2: Patch database
+## Task 2: Patch Database
 
 Patching a single instance Oracle AI Database requires downtime. Downtime starts now.
 
@@ -281,7 +281,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
     </details>
 
-4. Monitor the progress.
+3. Monitor the progress.
 
     ``` bash
     <copy>
@@ -290,7 +290,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     ```
 
     * The `lsj` command lists active jobs.
-    * There is only one job in this config file.
+    * There is only one job in this configuration file.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -302,11 +302,12 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     | 101|   UPGR|PREFIXUPS|EXECUTING|RUNNING|  05:01:11| 1s ago|Re-Executing Checks|
     +----+-------+---------+---------+-------+----------+-------+-------------------+
     Total jobs 1
+    Total jobs 1
     ```
 
     </details>
 
-5. Get the status of the job.
+4. Get the status of the job.
 
     ``` bash
     <copy>
@@ -314,7 +315,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     </copy>
     ```
 
-    * The `status` command require the job number as input. You can find that in the list of active jobs.
+    * The `status` command requires the job number as input. You can find it in the list of active jobs.
     * The `-a 10` parameter refreshes the information every 10 seconds.
 
     <details>
@@ -364,9 +365,9 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
     </details>
 
-6. It takes just a few minutes to patch the database. Leave AutoUpgrade running.
+5. It takes just a few minutes to patch the database. Leave AutoUpgrade running.
 
-7. When patching completes, AutoUpgrade exists.
+6. When patching completes, AutoUpgrade exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -389,9 +390,9 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
     </details>
 
-## Task 3: Check the outcome
+## Task 3: Check the Outcome
 
-When AutoUpgrade completes the patching, you can start to use the database. You might have some custom post-patching tasks. 
+When AutoUpgrade completes patching, you can start using the database. You may have custom post-patching tasks.
 
 1. Update the profile script. This lab has a profile script for each database that configures the environment accordingly. Since the database now runs out of a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
 
@@ -420,7 +421,7 @@ When AutoUpgrade completes the patching, you can start to use the database. You 
 
     </details>
 
-3. AutoUpgrade also moves the all the database configuration files to the new Oracle home. Set the environment and dheck the files.
+3. AutoUpgrade also moves all the database configuration files to the new Oracle home. Set the environment and check the files.
 
     ``` bash
     <copy>
@@ -495,7 +496,7 @@ When AutoUpgrade completes the patching, you can start to use the database. You 
     </copy>
     ```
 
-    * This is the output from Datapatch that you would see if you patch manually.
+    * This is the Datapatch output you would see if you patched the database manually.
     * AutoUpgrade stores all output and log files in the logging directory.
 
     <details>
@@ -577,7 +578,7 @@ When AutoUpgrade completes the patching, you can start to use the database. You 
 
     </details>
 
-7. That's it. You just patched your Oracle AI Database.
+7. You have patched your Oracle AI Database.
 
 You may now [*proceed to the next lab*](#next).
 
@@ -586,4 +587,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
