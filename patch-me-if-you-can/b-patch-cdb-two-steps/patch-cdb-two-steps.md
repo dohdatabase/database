@@ -10,14 +10,14 @@ Estimated Time: 20 Minutes
 
 In this lab, you will:
 
-* Create new 26ai Oracle home with the latest Release Update
+* Create a new 26ai Oracle home with the latest Release Update
 * Analyze and patch the *CDB26* database
 
 ### Prerequisites
 
 None.
 
-## Task 1: Create Oracle home
+## Task 1: Create Oracle Home
 
 1. Examine the following AutoUpgrade config file:
 
@@ -34,7 +34,7 @@ None.
     * `target_home` is where you want to install the new Oracle home and `home_settings.home_name` instructs AutoUpgrade to give the new Oracle home a custom name.
     * `sid` is the database that you want to patch.
     * `download_folder` is the location where AutoUpgrade can find and store patch files. Ideally, this location is a network share accessible to all your database hosts.
-    * `patch` informs AutoUpgrade which patches you want to apply. *RECOMMENDED* gives you the latest Release Update with the newest MRP on top. In 26ai, it also includes the Data Pump bundle patch, but not the OJVM bundle patch. The OJVM patches are now part of the Release Update.
+    * `patch` informs AutoUpgrade which patches you want to apply. *RECOMMENDED* provides the latest Release Update with the newest MRP on top. In 26ai, it also includes the Data Pump bundle patch, but not the OJVM bundle patch. The OJVM patches are now part of the Release Update.
     * `download` tells whether AutoUpgrade should attempt to download the patches from My Oracle Support using your My Oracle Support credentials. This is not possible inside this lab environment, so all patches have been pre-downloaded.
 
     <details>
@@ -61,7 +61,7 @@ None.
     </copy>
     ```
 
-    * It may stay a while on *Processing config file ...*, while AutoUpgrade reads and catalog the zip files on */home/oracle/patch-repo* folder.
+    * It may remain at *Processing config file ...* for a while as AutoUpgrade reads and catalogs the ZIP files in the */home/oracle/patch-repo* folder.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -77,7 +77,7 @@ None.
 
     </details>
 
-3. You're now in the AutoUpgrade console. Monitor the progress.
+3. You are now in the AutoUpgrade console. Monitor the progress.
 
     ``` bash
     <copy>
@@ -102,13 +102,13 @@ None.
 
     </details>
 
-6. **It takes around 5 minutes to install a new 26ai Oracle home.**
-  * It is faster to create a 26ai Oracle home compared to 19c.
-  * From 26ai Oracle delivers up-to-date gold images that contain the newest Release Update, JDK and OCW component. You avoid the time it takes to apply those patches.
+4. **Installing a new 26ai Oracle home takes approximately 5 minutes.**
+  * It is faster to create a 26ai Oracle home than a 19c Oracle home.
+  * Starting with 26ai, Oracle delivers up-to-date gold images that contain the newest Release Update, JDK, and OCW components. You avoid the time it takes to apply those patches.
 
-7. Wait for AutoUpgrade to complete.
+5. Wait for AutoUpgrade to complete.
 
-8. Examine the Oracle Inventory and check the new Oracle home. 
+6. Examine the Oracle Inventory and check the new Oracle home.
 
     ``` bash
     <copy>
@@ -116,9 +116,8 @@ None.
     </copy>
     ```
 
-    * You can find the Oracle home by the *NAME* attribute.
-    * Look for *OraDbHome2631*.
-    * The name looks similar to the other Oracle homes, but there is a difference.
+    * Find the entry matching your new Oracle home and check the *NAME* attribute.
+    * The *NAME* attribute matches the custom name you provided in the config file.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -148,7 +147,7 @@ None.
 
     </details>
 
-9. Examine the new Oracle home.
+7. Examine the new Oracle home.
 
     ``` bash
     <copy>
@@ -181,9 +180,9 @@ None.
 
     </details>
 
-## Task 2: Analyze database
+## Task 2: Analyze Database
 
-Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode is a lightweight and non-intrusive check of an Oracle AI Database. 
+Oracle recommends that you first check your database. AutoUpgrade in *analyze* mode performs a lightweight, non-intrusive analysis of an Oracle AI Database.
 
 1. Analyze the database.
 
@@ -196,7 +195,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     # Be sure to press RETURN
     ```
 
-    * AutoUpgrade informs me that two PDBs are not open.
+    * AutoUpgrade informs you that two PDBs are not open.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -284,9 +283,9 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-7. Wait a minute or two until AutoUpgrade completes. Don't exit from the AutoUpgrade console.
+7. Wait a minute or two until AutoUpgrade completes. Do not exit from the AutoUpgrade console.
 
-8. When the job completes, AutoUpgrade prints the location of the *summary report* which contains information about the analysis. Check the summary report.
+8. When the job completes, AutoUpgrade prints the location of the *summary report*, which contains information about the analysis. Check the summary report.
 
     ``` bash
     <copy>
@@ -294,9 +293,8 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     </copy>
     ```
 
-    * Both *Version Before Upgrade* and *Version After Upgrade* is *23.26.3* so why patch this database? The new Oracle home contained the Monthly Recommended Patches (MRP #1), so the new Oracle home is more up-to-date.
     * This database was found to be ready for patching.
-    * AutoUpgrade reports *Check passed and no manual intervention needed*. 
+    * AutoUpgrade reports *Check passed, and no manual intervention was needed*.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -326,7 +324,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
     </details>
 
-9. You can find even more details in the precheck reports. You find them in the *Log Directory* mentioned in the above summary report. Examine the HTML report.
+9. You can find even more details in the precheck reports. You can find them in the *Log Directory* mentioned in the preceding summary report. Examine the HTML report.
 
     ``` bash
     <copy>
@@ -338,7 +336,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     ```
 10. Close Firefox.
 
-## Task 3: Patch database
+## Task 3: Patch Database
 
 Patching a single instance Oracle AI Database requires downtime. Downtime starts now.
 
@@ -353,7 +351,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     # Be sure to press RETURN
     ```
 
-    * Deploy mode is the complete automation which performs all parts of a patch process.
+    * Deploy mode automates all parts of the patching process.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -378,7 +376,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     </copy>
     ```
 
-    * The `status` command require the job number as input. You can find that in the list of active jobs.
+    * The `status` command requires the job number as input. You can find that in the list of active jobs.
     * The `-a 10` parameter refreshes the information every 10 seconds.
 
     <details>
@@ -431,9 +429,9 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
     </details>
 
-6. It takes just a few minutes to patch the database. Leave AutoUpgrade running.
+3. It takes just a few minutes to patch the database. Leave AutoUpgrade running.
 
-7. When patching completes, AutoUpgrade exists.
+4. When patching completes, AutoUpgrade exits.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -456,7 +454,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
     </details>
 
-8. Update the profile script. This lab has a profile script for each database that configures the environment accordingly. Since the database now runs out of a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
+5. Update the profile script. This lab has a profile script for each database that configures the environment accordingly. Since the database now runs from a new Oracle home, you must update the profile script. This command replaces the `ORACLE_HOME` variable in the profile script.
 
     ``` bash
     <copy>
@@ -502,7 +500,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
     </copy>
     ```    
 
-9. That's it. You just patched your Oracle AI Database.
+10. You have now patched your Oracle AI Database.
 
 You may now [*proceed to the next lab*](#next).
 
@@ -511,4 +509,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-
