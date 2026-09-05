@@ -298,8 +298,9 @@ Patching a single instance Oracle AI Database requires downtime.
 
     </details>
 
-4. **Patching the database takes approximately 20 minutes.**
-    * Most of the time is spent in *INSTALL* and *OH_PATCHING* stages when AutoUpgrade builds and patches the new Oracle home.
+4. **Patching the database takes approximately 10 minutes or 30 minutes.**
+    * In lab 5, you create a 19.32 gold image. If you completed that lab, then AutoUpgrade sees and uses this gold image. Using an already patched gold image is a faster option.
+    * If you didn't complete lab, then AutoUpgrade must build the Oracle home from scratch by extracting the base image and apply the 19.32 Release Update which is a slower option. In this case, most of the time is spent in *INSTALL* and *OH_PATCHING* stages.
     * In this lab, you build the new Oracle home and patch the database in one command. This is a convenient option.
     * For less downtime, you can build the Oracle home in advance and then patch the database using an existing Oracle home. This is what you did in Lab 4.
 

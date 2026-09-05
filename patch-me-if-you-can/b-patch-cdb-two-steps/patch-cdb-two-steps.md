@@ -502,7 +502,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
 10. You have now patched your Oracle AI Database.
 
-You may now [*proceed to the next lab*](#next).
+This is the end of *Patch Me If You Can*. 
 
 ## Acknowledgements
 
