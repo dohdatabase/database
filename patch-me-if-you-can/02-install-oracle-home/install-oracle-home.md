@@ -114,7 +114,7 @@ None.
 
 5. If you have a brand-new server with no existing Oracle home, you can still use `-mode create_home`. AutoUpgrade creates the Oracle home with the default settings rather than copying them from a source Oracle home. In this case, you can specify most of the `runInstaller` settings by using `patch1.home_settings`.
 
-6. **It takes around 15 minutes to install a new Oracle home, patch it, and create a gold image.**
+6. **It takes around 20 minutes to install a new Oracle home, patch it, and create a gold image.**
 
 7. Leave AutoUpgrade running and move on to the next lab.
 
@@ -125,4 +125,3 @@ You may now [*proceed to the next lab*](#next).
 * **Author** - Daniel Overby Hansen
 * **Contributors** - Rodrigo Jorge, Alex Zaballa, Mike Dietrich, Alejandro Diaz
 * **Last Updated By/Date** - Daniel Overby Hansen, September 2026
-

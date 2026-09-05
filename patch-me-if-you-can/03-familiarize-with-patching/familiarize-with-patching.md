@@ -376,8 +376,8 @@ You use *OPatch* to perform the first part of patching an Oracle AI Database; pa
     </copy>
     ```
 
-    * Use *Space* to browse through the pages.
-    * Use *CTRL+C* to break when you'se seen enough.
+    * Use the *space bar* to browse through the pages.
+    * Use *Q* or *CTRL+C* to break when you'se seen enough.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -593,8 +593,7 @@ Datapatch applies or rolls back SQL changes to the database.
     * Datapatch operates on one database at a time.
     * This nonintrusive check examines the database and determines whether Datapatch needs to install patches.
     * Datapatch reports that no patches need to be applied.
-    * To work on two databases simultaneously, open another terminal, set its environment for the second database, and run Datapatch.
-
+    
     <details>
     <summary>*click to see the output*</summary>
 

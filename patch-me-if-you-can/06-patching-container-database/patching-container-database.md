@@ -580,7 +580,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
     ``` bash
     <copy>
-    set pagesize 1100
+    set pagesize 100
     select directory_name , directory_path from dba_directories where owner='SYS' order by 2;    
     </copy>
 

@@ -180,7 +180,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
     </copy>
     ```
 
-    * Scroll through the report using the *spacebar*.
+    * Scroll through the report using the *space bar*.
     * You can exit the report by pressing the *Q* key.
     * The report starts with details about the database.
     * Next it divides the findings into *BEFORE UPGRADE* and *AFTER UPGRADE* findings.

@@ -25,7 +25,7 @@ This lab assumes:
 
 ## Task 1: Rollback Using AutoUpgrade
 
-In Lab 4, you patched the *UPGR* database to 19.32. Imagine that you found a critical issue and decided to go back to 19.31. You can roll back the SQL changes with Datapatch without losing data.
+In Lab 4, you patched the *UPGR* database to 19.32. Imagine that you found a critical issue and decided to go back to 19.31. You can roll back with Datapatch without losing data.
 
 1. Use the *yellow* terminal 🟨. Since you patched the database using AutoUpgrade, you can roll back as well. Start AutoUpgrade:
 
@@ -34,8 +34,6 @@ In Lab 4, you patched the *UPGR* database to 19.32. Imagine that you found a cri
     java -jar autoupgrade.jar -config scripts/pt-04-simple-patching-existing-home.cfg -rollback -jobs 101
     </copy>
     ```
-
-    * Replace `101` with the job ID of the job that performed the patching, if the job ID differs in your environment.
 
     <details>
     <summary>*click to see the output*</summary>
@@ -46,7 +44,6 @@ In Lab 4, you patched the *UPGR* database to 19.32. Imagine that you found a cri
     +--------------------------------+
     | Starting AutoUpgrade execution |
     +--------------------------------+
-    Exiting    
     ```
 
     </details>
@@ -543,6 +540,14 @@ In Task 2, you left Datapatch while it applied the SQL changes to *CDB19* to com
     ```
 
     </details>
+
+5. Exit SQLcl.
+
+    ``` sql
+    <copy>
+    exit
+    </copy>
+    ```    
 
 ## Task 5: Check Software Components
 
