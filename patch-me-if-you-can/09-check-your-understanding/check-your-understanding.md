@@ -19,7 +19,7 @@ Complete the earlier workshop labs or review the workshop material before taking
 
 ```quiz-config
 passing: 75
-badge: ../../09-check-your-understanding/images/upgrade-badge.png
+badge: ../09-check-your-understanding/images/upgrade-badge.png
 ```
 
 ## Task 1: Complete the quiz
@@ -77,7 +77,7 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     - You must call Datapatch once per PDB
     - OPatch patches CDBs and Datapatch is for non-CDBs.
     * Only open PDBs are patched
-    - Datapatch never touches the root container (`CDB$ROOT`)
+    - Datapatch never touches the root container (CDB$ROOT)
     > OPatch updates and patches the files in the Oracle home. Datapatch works only inside the database. OUI is used to attach the Oracle home to the local inventory and do installation tasks only.
     ``` 
 
