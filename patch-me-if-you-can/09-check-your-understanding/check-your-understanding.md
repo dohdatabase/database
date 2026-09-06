@@ -49,9 +49,9 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     Q: What are the advantages of using gold images?
     - They contain fewer bugs
     - They are platform independent
-    * They are required in Oracle AI Database 26ai
-    - They install faster
-    > You can install a gold image faster because you can avoid applying patches.
+    - They are required in Oracle AI Database 26ai
+    * They install faster
+    > You can install a gold image faster because you can avoid applying patches. They are not required in 26ai, but made available for download.
     ```
 
     ```quiz score
@@ -68,10 +68,11 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     - MRPs don't apply to a database Oracle home
     - You must add those manually using OPatch
     - By using a Datapatch command line option
-    * Using the *MRP* keyword in the `patch` config file entry
+    * Using the "MRP" keyword in the "patch" config file entry
     > AutoUpgrade can find the correct MRP when you use the appropriate keyword in the `patch` config file entry.
     ```
 
+    ```quiz score
     Q: Which statement about container database patching is true?
     - You must call Datapatch once per PDB
     - OPatch patches CDBs and Datapatch is for non-CDBs.
@@ -85,16 +86,16 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     - Datapatch
     * OPatch
     - Datapatch and OPatch in combination
-    - Oracle Universal Installer (`runInstaller`)
+    - Oracle Universal Installer (runInstaller)
     > OPatch updates and patches the files in the Oracle home. Datapatch works only inside the database. OUI is used to attach the Oracle home to the local inventory and do installation tasks only.
     ```    
 
     ```quiz score
     Q: Where does Datapatch store information?
-    * In the tables `REGISTRY$SQLPATCH` and `REGISTRY$SQLPATCH_RU_INFO`
-    - In the hidden `.patch_storage` directory in the Oracle home
+    * In the tables REGISTRY$SQLPATCH and REGISTRY$SQLPATCH_RU_INFO
+    - In the hidden .patch_storage directory in the Oracle home
     - In XML files in diagnostic destination
-    - Datapatch never stores information, just log files in `$ORACLE_BASE`
+    - Datapatch never stores information, just log files in $ORACLE_BASE
     > Datapatch stores patching related information and rollback scripts inside the database in the data dictionary. 
     ```    
 
@@ -106,24 +107,6 @@ badge: ../../09-check-your-understanding/images/upgrade-badge.png
     - AutoUpgrade can install Oracle homes and create gold images
     > AutoUpgrade can patch a database to a new or existing Oracle home. You can create a new Oracle home separately and later patch the database.
     ``` 
-
-    ```quiz score
-    Q: Which of the following statements are incorrect?
-    * AutoUpgrade only patches the database to an existing Oracle home
-    - AutoUpgrade can download patches
-    - AutoUpgrade works on all platforms
-    - AutoUpgrade can install Oracle homes and create gold images
-    > AutoUpgrade can patch a database to a new or existing Oracle home. You can create a new Oracle home separately and later patch the database.
-    ```
-
-    ```quiz score
-    Q: Which of the following statements are incorrect?
-    * AutoUpgrade only patches the database to an existing Oracle home
-    - AutoUpgrade can download patches
-    - AutoUpgrade works on all platforms
-    - AutoUpgrade can install Oracle homes and create gold images
-    > AutoUpgrade can patch a database to a new or existing Oracle home. You can create a new Oracle home separately and later patch the database.
-    ```
 
     ```quiz score
     Q: What license is required for using AutoUpgrade?
