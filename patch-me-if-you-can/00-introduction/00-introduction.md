@@ -35,7 +35,7 @@ Guidance:
 
 ### AutoUpgrade
 
-* AutoUpgrade was originally developed to facilitate easier upgrades of Oracle AI Database. Based on customer demand, AutoUpgrade was enhanced to patch Oracle AI Database using the same approach. AutoUpgrade aims to automate maintenance activities according to best practices, including all pre- and post-patching tasks. It can patch many databases in parallel and supports the customization required in complex environments. AutoUpgrade works on all supported platforms and supports non-CDBs, CDBs, and either all or selected PDBs.
+* AutoUpgrade was originally developed to facilitate easier upgrades of Oracle AI Database. Based on customer demand, AutoUpgrade was enhanced to patch Oracle AI Database using the same approach. AutoUpgrade aims to automate maintenance activities according to best practices, including all pre- and post-patching tasks. It can patch many databases in parallel and supports the customization required in complex environments. AutoUpgrade works on all supported platforms and supports non-CDBs, CDBs, and either all or selected PDBs. There is no separate license requirement for using AutoUpgrade. It's available to all users of Oracle AI Database.
 
 ### OPatch
 

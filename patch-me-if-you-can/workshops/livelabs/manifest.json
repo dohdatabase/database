@@ -54,6 +54,11 @@
       "filename": "../../08-patching-internals/patching-internals.md"
     },
     {
+      "title": "Lab 9: Check Your Understanding",
+      "description": "Review key patching concepts with a scored quiz.",
+      "filename": "../../09-check-your-understanding/check-your-understanding.md"
+    },
+    {
       "title": "OPTIONAL Lab A: Patch a Database in One Command",
       "description": "Fully automated patch of a database in just one command",
       "filename": "../../a-one-command-patching/one-command-patching.md"
