@@ -496,7 +496,7 @@ You can use the *queryable inventory* inside the database to get information fro
 
     </details>
 
-4. Use `opatch lsinventory` to find the installed patches.
+4. Get a list of installed patches using `DBMS_QOPATCH`.
 
     ``` sql
     <copy>
@@ -527,13 +527,38 @@ You can use the *queryable inventory* inside the database to get information fro
 
     </details>
 
-5. Exit SQLcl.
+5. Exit SQLcl - sql.
 
     ``` sql
     <copy>
     exit
     </copy>
     ```
+
+5. Exit SQLcl - bash.
+
+    ``` bash
+    <copy>
+    exit
+    </copy>
+    ```
+
+5. Exit SQLcl - text.
+
+    ``` text
+    <copy>
+    exit
+    </copy>
+    ```        
+
+5. Exit SQLcl - none.
+
+    ``` 
+    <copy>
+    exit
+    </copy>
+    ```    
+
 
 ## Task 4: Use Datapatch
 
