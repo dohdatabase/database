@@ -76,7 +76,7 @@ You can also roll back manually. In Lab 6, you patched the *CDB19* database to 1
 
 3. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -264,7 +264,7 @@ In Task 1, you left AutoUpgrade while it performed the rollback of *UPGR*.
 
 7. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -543,7 +543,7 @@ In Task 2, you left Datapatch while it applied the SQL changes to *CDB19* to com
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -977,7 +977,7 @@ Optimizer fixes are provided as part of the Release Update. However, optimizer f
 
 11. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>

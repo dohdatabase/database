@@ -164,7 +164,7 @@ Datapatch stores patching information inside the database. Understanding these t
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -628,7 +628,7 @@ Every time you patch your database, Datapatch stores the rollback scripts inside
 
 3. Exit SQLcl
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>

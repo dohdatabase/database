@@ -84,7 +84,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -180,7 +180,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
 11. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -476,7 +476,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
 9. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -823,7 +823,7 @@ You will patch *CDB19* to 19.32 and use an existing Oracle home.
 
 7. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>

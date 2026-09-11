@@ -248,7 +248,7 @@ Oracle recommends that you first check your database. AutoUpgrade in *analyze* m
 
 5. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
@@ -494,7 +494,7 @@ Patching a single instance Oracle AI Database requires downtime. Downtime starts
 
 9. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>

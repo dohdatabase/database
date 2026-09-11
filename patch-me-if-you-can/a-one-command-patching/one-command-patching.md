@@ -372,7 +372,7 @@ Patching a single instance Oracle AI Database requires downtime.
 
 9. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>

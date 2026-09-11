@@ -527,31 +527,7 @@ You can use the *queryable inventory* inside the database to get information fro
 
     </details>
 
-5. Exit SQLcl - sql.
-
-    ``` sql
-    <copy>
-    exit
-    </copy>
-    ```
-
-5. Exit SQLcl - bash.
-
-    ``` bash
-    <copy>
-    exit
-    </copy>
-    ```
-
-5. Exit SQLcl - text.
-
-    ``` text
-    <copy>
-    exit
-    </copy>
-    ```        
-
-5. Exit SQLcl - none.
+5. Exit SQLcl.
 
     ``` 
     <copy>
@@ -898,7 +874,7 @@ Here are a few useful queries that provide information about the database.
 
 4. Exit SQLcl.
 
-    ``` sql
+    ``` 
     <copy>
     exit
     </copy>
