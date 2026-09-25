@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lab, ou will verify that all components required to run this workshop are available and running.
+In this lab, you will verify that all components required to run this workshop are available and running.
 
 Estimated Time: 5 minutes
 

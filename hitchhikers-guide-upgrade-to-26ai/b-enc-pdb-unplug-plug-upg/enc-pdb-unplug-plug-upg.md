@@ -31,11 +31,12 @@ None.
     </copy>
     ```
 
-3. Start the database.
+3. Start the database and open the keystore.
 
     ``` sql
     <copy>
     startup
+    administer key management set keystore open force keystore identified by oracle_4U;
     </copy>
     ```
 
