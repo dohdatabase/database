@@ -6,6 +6,8 @@ In this lab, you will verify that all components required to run this workshop a
 
 Estimated Time: 5 minutes
 
+[Lab walkthrough by Daniel Overby Hansen, Oracle](youtube:4ELd0_GoGeY)
+
 ### Objectives
 
 In this lab, you will:

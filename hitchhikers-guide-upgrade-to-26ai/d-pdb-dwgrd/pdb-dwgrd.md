@@ -8,6 +8,8 @@ The PDB, *YELLOW*, has already been upgraded to the new release of Oracle AI Dat
 
 Estimated Time: 30 minutes
 
+[Lab walkthrough by Daniel Overby Hansen, Oracle](youtube:B9rI7owT6aU)
+
 ### Objectives
 
 In this lab, you will:

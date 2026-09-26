@@ -6,6 +6,8 @@ This lab focuses on databases that use Transparent Data Encryption (TDE). You wi
 
 Estimated Time: 35 minutes
 
+[Lab walkthrough by Daniel Overby Hansen, Oracle](youtube:hrYaJrgg1mg)
+
 ### Objectives
 
 In this lab, you will:

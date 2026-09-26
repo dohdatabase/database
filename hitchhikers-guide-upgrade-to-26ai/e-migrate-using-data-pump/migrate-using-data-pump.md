@@ -8,6 +8,8 @@ A Data Pump migration is most suitable for smaller databases or when you need to
 
 Estimated Time: 15 minutes
 
+[Lab walkthrough by Daniel Overby Hansen, Oracle](youtube:-5VOgkqt9q8)
+
 ### Objectives
 
 In this lab, you will:
